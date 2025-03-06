@@ -1,1 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AlphaBet 2025 - Login</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+      /* Reset CSS */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Kanit", "Roboto", sans-serif;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 123, 255, 0.9),
+          rgba(50, 205, 50, 0.9)
+        );
+        backdrop-filter: blur(10px);
+      }
+
+      .box-container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 310px;
+        position: absolute;
+        top: 15%;
+        backdrop-filter: blur(5px);
+      }
+
+      .alpha-bet-title {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #007bff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .login-container h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+      }
+
+      .login-container input {
+        font-family: inherit;
+        width: 93%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.8);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .login-container input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        outline: none;
+      }
+
+      .login-container button {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      .login-container button:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      input:disabled {
+        background-color: rgba(240, 240, 240, 0.8);
+        cursor: not-allowed;
+      }
+
+      .container-titulo {
+        display: block;
+        justify-content: center;
+        text-align: center;
+        font-family: "Kanit", "Poppins", Arial, sans-serif;
+        font-size: 2.5em;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 20px;
+        margin-bottom: 20px;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 123, 255, 0.9),
+          rgba(255, 99, 71, 0.9),
+          rgba(50, 205, 50, 0.9)
+        );
+        background-size: 300% 300%;
+        color: white;
+        border-radius: 0px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        animation: fadeIn 1.5s ease-in-out forwards,
+          colorShift 6s infinite alternate;
+      }
+
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes colorShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 100% 50%;
+        }
+      }
+
+      .letra {
+        opacity: 0;
+        transform: translateX(-100px);
+        animation: moveIn 1.5s ease-out forwards;
+      }
+
+      .letra:nth-child(even) {
+        transform: translateX(100px);
+      }
+
+      @keyframes moveIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .logout-button {
+        padding: 8px 16px; /* Aumentei o padding para melhorar o toque em dispositivos móveis */
+        font-size: 14px; /* Tamanho de fonte um pouco maior para melhor legibilidade */
+        right: 10px; /* Distância da borda direita */
+        top: 10px; /* Distância do topo */
+        position: absolute;
+        background: rgba(255, 99, 71, 0.9); /* Cor de fundo com transparência */
+        color: white;
+        border: none;
+        border-radius: 8px; /* Bordas mais arredondadas */
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        z-index: 1000; /* Garante que o botão fique acima de outros elementos */
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Espaçamento entre o ícone e o texto */
+      }
+
+      .logout-button:hover {
+        background: rgba(255, 69, 58, 0.9); /* Cor de fundo ao passar o mouse */
+        transform: translateY(-2px); /* Efeito de levantar ao passar o mouse */
+      }
+
+      /* Estilo para o ícone dentro do botão */
+      .logout-button i {
+        font-size: 16px; /* Tamanho do ícone */
+      }
+
+      /* Ajustes para telas menores (mobile) */
+      @media (max-width: 768px) {
+        .logout-button {
+          padding: 6px 12px; /* Padding menor para telas pequenas */
+          font-size: 12px; /* Fonte menor para telas pequenas */
+          right: 5px; /* Mais próximo da borda */
+          top: 5px; /* Mais próximo do topo */
+        }
+
+        .logout-button i {
+          font-size: 14px; /* Ícone menor para telas pequenas */
+        }
+      }
+
+      /* Ajustes para telas muito pequenas (ex.: smartphones em modo retrato) */
+      @media (max-width: 480px) {
+        .logout-button {
+          padding: 4px 8px; /* Padding ainda menor */
+          font-size: 10px; /* Fonte ainda menor */
+          right: 2px; /* Próximo da borda */
+          top: 2px; /* Próximo do topo */
+        }
+
+        .logout-button i {
+          font-size: 12px; /* Ícone ainda menor */
+        }
+
+        .logout-text {
+          display: none; /* Oculta o texto "SAIR" em telas muito pequenas */
+        }
+      }
+
+      .table-container {
+        display: flex;
+        width: 100%;
+        max-width: 800px;
+        margin: 10px auto;
+        overflow-x: auto;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+      }
+
+      table {
+        width: 100%;
+        min-width: 800px;
+        border-collapse: collapse;
+      }
+
+      td {
+        padding: 0px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      th {
+        padding: 10px;
+        background: rgba(0, 123, 255, 0.9);
+        color: white;
+        font-size: 19px;
+        font-weight: 500;
+      }
+
+      th:first-child,
+      td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: white;
+        outline: none;
+        width: 140px;
+        padding: 5px;
+      }
+
+      th:first-child {
+        background-color: #007bff;
+      }
+
+      tr:nth-child(even) {
+        background-color: rgba(249, 249, 249, 0.8);
+      }
+
+      .input-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
+
+      #nome-rodada {
+        position: sticky;
+        background: rgba(0, 123, 255, 0.9); /* Mesma cor dos cabeçalhos */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 19px;
+        font-weight: 500;
+        text-align: center;
+        width: 140px;
+        text-transform: uppercase;
+        padding: 10px;
+        box-shadow: none; /* Remova sombras se necessário */
+        outline: none; /* Remova outlines se necessário */
+        backdrop-filter: none; /* Remova backdrop-filter se necessário */
+      }
+
+      #nome-rodada::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .input-placar,
+      .input-jogo {
+        font-family: inherit;
+        width: 40px;
+        text-align: center;
+        padding: 2px;
+        font-size: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.8);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
+
+      .input-jogo {
+        background-color: rgba(0, 123, 255, 0.9);
+        color: white;
+        border: none;
+        font-size: 16px;
+        font-weight: 500;
+        text-transform: uppercase;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+        outline: none;
+        margin: 0;
+        border-radius: 5px;
+        padding: 8px;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      .input-jogo:focus {
+        background-color: rgba(0, 123, 255, 1);
+        transform: translateY(-2px);
+      }
+
+      .placar-separador {
+        font-size: 18px;
+        color: rgba(119, 119, 119, 0.8);
+      }
+
+      .pontuacao-container {
+        display: flex;
+        flex-direction: column;
+		Max-width: 1000px;
+        gap: 10px;
+        margin: 20px auto;
+      }
+
+      .pontuacao-card {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 22px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        display: block;
+        align-items: center;
+        justify-content: center;
+        min-height: 60px;
+        width: 80%;
+        margin: auto;
+        backdrop-filter: blur(5px);
+      }
+
+      .pontuacao-card:hover {
+        transform: scale(1.02);
+      }
+
+      @media (min-width: 768px) {
+        .pontuacao-container {
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .pontuacao-card {
+          flex: 1 1 180px;
+          max-width: 200px;
+          min-height: 80px;
+          font-size: 20px;
+        }
+      }
+
+      .pontuacao-card.vencedor {
+        background: linear-gradient(to right, #fde68a, #fbbf24);
+        color: black;
+        font-weight: bold;
+        border: 2px solid rgba(255, 235, 59, 0.9);
+      }
+
+      .buttons {
+        margin-top: 20px;
+        text-align: center;
+        display: inline-block;
+      }
+
+      button {
+        font-family: "Kanit", "Poppins", Arial, sans-serif;
+        background: rgba(0, 123, 255, 0.9);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        font-size: 22px;
+        cursor: pointer;
+        margin: 5px;
+        border-radius: 8px;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      button:hover {
+        background: rgba(0, 86, 179, 0.9);
+        transform: translateY(-2px);
+      }
+
+      footer {
+        margin-top: auto;
+        text-align: center;
+        padding: 5px;
+        background-color: rgba(240, 240, 240, 0.9);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      footer p {
+        margin: 5px 0;
+      }
+
+      .fab.fa-instagram {
+        font-size: 24px;
+        color: rgba(225, 48, 108, 0.9);
+        transition: color 0.3s ease;
+      }
+
+      .fab.fa-instagram:hover {
+        color: rgba(193, 53, 132, 0.9);
+      }
+
+      .iframe-container {
+        width: 95%;
+        max-width: 1000px;
+        margin: 20px auto;
+        height: 500px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+      }
+
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="login-container" id="login-container">
+      <div class="box-container">
+        <div class="alpha-bet-title">AlphaBet</div>
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Nome de usuário" />
+        <input
+          type="password"
+          id="password"
+          placeholder="Senha"
+          onkeydown="handleKeyPress(event)"
+        />
+        <button onclick="login()">Entrar</button>
+      </div>
+    </div>
+
+    <div id="main-content" class="hidden">
+      <!-- Conteúdo principal (tabela de apostas) -->
+      <div class="container-titulo">
+        <!-- As letras do título serão inseridas aqui pelo script -->
+      </div>
+
+      <button class="logout-button" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="logout-text">SAIR</span>
+      </button>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <input
+                  type="text"
+                  id="nome-rodada"
+                  placeholder="Nome da Rodada"
+                />
+              </th>
+              <th>Jardel</th>
+              <th>Werbet</th>
+              <th>Nailton</th>
+              <th>Phillipe</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-apostas">
+            <!-- Linhas das partidas serão inseridas aqui pelo script -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pontuacao-container" id="pontuacao"></div>
+
+      <div class="iframe-container">
+        <iframe
+          src="https://ge.globo.com/sp/futebol/campeonato-paulista/"
+          style="
+            border: 20px;
+            height: 100%;
+            left: 0;
+            position: bottom;
+            top: 0;
+            width: 100%;
+          "
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Jardel Correia.</p>
+        <p>Todos os direitos reservados.</p>
+        <p>
+          <a href="https://instagram.com/jardelcorreia" target="_blank">
+            <i class="fab fa-instagram"></i>
+            <!-- Ícone do Instagram -->
+          </a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Função debounce para evitar múltiplas chamadas ao servidor
+      function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      // Função para salvar as apostas com debounce
+      const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
+
+      // Adiciona eventos de input, change, blur e keydown para salvar automaticamente
+      function adicionarEventosSalvamento() {
+        const inputs = document.querySelectorAll(
+          ".aposta, .resultado, .input-jogo, #nome-rodada"
+        );
+        inputs.forEach((input) => {
+          input.addEventListener("input", salvarApostasDebounced);
+          input.addEventListener("change", salvarApostasDebounced);
+          input.addEventListener("blur", salvarApostasDebounced);
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced();
+            }
+          });
+        });
+      }
+
+      // Restante do JavaScript permanece o mesmo
+      const titulo = "Paulistão AlphaBet 2025";
+      const containerTitulo = document.querySelector(".container-titulo");
+
+      // Adiciona as letras do título com animação
+      titulo.split("").forEach((letra, index) => {
+        const span = document.createElement("span");
+        span.textContent = letra;
+        span.classList.add("letra");
+        span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
+        containerTitulo.appendChild(span);
+      });
+
+      // Remove o usuário logado ao carregar a página
+      localStorage.removeItem("loggedInUser");
+
+      // Função para fazer logout
+      function logout() {
+        localStorage.removeItem("loggedInUser"); // Remove o usuário logado
+        document.getElementById("login-container").classList.remove("hidden"); // Exibe a tela de login
+        document.getElementById("main-content").classList.add("hidden"); // Oculta o conteúdo principal
+      }
+
+      // Chave fixa para criptografia (não segura para produção!)
+      const chave = "329c82f43cd51107fa938c787be9f78f";
+
+      // Senhas criptografadas (substitua pelos valores que você gerou)
+      const senhasCriptografadas = {
+        Jardel: "U2FsdGVkX1/kdazYVnQYtdxrejj/llx4W+v/dnbXvHE=", // Substitua pelo valor gerado
+        Werbet: "U2FsdGVkX19/TGyRq/pZEzBcqlUzOjksB8qJ6VSyr1Q=", // Substitua pelo valor gerado
+        Nailton: "U2FsdGVkX18v/Pv6R5bjotoKzHpe2yD9bg7/iGdIp0o=", // Substitua pelo valor gerado
+        Phillipe: "U2FsdGVkX1/A6/qFX50fRpb+YoYBd7ElBetNYg7jWOs=", // Substitua pelo valor gerado
+      };
+
+      // Função para descriptografar
+      function descriptografar(textoCriptografado) {
+        const bytes = CryptoJS.AES.decrypt(textoCriptografado, chave);
+        return bytes.toString(CryptoJS.enc.Utf8);
+      }
+
+      // Função de login
+      function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        if (
+          senhasCriptografadas[username] &&
+          descriptografar(senhasCriptografadas[username]) === password
+        ) {
+          localStorage.setItem("loggedInUser", username);
+          document.getElementById("login-container").classList.add("hidden");
+          document.getElementById("main-content").classList.remove("hidden");
+          bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
+          carregarApostas(); // Carrega as apostas salvas
+        } else {
+          alert("Nome de usuário ou senha incorretos!");
+        }
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          login();
+        }
+      }
+
+      // Verificar se o usuário já está logado ao carregar a página
+      const loggedInUser = localStorage.getItem("loggedInUser");
+      if (loggedInUser) {
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("main-content").classList.remove("hidden");
+        bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
+        carregarApostas(); // Carrega as apostas salvas
+      }
+
+      // Função para bloquear as colunas dos outros jogadores
+      function bloquearColunasOutrosJogadores() {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        if (!loggedInUser) return;
+
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        const inputsApostas = document.querySelectorAll(".aposta");
+
+        inputsApostas.forEach((input) => {
+          const colunaJogador = input.classList.contains("jogador0")
+            ? "Jardel"
+            : input.classList.contains("jogador1")
+            ? "Werbet"
+            : input.classList.contains("jogador2")
+            ? "Nailton"
+            : input.classList.contains("jogador3")
+            ? "Phillipe"
+            : null;
+
+          // Se o input pertence a outro jogador, bloqueia a edição
+          if (colunaJogador && colunaJogador !== loggedInUser) {
+            input.disabled = true;
+            input.style.backgroundColor = "#f0f0f0"; // Estilo visual para indicar que está bloqueado
+          } else {
+            input.disabled = false;
+            input.style.backgroundColor = ""; // Remove o estilo de bloqueio
+          }
+        });
+      }
+
+      // Restante do JavaScript para a tabela e funcionalidades
+      const JSONBIN_API_KEY =
+        "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
+      const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
+
+      document.addEventListener("DOMContentLoaded", function () {
+        criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
+        adicionarNavegacao();
+        adicionarNavegacaoJogos();
+        adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
+        adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
+        carregarApostas(); // Carrega as apostas salvas
+
+        // Adiciona evento de input para o nome da rodada
+        document
+          .getElementById("nome-rodada")
+          .addEventListener("input", salvarApostasDebounced);
+      });
+
+      function adicionarNavegacaoJogos() {
+        const inputsJogos = document.querySelectorAll(".input-jogo");
+        inputsJogos.forEach((input, index) => {
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === "Tab") {
+              event.preventDefault();
+              const nextIndex = index + 1;
+              if (nextIndex < inputsJogos.length) {
+                inputsJogos[nextIndex].focus();
+              }
+            }
+
+            // Adiciona a lógica de apagar com Delete ou Backspace
+            if (event.key === "Delete" || event.key === "Backspace") {
+              event.preventDefault();
+
+              // Se houver texto no campo, remove o último caractere
+              if (input.value.length > 0) {
+                input.value = input.value.slice(0, -1); // Remove o último caractere
+              } else {
+                // Se o campo estiver vazio, move o foco para o campo anterior na mesma coluna
+                const prevIndex = index - 1;
+                if (prevIndex >= 0) {
+                  inputsJogos[prevIndex].focus();
+                }
+                // Se estiver no primeiro campo da coluna, o foco para aqui
+              }
+            }
+          });
+        });
+      }
+
+      function adicionarNavegacao() {
+        // Navegação para as colunas dos jogadores
+        for (let i = 0; i < 4; i++) {
+          const coluna = document.querySelectorAll(`input.jogador${i}`);
+          coluna.forEach((input, index) => {
+            input.addEventListener("input", (event) => {
+              if (event.target.value.length === 1) {
+                // Verifica se um número foi digitado
+                let nextIndex = index + 1;
+                if (nextIndex < coluna.length) {
+                  coluna[nextIndex].focus(); // Move o foco para o próximo campo na mesma coluna
+                }
+              }
+            });
+
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                event.preventDefault();
+                if (input.value === "") {
+                  // Move o foco para o campo anterior na mesma coluna
+                  const prevIndex = index - 1;
+                  if (prevIndex >= 0) {
+                    coluna[prevIndex].focus();
+                  }
+                  // Se estiver no primeiro campo da coluna, o foco para aqui
+                } else {
+                  // Limpa o campo atual
+                  input.value = "";
+                }
+              }
+            });
+          });
+        }
+
+        // Navegação para os campos de resultado
+        const placarReal = document.querySelectorAll("input.resultado");
+        placarReal.forEach((input, index) => {
+          input.addEventListener("input", (event) => {
+            if (event.target.value.length === 1) {
+              // Verifica se um número foi digitado
+              let nextIndex = index + 1;
+              if (nextIndex < placarReal.length) {
+                placarReal[nextIndex].focus(); // Move o foco para o próximo campo de resultado
+              }
+            }
+          });
+
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              event.preventDefault();
+              if (input.value === "") {
+                // Move o foco para o campo anterior na mesma coluna
+                const prevIndex = index - 1;
+                if (prevIndex >= 0) {
+                  placarReal[prevIndex].focus();
+                }
+                // Se estiver no primeiro campo da coluna, o foco para aqui
+              } else {
+                // Limpa o campo atual
+                input.value = "";
+              }
+            }
+          });
+        });
+      }
+
+      function criarLinhasTabela() {
+        const tabela = document.getElementById("tabela-apostas");
+
+        for (let i = 1; i <= 10; i++) {
+          const linha = document.createElement("tr");
+          linha.innerHTML = `
+            <td>
+                <input type="text" class="input-jogo" placeholder="casa x fora">
+            </td>
+            ${["Jardel", "Werbet", "Nailton", "Phillipe"]
+              .map(
+                (jogador, jogadorIndex) => `
+                <td>
+                    <div class="input-container">
+                        <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
+                        <span class="placar-separador">x</span>
+                        <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
+                    </div>
+                </td>
+            `
+              )
+              .join("")}
+            <td>
+                <div class="input-container">
+                    <input type="number" class="resultado input-placar" min="0">
+                    <span class="placar-separador">x</span>
+                    <input type="number" class="resultado input-placar" min="0">
+                </div>
+            </td>
+        `;
+          tabela.appendChild(linha);
+        }
+      }
+
+      function carregarApostas() {
+        fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          headers: {
+            "X-Master-Key": JSONBIN_API_KEY,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log("Dados carregados:", data); // Verifique os dados carregados
+            const { nomeRodada, jogos, apostas, resultados } = data.record;
+
+            // Preenche o nome da rodada
+            document.getElementById("nome-rodada").value = nomeRodada || "";
+
+            // Verifica se jogos é um array
+            if (!Array.isArray(jogos)) {
+              console.error("Erro: jogos não é um array");
+              return;
+            }
+
+            preencherTabela(jogos, apostas, resultados);
+            calcularPontuacao(); // Calcula a pontuação após carregar os dados
+          })
+          .catch((error) => console.error("Erro ao carregar apostas:", error));
+      }
+
+      function salvarApostas() {
+        const nomeRodada = document.getElementById("nome-rodada").value;
+        const jogos = obterJogosDaTabela();
+        console.log("Jogos a serem salvos:", jogos); // Verifique os jogos coletados
+        const apostas = obterApostasDaTabela();
+        const resultados = obterResultadosDaTabela();
+
+        const dados = { nomeRodada, jogos, apostas, resultados };
+
+        fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": JSONBIN_API_KEY,
+          },
+          body: JSON.stringify(dados),
+        })
+          .then((response) => response.json())
+          .then((data) => console.log("Dados salvos com sucesso:", data))
+          .catch((error) => console.error("Erro ao salvar dados:", error));
+      }
+
+      function preencherTabela(jogos, apostas, resultados) {
+        console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
+        const inputsJogos = document.querySelectorAll(".input-jogo");
+        const inputsApostas = document.querySelectorAll(".aposta");
+        const inputsResultados = document.querySelectorAll(".resultado");
+
+        // Preenche os nomes dos times
+        inputsJogos.forEach((input, index) => {
+          input.value = jogos[index] || "";
+        });
+
+        // Preenche as apostas dos jogadores
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        jogadores.forEach((jogador, jogadorIndex) => {
+          for (let i = 0; i < 10; i++) {
+            const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
+            const indexFora = indexCasa + 1; // Índice do time2
+            inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+            inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
+          }
+        });
+
+        // Preenche os resultados
+        for (let i = 0; i < 10; i++) {
+          inputsResultados[i * 2].value = resultados[i].time1 || "";
+          inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+        }
+      }
+
+      function obterJogosDaTabela() {
+        const jogos = [];
+        const inputs = document.querySelectorAll(".input-jogo");
+        inputs.forEach((input) => jogos.push(input.value));
+        return jogos;
+      }
+
+      function obterApostasDaTabela() {
+        const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
+        const inputs = document.querySelectorAll(".aposta");
+
+        for (let i = 0; i < 10; i++) {
+          apostas.Jardel.push({
+            time1: inputs[i * 8].value,
+            time2: inputs[i * 8 + 1].value,
+          });
+          apostas.Werbet.push({
+            time1: inputs[i * 8 + 2].value,
+            time2: inputs[i * 8 + 3].value,
+          });
+          apostas.Nailton.push({
+            time1: inputs[i * 8 + 4].value,
+            time2: inputs[i * 8 + 5].value,
+          });
+          apostas.Phillipe.push({
+            time1: inputs[i * 8 + 6].value,
+            time2: inputs[i * 8 + 7].value,
+          });
+        }
+
+        return apostas;
+      }
+
+      function obterResultadosDaTabela() {
+        const resultados = [];
+        const inputs = document.querySelectorAll(".resultado");
+
+        for (let i = 0; i < 10; i++) {
+          resultados.push({
+            time1: inputs[i * 2].value,
+            time2: inputs[i * 2 + 1].value,
+          });
+        }
+
+        return resultados;
+      }
+
+      // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
+      function calcularPontuacao() {
+        const apostas = obterApostasDaTabela();
+        const resultados = obterResultadosDaTabela();
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+
+        for (let i = 0; i < 10; i++) {
+          const resultadoCasa = resultados[i].time1;
+          const resultadoFora = resultados[i].time2;
+
+          // Ignora jogos sem resultado
+          if (resultadoCasa === "" || resultadoFora === "") continue;
+
+          jogadores.forEach((jogador) => {
+            const apostaCasa = apostas[jogador][i].time1;
+            const apostaFora = apostas[jogador][i].time2;
+
+            // Ignora apostas em branco
+            if (apostaCasa === "" || apostaFora === "") return;
+
+            if (apostaCasa === resultadoCasa && apostaFora === resultadoFora) {
+              pontos[jogador] += 3; // Acertou o placar exato
+            } else if (
+              (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
+              (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
+              (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
+            ) {
+              pontos[jogador] += 1; // Acertou o vencedor ou empate
+            }
+          });
+        }
+
+        // Ordena os jogadores por pontuação (do maior para o menor)
+        const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
+          if (b[1] !== a[1]) {
+            return b[1] - a[1]; // Ordena por pontuação decrescente
+          } else {
+            return a[0].localeCompare(b[0]); // Em caso de empate, ordena alfabeticamente
+          }
+        });
+
+        // Verifica se há um único vencedor (sem empate)
+        const [primeiroJogador, primeiraPontuacao] = jogadoresOrdenados[0];
+        const [segundoJogador, segundaPontuacao] = jogadoresOrdenados[1];
+
+        const haEmpate = primeiraPontuacao === segundaPontuacao;
+
+        // Atualiza a exibição da pontuação
+        const pontuacaoHTML = jogadoresOrdenados
+          .map(([jogador, pontuacao]) => {
+            const isVencedor = !haEmpate && jogador === primeiroJogador;
+            return `<div class="pontuacao-card ${
+              isVencedor ? "vencedor" : ""
+            }"><h3>${jogador}</h3>
+                    <span>
+                    <p>${pontuacao} pontos</p></div>`;
+          })
+          .join("");
+
+        document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+      }
+
+      // Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
+      function adicionarEventosCalculoPontuacao() {
+        // Adiciona eventos aos campos de apostas
+        const inputsApostas = document.querySelectorAll(".aposta");
+        inputsApostas.forEach((input) => {
+          input.addEventListener("input", function () {
+            salvarApostasDebounced(); // Salva as apostas automaticamente
+            calcularPontuacao(); // Recalcula a pontuação
+          });
+
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
+            }
+          });
+        });
+
+        // Adiciona eventos aos campos de resultado
+        const inputsResultados = document.querySelectorAll(".resultado");
+        inputsResultados.forEach((input) => {
+          input.addEventListener("input", function () {
+            salvarApostasDebounced(); // Salva as apostas automaticamente
+            calcularPontuacao(); // Recalcula a pontuação
+          });
+
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
+            }
+          });
+        });
+      }
+
+      function limparApostas() {
+        document
+          .querySelectorAll("input")
+          .forEach((input) => (input.value = ""));
+        document.getElementById("pontuacao").innerHTML = "";
+      }
+    </script>
+  </body>
+</html>
+
 
