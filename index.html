@@ -526,7 +526,7 @@
 
       <div class="iframe-container">
         <iframe
-          src="https://ge.globo.com/sp/futebol/campeonato-paulista/"
+          src="https://ge.globo.com/futebol/brasileirao-serie-a/"
           style="
             border: 20px;
             height: 100%;
@@ -606,7 +606,7 @@
       }
 
       // Chave fixa para criptografia (não segura para produção!)
-      require('dotenv').config(); // Carrega as variáveis de ambiente
+      const chave = "329c82f43cd51107fa938c787be9f78f";
 
       // Senhas criptografadas (substitua pelos valores que você gerou)
       const senhasCriptografadas = {
@@ -618,25 +618,35 @@
 
       // Função para descriptografar
       function descriptografar(textoCriptografado) {
-    const bytes = CryptoJS.AES.decrypt(textoCriptografado, process.env.CRYPTO_KEY); // Usa a chave do .env
-    return bytes.toString(CryptoJS.enc.Utf8);
-}
+        const bytes = CryptoJS.AES.decrypt(textoCriptografado, chave);
+        return bytes.toString(CryptoJS.enc.Utf8);
+      }
 
       // Função de login
-function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+      function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
 
-    if (senhasCriptografadas[username] && descriptografar(senhasCriptografadas[username]) === password) {
-        localStorage.setItem("loggedInUser", username);
-        document.getElementById("login-container").classList.add("hidden");
-        document.getElementById("main-content").classList.remove("hidden");
-        bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
-        carregarApostas(); // Carrega as apostas salvas
-    } else {
-        alert("Nome de usuário ou senha incorretos!");
-    }
-}
+        if (
+          senhasCriptografadas[username] &&
+          descriptografar(senhasCriptografadas[username]) === password
+        ) {
+          localStorage.setItem("loggedInUser", username);
+          document.getElementById("login-container").classList.add("hidden");
+          document.getElementById("main-content").classList.remove("hidden");
+          bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
+          carregarApostas(); // Carrega as apostas salvas
+        } else {
+          alert("Nome de usuário ou senha incorretos!");
+        }
+      }
+
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          login();
+        }
+      }
+
 
       // Verificar se o usuário já está logado ao carregar a página
       const loggedInUser = localStorage.getItem("loggedInUser");
