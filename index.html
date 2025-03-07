@@ -594,7 +594,8 @@
         span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
         containerTitulo.appendChild(span);
       });
-      
+
+      // Remove o usuário logado ao carregar a página
       // Remove o usuário logado ao carregar a página
 localStorage.removeItem("loggedInUser");
 
@@ -606,6 +607,7 @@ function logout() {
 }
 
 // Senhas criptografadas (substitua pelos valores que você gerou)
+// Função para buscar as senhas criptografadas do backend
 async function buscarSenhasCriptografadas() {
   try {
     const response = await fetch("/.netlify/functions/senhas");
@@ -621,6 +623,29 @@ async function buscarSenhasCriptografadas() {
   }
 }
 
+// Função para descriptografar usando o backend
+async function descriptografar(textoCriptografado) {
+  try {
+    const response = await fetch("/.netlify/functions/descriptografar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ textoCriptografado }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao descriptografar");
+    }
+
+    const data = await response.json();
+    return data.textoDescriptografado;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    alert("Erro ao descriptografar. Tente novamente.");
+    return null;
+  }
+}
+
+// Função de login
 async function login() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
@@ -643,12 +668,6 @@ async function login() {
     }
   } else {
     alert("Nome de usuário ou senha incorretos!");
-  }
-}
-
-function handleKeyPress(event) {
-  if (event.key === "Enter") {
-    login();
   }
 }
 
