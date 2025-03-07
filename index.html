@@ -11,8 +11,6 @@
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
-
       /* Reset CSS */
       * {
         margin: 0;
@@ -175,62 +173,59 @@
       }
 
       .logout-button {
-        padding: 8px 16px; /* Aumentei o padding para melhorar o toque em dispositivos móveis */
-        font-size: 14px; /* Tamanho de fonte um pouco maior para melhor legibilidade */
-        right: 10px; /* Distância da borda direita */
-        top: 10px; /* Distância do topo */
+        padding: 8px 16px;
+        font-size: 14px;
+        right: 10px;
+        top: 10px;
         position: absolute;
-        background: rgba(255, 99, 71, 0.9); /* Cor de fundo com transparência */
+        background: rgba(255, 99, 71, 0.9);
         color: white;
         border: none;
-        border-radius: 8px; /* Bordas mais arredondadas */
+        border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.3s, transform 0.2s;
-        z-index: 1000; /* Garante que o botão fique acima de outros elementos */
+        z-index: 1000;
         display: flex;
         align-items: center;
-        gap: 5px; /* Espaçamento entre o ícone e o texto */
+        gap: 5px;
       }
 
       .logout-button:hover {
-        background: rgba(255, 69, 58, 0.9); /* Cor de fundo ao passar o mouse */
-        transform: translateY(-2px); /* Efeito de levantar ao passar o mouse */
+        background: rgba(255, 69, 58, 0.9);
+        transform: translateY(-2px);
       }
 
-      /* Estilo para o ícone dentro do botão */
       .logout-button i {
-        font-size: 16px; /* Tamanho do ícone */
+        font-size: 16px;
       }
 
-      /* Ajustes para telas menores (mobile) */
       @media (max-width: 768px) {
         .logout-button {
-          padding: 6px 12px; /* Padding menor para telas pequenas */
-          font-size: 12px; /* Fonte menor para telas pequenas */
-          right: 5px; /* Mais próximo da borda */
-          top: 5px; /* Mais próximo do topo */
+          padding: 6px 12px;
+          font-size: 12px;
+          right: 5px;
+          top: 5px;
         }
 
         .logout-button i {
-          font-size: 14px; /* Ícone menor para telas pequenas */
+          font-size: 14px;
         }
       }
 
-      /* Ajustes para telas muito pequenas (ex.: smartphones em modo retrato) */
       @media (max-width: 480px) {
         .logout-button {
-          padding: 4px 8px; /* Padding ainda menor */
-          font-size: 10px; /* Fonte ainda menor */
-          right: 2px; /* Próximo da borda */
-          top: 2px; /* Próximo do topo */
+          padding: 4px 8px;
+          font-size: 10px;
+          right: 2px;
+          top: 2px;
         }
 
         .logout-button i {
-          font-size: 12px; /* Ícone ainda menor */
+          font-size: 12px;
         }
 
         .logout-text {
-          display: none; /* Oculta o texto "SAIR" em telas muito pequenas */
+          display: none;
         }
       }
 
@@ -294,7 +289,7 @@
 
       #nome-rodada {
         position: sticky;
-        background: rgba(0, 123, 255, 0.9); /* Mesma cor dos cabeçalhos */
+        background: rgba(0, 123, 255, 0.9);
         color: white;
         border: none;
         border-radius: 5px;
@@ -305,9 +300,9 @@
         width: 140px;
         text-transform: uppercase;
         padding: 10px;
-        box-shadow: none; /* Remova sombras se necessário */
-        outline: none; /* Remova outlines se necessário */
-        backdrop-filter: none; /* Remova backdrop-filter se necessário */
+        box-shadow: none;
+        outline: none;
+        backdrop-filter: none;
       }
 
       #nome-rodada::placeholder {
@@ -358,7 +353,7 @@
       .pontuacao-container {
         display: flex;
         flex-direction: column;
-		Max-width: 1000px;
+        max-width: 1000px;
         gap: 10px;
         margin: 20px auto;
       }
@@ -488,9 +483,8 @@
     </div>
 
     <div id="main-content" class="hidden">
-      <!-- Conteúdo principal (tabela de apostas) -->
       <div class="container-titulo">
-        <!-- As letras do título serão inseridas aqui pelo script -->
+        <!-- Título animado -->
       </div>
 
       <button class="logout-button" onclick="logout()">
@@ -498,17 +492,35 @@
         <span class="logout-text">SAIR</span>
       </button>
 
+      <!-- Tabela Pessoal (Apostas Privadas) -->
       <div class="table-container">
-        <table>
+        <h3>Suas Apostas</h3>
+        <table id="tabela-pessoal">
           <thead>
             <tr>
-              <th>
-                <input
-                  type="text"
-                  id="nome-rodada"
-                  placeholder="Nome da Rodada"
-                />
-              </th>
+              <th>Jogo</th>
+              <th>Seu Palpite</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Linhas das apostas pessoais serão inseridas aqui -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Botões de Controle -->
+      <div class="buttons">
+        <button onclick="salvarApostasPrivadas()">Salvar Apostas</button>
+        <button onclick="revelarApostas()">Revelar Apostas</button>
+      </div>
+
+      <!-- Tabela Principal (Apostas Reveladas) -->
+      <div class="table-container">
+        <h3>Tabela Principal</h3>
+        <table id="tabela-principal">
+          <thead>
+            <tr>
+              <th>Jogo</th>
               <th>Jardel</th>
               <th>Werbet</th>
               <th>Nailton</th>
@@ -516,27 +528,16 @@
               <th>Resultado</th>
             </tr>
           </thead>
-          <tbody id="tabela-apostas">
-            <!-- Linhas das partidas serão inseridas aqui pelo script -->
+          <tbody>
+            <!-- Linhas das apostas reveladas serão inseridas aqui -->
           </tbody>
         </table>
       </div>
 
+      <!-- Pontuação e Iframe -->
       <div class="pontuacao-container" id="pontuacao"></div>
-
       <div class="iframe-container">
-        <iframe
-          src="https://ge.globo.com/futebol/brasileirao-serie-a/"
-          style="
-            border: 20px;
-            height: 100%;
-            left: 0;
-            position: bottom;
-            top: 0;
-            width: 100%;
-          "
-          allowfullscreen
-        ></iframe>
+        <iframe src="https://ge.globo.com/futebol/brasileirao-serie-a/"></iframe>
       </div>
     </div>
     <footer>
@@ -546,7 +547,6 @@
         <p>
           <a href="https://instagram.com/jardelcorreia" target="_blank">
             <i class="fab fa-instagram"></i>
-            <!-- Ícone do Instagram -->
           </a>
         </p>
       </div>
@@ -596,119 +596,120 @@
       });
 
       // Remove o usuário logado ao carregar a página
-      // Remove o usuário logado ao carregar a página
-localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("loggedInUser");
 
-// Função para fazer logout
-function logout() {
-  localStorage.removeItem("loggedInUser"); // Remove o usuário logado
-  document.getElementById("login-container").classList.remove("hidden"); // Exibe a tela de login
-  document.getElementById("main-content").classList.add("hidden"); // Oculta o conteúdo principal
-}
+      // Função para fazer logout
+      function logout() {
+        localStorage.removeItem("loggedInUser"); // Remove o usuário logado
+        document.getElementById("login-container").classList.remove("hidden"); // Exibe a tela de login
+        document.getElementById("main-content").classList.add("hidden"); // Oculta o conteúdo principal
+      }
 
-// Senhas criptografadas (substitua pelos valores que você gerou)
-// Função para buscar as senhas criptografadas do backend
-async function buscarSenhasCriptografadas() {
-  try {
-    const response = await fetch("/.netlify/functions/senhas");
-    if (!response.ok) {
-      throw new Error("Erro ao buscar senhas");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    alert("Erro ao buscar senhas. Tente novamente.");
-    return {};
-  }
-}
+      // Senhas criptografadas (substitua pelos valores que você gerou)
+      // Função para buscar as senhas criptografadas do backend
+      async function buscarSenhasCriptografadas() {
+        try {
+          const response = await fetch("/.netlify/functions/senhas");
+          if (!response.ok) {
+            throw new Error("Erro ao buscar senhas");
+          }
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error("Erro na requisição:", error);
+          alert("Erro ao buscar senhas. Tente novamente.");
+          return {};
+        }
+      }
 
-// Função para descriptografar usando o backend
-async function descriptografar(textoCriptografado) {
-  try {
-    const response = await fetch("/.netlify/functions/descriptografar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ textoCriptografado }),
-    });
+      // Função para descriptografar usando o backend
+      async function descriptografar(textoCriptografado) {
+        try {
+          const response = await fetch("/.netlify/functions/descriptografar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ textoCriptografado }),
+          });
 
-    if (!response.ok) {
-      throw new Error("Erro ao descriptografar");
-    }
+          if (!response.ok) {
+            throw new Error("Erro ao descriptografar");
+          }
 
-    const data = await response.json();
-    return data.textoDescriptografado;
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    alert("Erro ao descriptografar. Tente novamente.");
-    return null;
-  }
-}
+          const data = await response.json();
+          return data.textoDescriptografado;
+        } catch (error) {
+          console.error("Erro na requisição:", error);
+          alert("Erro ao descriptografar. Tente novamente.");
+          return null;
+        }
+      }
 
-// Função de login
-async function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+      // Função de login
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
 
-  // Busca as senhas criptografadas do backend
-  const senhasCriptografadas = await buscarSenhasCriptografadas();
+        // Busca as senhas criptografadas do backend
+        const senhasCriptografadas = await buscarSenhasCriptografadas();
 
-  if (senhasCriptografadas[username]) {
-    // Descriptografa a senha usando o backend
-    const senhaDescriptografada = await descriptografar(senhasCriptografadas[username]);
+        if (senhasCriptografadas[username]) {
+          // Descriptografa a senha usando o backend
+          const senhaDescriptografada = await descriptografar(
+            senhasCriptografadas[username]
+          );
 
-    if (senhaDescriptografada === password) {
-      localStorage.setItem("loggedInUser", username);
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("main-content").classList.remove("hidden");
-      bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
-      carregarApostas(); // Carrega as apostas salvas
-    } else {
-      alert("Nome de usuário ou senha incorretos!");
-    }
-  } else {
-    alert("Nome de usuário ou senha incorretos!");
-  }
-}
+          if (senhaDescriptografada === password) {
+            localStorage.setItem("loggedInUser", username);
+            document.getElementById("login-container").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
+            carregarApostas(); // Carrega as apostas salvas
+          } else {
+            alert("Nome de usuário ou senha incorretos!");
+          }
+        } else {
+          alert("Nome de usuário ou senha incorretos!");
+        }
+      }
 
-// Verificar se o usuário já está logado ao carregar a página
-const loggedInUser = localStorage.getItem("loggedInUser");
-if (loggedInUser) {
-  document.getElementById("login-container").classList.add("hidden");
-  document.getElementById("main-content").classList.remove("hidden");
-  bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
-  carregarApostas(); // Carrega as apostas salvas
-}
+      // Verificar se o usuário já está logado ao carregar a página
+      const loggedInUser = localStorage.getItem("loggedInUser");
+      if (loggedInUser) {
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("main-content").classList.remove("hidden");
+        bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
+        carregarApostas(); // Carrega as apostas salvas
+      }
 
-// Função para bloquear as colunas dos outros jogadores
-function bloquearColunasOutrosJogadores() {
-  const loggedInUser = localStorage.getItem("loggedInUser");
-  if (!loggedInUser) return;
+      // Função para bloquear as colunas dos outros jogadores
+      function bloquearColunasOutrosJogadores() {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        if (!loggedInUser) return;
 
-  const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-  const inputsApostas = document.querySelectorAll(".aposta");
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        const inputsApostas = document.querySelectorAll(".aposta");
 
-  inputsApostas.forEach((input) => {
-    const colunaJogador = input.classList.contains("jogador0")
-      ? "Jardel"
-      : input.classList.contains("jogador1")
-      ? "Werbet"
-      : input.classList.contains("jogador2")
-      ? "Nailton"
-      : input.classList.contains("jogador3")
-      ? "Phillipe"
-      : null;
+        inputsApostas.forEach((input) => {
+          const colunaJogador = input.classList.contains("jogador0")
+            ? "Jardel"
+            : input.classList.contains("jogador1")
+            ? "Werbet"
+            : input.classList.contains("jogador2")
+            ? "Nailton"
+            : input.classList.contains("jogador3")
+            ? "Phillipe"
+            : null;
 
-    // Se o input pertence a outro jogador, bloqueia a edição
-    if (colunaJogador && colunaJogador !== loggedInUser) {
-      input.disabled = true;
-      input.style.backgroundColor = "#f0f0f0"; // Estilo visual para indicar que está bloqueado
-    } else {
-      input.disabled = false;
-      input.style.backgroundColor = ""; // Remove o estilo de bloqueio
-    }
-  });
-}
+          // Se o input pertence a outro jogador, bloqueia a edição
+          if (colunaJogador && colunaJogador !== loggedInUser) {
+            input.disabled = true;
+            input.style.backgroundColor = "#f0f0f0"; // Estilo visual para indicar que está bloqueado
+          } else {
+            input.disabled = false;
+            input.style.backgroundColor = ""; // Remove o estilo de bloqueio
+          }
+        });
+      }
 
       // Restante do JavaScript para a tabela e funcionalidades
       const JSONBIN_API_KEY =
@@ -1092,5 +1093,3 @@ function bloquearColunasOutrosJogadores() {
     </script>
   </body>
 </html>
-
-
