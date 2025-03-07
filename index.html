@@ -467,6 +467,7 @@
   </head>
 
   <body>
+    <!-- Tela de Login -->
     <div class="login-container" id="login-container">
       <div class="box-container">
         <div class="alpha-bet-title">AlphaBet</div>
@@ -482,9 +483,16 @@
       </div>
     </div>
 
-    <div id="main-content" class="hidden">
+    <!-- Tela de Apostas Individuais -->
+    <div id="apostas-individuais" class="hidden">
       <div class="container-titulo">
-        <!-- Título animado -->
+        <span class="letra">A</span>
+        <span class="letra">P</span>
+        <span class="letra">O</span>
+        <span class="letra">S</span>
+        <span class="letra">T</span>
+        <span class="letra">A</span>
+        <span class="letra">S</span>
       </div>
 
       <button class="logout-button" onclick="logout()">
@@ -492,10 +500,8 @@
         <span class="logout-text">SAIR</span>
       </button>
 
-      <!-- Tabela Pessoal (Apostas Privadas) -->
       <div class="table-container">
-        <h3>Suas Apostas</h3>
-        <table id="tabela-pessoal">
+        <table id="tabela-individual">
           <thead>
             <tr>
               <th>Jogo</th>
@@ -503,20 +509,44 @@
             </tr>
           </thead>
           <tbody>
-            <!-- Linhas das apostas pessoais serão inseridas aqui -->
+            <!-- Linhas das apostas individuais serão inseridas aqui -->
           </tbody>
         </table>
       </div>
 
-      <!-- Botões de Controle -->
       <div class="buttons">
-        <button onclick="salvarApostasPrivadas()">Salvar Apostas</button>
+        <button onclick="salvarApostasLocais()">Salvar Apostas</button>
         <button onclick="revelarApostas()">Revelar Apostas</button>
       </div>
+    </div>
 
-      <!-- Tabela Principal (Apostas Reveladas) -->
+    <!-- Tela Principal (Apostas Reveladas) -->
+    <div id="main-content" class="hidden">
+      <div class="container-titulo">
+        <span class="letra">T</span>
+        <span class="letra">A</span>
+        <span class="letra">B</span>
+        <span class="letra">E</span>
+        <span class="letra">L</span>
+        <span class="letra">A</span>
+        <span class="letra"> </span>
+        <span class="letra">P</span>
+        <span class="letra">R</span>
+        <span class="letra">I</span>
+        <span class="letra">N</span>
+        <span class="letra">C</span>
+        <span class="letra">I</span>
+        <span class="letra">P</span>
+        <span class="letra">A</span>
+        <span class="letra">L</span>
+      </div>
+
+      <button class="logout-button" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="logout-text">SAIR</span>
+      </button>
+
       <div class="table-container">
-        <h3>Tabela Principal</h3>
         <table id="tabela-principal">
           <thead>
             <tr>
@@ -534,12 +564,12 @@
         </table>
       </div>
 
-      <!-- Pontuação e Iframe -->
       <div class="pontuacao-container" id="pontuacao"></div>
       <div class="iframe-container">
         <iframe src="https://ge.globo.com/futebol/brasileirao-serie-a/"></iframe>
       </div>
     </div>
+
     <footer>
       <div class="container">
         <p>&copy; 2025 Jardel Correia.</p>
@@ -602,6 +632,7 @@
       function logout() {
         localStorage.removeItem("loggedInUser"); // Remove o usuário logado
         document.getElementById("login-container").classList.remove("hidden"); // Exibe a tela de login
+        document.getElementById("apostas-individuais").classList.add("hidden"); // Oculta a tela de apostas individuais
         document.getElementById("main-content").classList.add("hidden"); // Oculta o conteúdo principal
       }
 
@@ -661,9 +692,8 @@
           if (senhaDescriptografada === password) {
             localStorage.setItem("loggedInUser", username);
             document.getElementById("login-container").classList.add("hidden");
-            document.getElementById("main-content").classList.remove("hidden");
-            bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
-            carregarApostas(); // Carrega as apostas salvas
+            document.getElementById("apostas-individuais").classList.remove("hidden");
+            carregarApostasLocais(); // Carrega as apostas salvas localmente
           } else {
             alert("Nome de usuário ou senha incorretos!");
           }
@@ -676,59 +706,133 @@
       const loggedInUser = localStorage.getItem("loggedInUser");
       if (loggedInUser) {
         document.getElementById("login-container").classList.add("hidden");
-        document.getElementById("main-content").classList.remove("hidden");
-        bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
-        carregarApostas(); // Carrega as apostas salvas
+        document.getElementById("apostas-individuais").classList.remove("hidden");
+        carregarApostasLocais(); // Carrega as apostas salvas localmente
       }
 
-      // Função para bloquear as colunas dos outros jogadores
-      function bloquearColunasOutrosJogadores() {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        if (!loggedInUser) return;
+      // Função para salvar as apostas localmente
+      function salvarApostasLocais() {
+        const jogos = obterJogosDaTabela("#tabela-individual");
+        const apostas = obterApostasDaTabela("#tabela-individual");
 
-        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-        const inputsApostas = document.querySelectorAll(".aposta");
+        const dados = {
+          jogos,
+          apostas,
+          usuario: localStorage.getItem("loggedInUser"),
+        };
 
-        inputsApostas.forEach((input) => {
-          const colunaJogador = input.classList.contains("jogador0")
-            ? "Jardel"
-            : input.classList.contains("jogador1")
-            ? "Werbet"
-            : input.classList.contains("jogador2")
-            ? "Nailton"
-            : input.classList.contains("jogador3")
-            ? "Phillipe"
-            : null;
+        // Salva no localStorage
+        localStorage.setItem("apostasLocais", JSON.stringify(dados));
+        alert("Apostas salvas com sucesso!");
+      }
 
-          // Se o input pertence a outro jogador, bloqueia a edição
-          if (colunaJogador && colunaJogador !== loggedInUser) {
-            input.disabled = true;
-            input.style.backgroundColor = "#f0f0f0"; // Estilo visual para indicar que está bloqueado
-          } else {
-            input.disabled = false;
-            input.style.backgroundColor = ""; // Remove o estilo de bloqueio
+      // Função para carregar as apostas salvas localmente
+      function carregarApostasLocais() {
+        const dados = JSON.parse(localStorage.getItem("apostasLocais"));
+        if (!dados) return;
+
+        const { jogos, apostas } = dados;
+
+        // Preenche a tabela individual
+        const inputsJogos = document.querySelectorAll("#tabela-individual .input-jogo");
+        const inputsApostas = document.querySelectorAll("#tabela-individual .aposta");
+
+        inputsJogos.forEach((input, index) => {
+          input.value = jogos[index] || "";
+        });
+
+        for (let i = 0; i < 10; i++) {
+          inputsApostas[i * 2].value = apostas[i].time1 || "";
+          inputsApostas[i * 2 + 1].value = apostas[i].time2 || "";
+        }
+      }
+
+      // Função para revelar as apostas
+      function revelarApostas() {
+        const dados = JSON.parse(localStorage.getItem("apostasLocais"));
+        if (!dados) {
+          alert("Nenhuma aposta privada encontrada.");
+          return;
+        }
+
+        const { jogos, apostas, usuario } = dados;
+
+        // Atualiza a tabela principal com as apostas reveladas
+        const tabelaPrincipal = document.querySelector("#tabela-principal tbody");
+        const linhas = tabelaPrincipal.querySelectorAll("tr");
+
+        linhas.forEach((linha, index) => {
+          const colunaUsuario = linha.querySelector(`td[data-usuario="${usuario}"]`);
+          if (colunaUsuario) {
+            colunaUsuario.innerHTML = `
+              <div class="input-container">
+                <span>${apostas[index].time1}</span>
+                <span class="placar-separador">x</span>
+                <span>${apostas[index].time2}</span>
+              </div>
+            `;
           }
         });
+
+        // Exibe a tela principal
+        document.getElementById("apostas-individuais").classList.add("hidden");
+        document.getElementById("main-content").classList.remove("hidden");
+        alert("Apostas reveladas com sucesso!");
       }
 
-      // Restante do JavaScript para a tabela e funcionalidades
-      const JSONBIN_API_KEY =
-        "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
-      const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
+      // Funções auxiliares para obter dados da tabela
+      function obterJogosDaTabela(seletor) {
+        const jogos = [];
+        const inputs = document.querySelectorAll(`${seletor} .input-jogo`);
+        inputs.forEach((input) => jogos.push(input.value));
+        return jogos;
+      }
 
+      function obterApostasDaTabela(seletor) {
+        const apostas = [];
+        const inputs = document.querySelectorAll(`${seletor} .aposta`);
+
+        for (let i = 0; i < 10; i++) {
+          apostas.push({
+            time1: inputs[i * 2].value,
+            time2: inputs[i * 2 + 1].value,
+          });
+        }
+
+        return apostas;
+      }
+
+      // Inicialização
       document.addEventListener("DOMContentLoaded", function () {
-        criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
+        criarLinhasTabela("#tabela-individual");
+        criarLinhasTabela("#tabela-principal");
         adicionarNavegacao();
         adicionarNavegacaoJogos();
         adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
         adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
-        carregarApostas(); // Carrega as apostas salvas
-
-        // Adiciona evento de input para o nome da rodada
-        document
-          .getElementById("nome-rodada")
-          .addEventListener("input", salvarApostasDebounced);
+        carregarApostasLocais(); // Carrega as apostas salvas localmente
       });
+
+      function criarLinhasTabela(seletor) {
+        const tabela = document.querySelector(`${seletor} tbody`);
+
+        for (let i = 1; i <= 10; i++) {
+          const linha = document.createElement("tr");
+          linha.innerHTML = `
+            <td>
+                <input type="text" class="input-jogo" placeholder="casa x fora">
+            </td>
+            <td>
+                <div class="input-container">
+                    <input type="number" class="aposta input-placar" min="0">
+                    <span class="placar-separador">x</span>
+                    <input type="number" class="aposta input-placar" min="0">
+                </div>
+            </td>
+        `;
+          tabela.appendChild(linha);
+        }
+      }
 
       function adicionarNavegacaoJogos() {
         const inputsJogos = document.querySelectorAll(".input-jogo");
@@ -828,168 +932,10 @@
         });
       }
 
-      function criarLinhasTabela() {
-        const tabela = document.getElementById("tabela-apostas");
-
-        for (let i = 1; i <= 10; i++) {
-          const linha = document.createElement("tr");
-          linha.innerHTML = `
-            <td>
-                <input type="text" class="input-jogo" placeholder="casa x fora">
-            </td>
-            ${["Jardel", "Werbet", "Nailton", "Phillipe"]
-              .map(
-                (jogador, jogadorIndex) => `
-                <td>
-                    <div class="input-container">
-                        <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
-                        <span class="placar-separador">x</span>
-                        <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
-                    </div>
-                </td>
-            `
-              )
-              .join("")}
-            <td>
-                <div class="input-container">
-                    <input type="number" class="resultado input-placar" min="0">
-                    <span class="placar-separador">x</span>
-                    <input type="number" class="resultado input-placar" min="0">
-                </div>
-            </td>
-        `;
-          tabela.appendChild(linha);
-        }
-      }
-
-      function carregarApostas() {
-        fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          headers: {
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Dados carregados:", data); // Verifique os dados carregados
-            const { nomeRodada, jogos, apostas, resultados } = data.record;
-
-            // Preenche o nome da rodada
-            document.getElementById("nome-rodada").value = nomeRodada || "";
-
-            // Verifica se jogos é um array
-            if (!Array.isArray(jogos)) {
-              console.error("Erro: jogos não é um array");
-              return;
-            }
-
-            preencherTabela(jogos, apostas, resultados);
-            calcularPontuacao(); // Calcula a pontuação após carregar os dados
-          })
-          .catch((error) => console.error("Erro ao carregar apostas:", error));
-      }
-
-      function salvarApostas() {
-        const nomeRodada = document.getElementById("nome-rodada").value;
-        const jogos = obterJogosDaTabela();
-        console.log("Jogos a serem salvos:", jogos); // Verifique os jogos coletados
-        const apostas = obterApostasDaTabela();
-        const resultados = obterResultadosDaTabela();
-
-        const dados = { nomeRodada, jogos, apostas, resultados };
-
-        fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-          body: JSON.stringify(dados),
-        })
-          .then((response) => response.json())
-          .then((data) => console.log("Dados salvos com sucesso:", data))
-          .catch((error) => console.error("Erro ao salvar dados:", error));
-      }
-
-      function preencherTabela(jogos, apostas, resultados) {
-        console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
-        const inputsJogos = document.querySelectorAll(".input-jogo");
-        const inputsApostas = document.querySelectorAll(".aposta");
-        const inputsResultados = document.querySelectorAll(".resultado");
-
-        // Preenche os nomes dos times
-        inputsJogos.forEach((input, index) => {
-          input.value = jogos[index] || "";
-        });
-
-        // Preenche as apostas dos jogadores
-        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-        jogadores.forEach((jogador, jogadorIndex) => {
-          for (let i = 0; i < 10; i++) {
-            const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
-            const indexFora = indexCasa + 1; // Índice do time2
-            inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
-            inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
-          }
-        });
-
-        // Preenche os resultados
-        for (let i = 0; i < 10; i++) {
-          inputsResultados[i * 2].value = resultados[i].time1 || "";
-          inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
-        }
-      }
-
-      function obterJogosDaTabela() {
-        const jogos = [];
-        const inputs = document.querySelectorAll(".input-jogo");
-        inputs.forEach((input) => jogos.push(input.value));
-        return jogos;
-      }
-
-      function obterApostasDaTabela() {
-        const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
-        const inputs = document.querySelectorAll(".aposta");
-
-        for (let i = 0; i < 10; i++) {
-          apostas.Jardel.push({
-            time1: inputs[i * 8].value,
-            time2: inputs[i * 8 + 1].value,
-          });
-          apostas.Werbet.push({
-            time1: inputs[i * 8 + 2].value,
-            time2: inputs[i * 8 + 3].value,
-          });
-          apostas.Nailton.push({
-            time1: inputs[i * 8 + 4].value,
-            time2: inputs[i * 8 + 5].value,
-          });
-          apostas.Phillipe.push({
-            time1: inputs[i * 8 + 6].value,
-            time2: inputs[i * 8 + 7].value,
-          });
-        }
-
-        return apostas;
-      }
-
-      function obterResultadosDaTabela() {
-        const resultados = [];
-        const inputs = document.querySelectorAll(".resultado");
-
-        for (let i = 0; i < 10; i++) {
-          resultados.push({
-            time1: inputs[i * 2].value,
-            time2: inputs[i * 2 + 1].value,
-          });
-        }
-
-        return resultados;
-      }
-
       // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
       function calcularPontuacao() {
-        const apostas = obterApostasDaTabela();
-        const resultados = obterResultadosDaTabela();
+        const apostas = obterApostasDaTabela("#tabela-principal");
+        const resultados = obterResultadosDaTabela("#tabela-principal");
         const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
         const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
 
