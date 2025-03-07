@@ -607,40 +607,27 @@ function logout() {
 }
 
 // Senhas criptografadas (substitua pelos valores que você gerou)
-const senhasCriptografadas = {
-  Jardel: "U2FsdGVkX1/kdazYVnQYtdxrejj/llx4W+v/dnbXvHE=", 
-  Werbet: "U2FsdGVkX19/TGyRq/pZEzBcqlUzOjksB8qJ6VSyr1Q=", 
-  Nailton: "U2FsdGVkX18v/Pv6R5bjotoKzHpe2yD9bg7/iGdIp0o=", 
-  Phillipe: "U2FsdGVkX1/A6/qFX50fRpb+YoYBd7ElBetNYg7jWOs=",
-};
-
-// Função para descriptografar usando o backend
-// Função para descriptografar usando o backend
-async function descriptografar(textoCriptografado) {
+async function buscarSenhasCriptografadas() {
   try {
-    const response = await fetch("/.netlify/functions/descriptografar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ textoCriptografado }),
-    });
-
+    const response = await fetch("/.netlify/functions/senhas");
     if (!response.ok) {
-      throw new Error("Erro ao descriptografar");
+      throw new Error("Erro ao buscar senhas");
     }
-
     const data = await response.json();
-    return data.textoDescriptografado;
+    return data;
   } catch (error) {
     console.error("Erro na requisição:", error);
-    alert("Erro ao descriptografar. Tente novamente.");
-    return null;
+    alert("Erro ao buscar senhas. Tente novamente.");
+    return {};
   }
 }
 
-// Função de login
 async function login() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
+
+  // Busca as senhas criptografadas do backend
+  const senhasCriptografadas = await buscarSenhasCriptografadas();
 
   if (senhasCriptografadas[username]) {
     // Descriptografa a senha usando o backend
