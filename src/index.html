@@ -526,7 +526,7 @@
 
       <div class="iframe-container">
         <iframe
-          src="https://ge.globo.com/futebol/brasileirao-serie-a/"
+          src="https://ge.globo.com/sp/futebol/campeonato-paulista/"
           style="
             border: 20px;
             height: 100%;
@@ -596,96 +596,103 @@
       });
 
       // Remove o usuário logado ao carregar a página
-      localStorage.removeItem("loggedInUser");
+      // Remove o usuário logado ao carregar a página
+localStorage.removeItem("loggedInUser");
 
-      // Função para fazer logout
-      function logout() {
-        localStorage.removeItem("loggedInUser"); // Remove o usuário logado
-        document.getElementById("login-container").classList.remove("hidden"); // Exibe a tela de login
-        document.getElementById("main-content").classList.add("hidden"); // Oculta o conteúdo principal
-      }
+// Função para fazer logout
+function logout() {
+  localStorage.removeItem("loggedInUser"); // Remove o usuário logado
+  document.getElementById("login-container").classList.remove("hidden"); // Exibe a tela de login
+  document.getElementById("main-content").classList.add("hidden"); // Oculta o conteúdo principal
+}
 
-      // Chave fixa para criptografia (não segura para produção!)
-      const chave = "329c82f43cd51107fa938c787be9f78f";
+// Senhas criptografadas (substitua pelos valores que você gerou)
+const senhasCriptografadas = {
+  Jardel: "U2FsdGVkX1/kdazYVnQYtdxrejj/llx4W+v/dnbXvHE=", 
+  Werbet: "U2FsdGVkX19/TGyRq/pZEzBcqlUzOjksB8qJ6VSyr1Q=", 
+  Nailton: "U2FsdGVkX18v/Pv6R5bjotoKzHpe2yD9bg7/iGdIp0o=", 
+  Phillipe: "U2FsdGVkX1/A6/qFX50fRpb+YoYBd7ElBetNYg7jWOs=",
+};
 
-      // Senhas criptografadas (substitua pelos valores que você gerou)
-      const senhasCriptografadas = {
-        Jardel: "U2FsdGVkX1/kdazYVnQYtdxrejj/llx4W+v/dnbXvHE=", // Substitua pelo valor gerado
-        Werbet: "U2FsdGVkX19/TGyRq/pZEzBcqlUzOjksB8qJ6VSyr1Q=", // Substitua pelo valor gerado
-        Nailton: "U2FsdGVkX18v/Pv6R5bjotoKzHpe2yD9bg7/iGdIp0o=", // Substitua pelo valor gerado
-        Phillipe: "U2FsdGVkX1/A6/qFX50fRpb+YoYBd7ElBetNYg7jWOs=", // Substitua pelo valor gerado
-      };
+// Função para descriptografar usando o backend
+async function descriptografar(textoCriptografado) {
+  const response = await fetch("/.netlify/functions/descriptografar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ textoCriptografado }),
+  });
 
-      // Função para descriptografar
-      function descriptografar(textoCriptografado) {
-        const bytes = CryptoJS.AES.decrypt(textoCriptografado, chave);
-        return bytes.toString(CryptoJS.enc.Utf8);
-      }
+  const { textoDescriptografado } = await response.json();
+  return textoDescriptografado;
+}
 
-      // Função de login
-      function login() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
+// Função de login
+async function login() {
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-        if (
-          senhasCriptografadas[username] &&
-          descriptografar(senhasCriptografadas[username]) === password
-        ) {
-          localStorage.setItem("loggedInUser", username);
-          document.getElementById("login-container").classList.add("hidden");
-          document.getElementById("main-content").classList.remove("hidden");
-          bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
-          carregarApostas(); // Carrega as apostas salvas
-        } else {
-          alert("Nome de usuário ou senha incorretos!");
-        }
-      }
+  if (senhasCriptografadas[username]) {
+    // Descriptografa a senha usando o backend
+    const senhaDescriptografada = await descriptografar(senhasCriptografadas[username]);
 
-      function handleKeyPress(event) {
-        if (event.key === "Enter") {
-          login();
-        }
-      }
+    if (senhaDescriptografada === password) {
+      localStorage.setItem("loggedInUser", username);
+      document.getElementById("login-container").classList.add("hidden");
+      document.getElementById("main-content").classList.remove("hidden");
+      bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
+      carregarApostas(); // Carrega as apostas salvas
+    } else {
+      alert("Nome de usuário ou senha incorretos!");
+    }
+  } else {
+    alert("Nome de usuário ou senha incorretos!");
+  }
+}
 
+function handleKeyPress(event) {
+  if (event.key === "Enter") {
+    login();
+  }
+}
 
-      // Verificar se o usuário já está logado ao carregar a página
-      const loggedInUser = localStorage.getItem("loggedInUser");
-      if (loggedInUser) {
-        document.getElementById("login-container").classList.add("hidden");
-        document.getElementById("main-content").classList.remove("hidden");
-        bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
-        carregarApostas(); // Carrega as apostas salvas
-      }
+// Verificar se o usuário já está logado ao carregar a página
+const loggedInUser = localStorage.getItem("loggedInUser");
+if (loggedInUser) {
+  document.getElementById("login-container").classList.add("hidden");
+  document.getElementById("main-content").classList.remove("hidden");
+  bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
+  carregarApostas(); // Carrega as apostas salvas
+}
 
-      // Função para bloquear as colunas dos outros jogadores
-      function bloquearColunasOutrosJogadores() {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        if (!loggedInUser) return;
+// Função para bloquear as colunas dos outros jogadores
+function bloquearColunasOutrosJogadores() {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (!loggedInUser) return;
 
-        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-        const inputsApostas = document.querySelectorAll(".aposta");
+  const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+  const inputsApostas = document.querySelectorAll(".aposta");
 
-        inputsApostas.forEach((input) => {
-          const colunaJogador = input.classList.contains("jogador0")
-            ? "Jardel"
-            : input.classList.contains("jogador1")
-            ? "Werbet"
-            : input.classList.contains("jogador2")
-            ? "Nailton"
-            : input.classList.contains("jogador3")
-            ? "Phillipe"
-            : null;
+  inputsApostas.forEach((input) => {
+    const colunaJogador = input.classList.contains("jogador0")
+      ? "Jardel"
+      : input.classList.contains("jogador1")
+      ? "Werbet"
+      : input.classList.contains("jogador2")
+      ? "Nailton"
+      : input.classList.contains("jogador3")
+      ? "Phillipe"
+      : null;
 
-          // Se o input pertence a outro jogador, bloqueia a edição
-          if (colunaJogador && colunaJogador !== loggedInUser) {
-            input.disabled = true;
-            input.style.backgroundColor = "#f0f0f0"; // Estilo visual para indicar que está bloqueado
-          } else {
-            input.disabled = false;
-            input.style.backgroundColor = ""; // Remove o estilo de bloqueio
-          }
-        });
-      }
+    // Se o input pertence a outro jogador, bloqueia a edição
+    if (colunaJogador && colunaJogador !== loggedInUser) {
+      input.disabled = true;
+      input.style.backgroundColor = "#f0f0f0"; // Estilo visual para indicar que está bloqueado
+    } else {
+      input.disabled = false;
+      input.style.backgroundColor = ""; // Remove o estilo de bloqueio
+    }
+  });
+}
 
       // Restante do JavaScript para a tabela e funcionalidades
       const JSONBIN_API_KEY =
