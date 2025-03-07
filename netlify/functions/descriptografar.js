@@ -5,23 +5,31 @@ exports.handler = async (event, context) => {
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      body: "Método não permitido",
+      body: JSON.stringify({ error: "Método não permitido" }),
     };
   }
 
-  // Obtém os dados criptografados do corpo da requisição
-  const { dataCriptografada } = JSON.parse(event.body);
+  try {
+    // Obtém os dados criptografados do corpo da requisição
+    const { textoCriptografado } = JSON.parse(event.body);
 
-  // Obtém a chave criptográfica das variáveis de ambiente
-  const chave = process.env.CRYPTO_KEY;
+    // Obtém a chave criptográfica das variáveis de ambiente
+    const chave = process.env.CRYPTO_KEY;
 
-  // Descriptografa os dados
-  const bytes = CryptoJS.AES.decrypt(dataCriptografada, chave);
-  const dadosDescriptografados = bytes.toString(CryptoJS.enc.Utf8);
+    // Descriptografa os dados
+    const bytes = CryptoJS.AES.decrypt(textoCriptografado, chave);
+    const textoDescriptografado = bytes.toString(CryptoJS.enc.Utf8);
 
-  // Retorna os dados descriptografados
-  return {
-    statusCode: 200,
-    body: JSON.stringify({ dadosDescriptografados }),
-  };
+    // Retorna os dados descriptografados
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ textoDescriptografado }),
+    };
+  } catch (error) {
+    // Retorna um erro em caso de falha
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Erro ao descriptografar" }),
+    };
+  }
 };

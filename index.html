@@ -615,15 +615,26 @@ const senhasCriptografadas = {
 };
 
 // Função para descriptografar usando o backend
+// Função para descriptografar usando o backend
 async function descriptografar(textoCriptografado) {
-  const response = await fetch("/.netlify/functions/descriptografar", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ textoCriptografado }),
-  });
+  try {
+    const response = await fetch("/.netlify/functions/descriptografar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ textoCriptografado }),
+    });
 
-  const { textoDescriptografado } = await response.json();
-  return textoDescriptografado;
+    if (!response.ok) {
+      throw new Error("Erro ao descriptografar");
+    }
+
+    const data = await response.json();
+    return data.textoDescriptografado;
+  } catch (error) {
+    console.error("Erro na requisição:", error);
+    alert("Erro ao descriptografar. Tente novamente.");
+    return null;
+  }
 }
 
 // Função de login
