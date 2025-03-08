@@ -263,6 +263,11 @@
         backdrop-filter: blur(5px);
       }
 
+      .table-container,
+      .container-titulo {
+         display: block; /* Garante que a tabela e o título sejam exibidos por padrão */
+      }
+
       table {
         width: 100%;
         min-width: 800px;
@@ -623,7 +628,6 @@ function toggleVisibility() {
   }
 }
 
-// Função para ocultar os placares dos outros jogadores
 function ocultarPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const inputsApostas = document.querySelectorAll(".aposta");
@@ -658,7 +662,6 @@ function mostrarPlacares() {
   });
 }
 
-// Verificar o estado do botão ao carregar a página
 function verificarEstadoPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const toggleButton = document.getElementById("toggle-visibility");
@@ -667,23 +670,29 @@ function verificarEstadoPlacares() {
   if (loggedInUser === "Jardel") {
     toggleButton.classList.remove("hidden"); // Mostra o botão
     toggleButton.addEventListener("click", toggleVisibility); // Adiciona o evento de clique
-  } else {
-    toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
-  }
 
-  // Verificar se os placares estão ocultos
-  const isHidden = localStorage.getItem("placaresOcultos") === "true";
-  if (isHidden) {
-    ocultarPlacares();
-    if (loggedInUser === "Jardel") {
+    // Verificar se os placares estão ocultos
+    const isHidden = localStorage.getItem("placaresOcultos") === "true";
+    if (isHidden) {
+      ocultarPlacares();
       document.getElementById("toggle-text").textContent = "Revelar Placar";
-    }
-  } else {
-    mostrarPlacares();
-    if (loggedInUser === "Jardel") {
+    } else {
+      mostrarPlacares();
       document.getElementById("toggle-text").textContent = "Ocultar Placar";
     }
+  } else {
+    toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
+    mostrarTabelaETitulo(); // Garante que a tabela e o título sejam exibidos
   }
+}
+
+// Função para garantir que a tabela e o título sejam exibidos
+function mostrarTabelaETitulo() {
+  const tabela = document.querySelector(".table-container");
+  const titulo = document.querySelector(".container-titulo");
+
+  tabela.style.display = ""; // Mostra a tabela
+  titulo.style.display = ""; // Mostra o título
 }
 
 // Função para fazer logout
