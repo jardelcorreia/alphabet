@@ -675,6 +675,10 @@ function verificarEstadoPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const toggleButton = document.getElementById("toggle-visibility");
 
+  // Garante que a tabela e o título sejam exibidos antes de aplicar o estado dos placares
+  document.querySelector(".table-container").style.display = "";
+  document.querySelector(".container-titulo").style.display = "";
+
   // Mostrar o botão apenas para o jogador Jardel
   if (loggedInUser === "Jardel") {
     toggleButton.classList.remove("hidden"); // Mostra o botão
@@ -700,6 +704,7 @@ function verificarEstadoPlacares() {
       mostrarPlacares();
     }
   }
+}
 
   // Garante que a tabela e o título sempre sejam exibidos
   document.querySelector(".table-container").style.display = "";
@@ -891,30 +896,61 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       function carregarApostas() {
-        fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          headers: {
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Dados carregados:", data); // Verifique os dados carregados
-            const { nomeRodada, jogos, apostas, resultados } = data.record;
+  fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+    headers: {
+      "X-Master-Key": JSONBIN_API_KEY,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      const { nomeRodada, jogos, apostas, resultados } = data.record;
 
-            // Preenche o nome da rodada
-            document.getElementById("nome-rodada").value = nomeRodada || "";
+      // Garante que a tabela e o título sejam exibidos antes de preencher os dados
+      document.querySelector(".table-container").style.display = "";
+      document.querySelector(".container-titulo").style.display = "";
 
-            // Verifica se jogos é um array
-            if (!Array.isArray(jogos)) {
-              console.error("Erro: jogos não é um array");
-              return;
-            }
+      // Preenche o nome da rodada
+      document.getElementById("nome-rodada").value = nomeRodada || "";
 
-            preencherTabela(jogos, apostas, resultados);
-            calcularPontuacao(); // Calcula a pontuação após carregar os dados
-          })
-          .catch((error) => console.error("Erro ao carregar apostas:", error));
+      // Verifica se jogos é um array
+      if (!Array.isArray(jogos)) {
+        console.error("Erro: jogos não é um array");
+        return;
       }
+
+      // Preenche a tabela com os dados
+      function preencherTabela(jogos, apostas, resultados) {
+  console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
+  const inputsJogos = document.querySelectorAll(".input-jogo");
+  const inputsApostas = document.querySelectorAll(".aposta");
+  const inputsResultados = document.querySelectorAll(".resultado");
+
+  // Garante que a tabela e o título sejam exibidos antes de preencher os dados
+  document.querySelector(".table-container").style.display = "";
+  document.querySelector(".container-titulo").style.display = "";
+
+  // Preenche os nomes dos times
+  inputsJogos.forEach((input, index) => {
+    input.value = jogos[index] || "";
+  });
+
+  // Preenche as apostas dos jogadores
+  const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+  jogadores.forEach((jogador, jogadorIndex) => {
+    for (let i = 0; i < 10; i++) {
+      const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
+      const indexFora = indexCasa + 1; // Índice do time2
+      inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+      inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
+    }
+  });
+
+  // Preenche os resultados
+  for (let i = 0; i < 10; i++) {
+    inputsResultados[i * 2].value = resultados[i].time1 || "";
+    inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+  }
+}
 
       function salvarApostas() {
         const nomeRodada = document.getElementById("nome-rodada").value;
