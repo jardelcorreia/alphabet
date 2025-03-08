@@ -643,11 +643,13 @@ function ocultarPlacares() {
       ? "Phillipe"
       : null;
 
-    // Oculta os placares dos outros jogadores
-    if (colunaJogador && colunaJogador !== loggedInUser) {
-      input.style.display = "none";
+    if (colunaJogador === loggedInUser) {
+      // Mostra e permite edição dos próprios placares
+      input.style.display = "";
+      input.disabled = false;
     } else {
-      input.style.display = ""; // Mostra os placares do jogador logado
+      // Oculta os placares dos outros jogadores
+      input.style.display = "none";
     }
   });
 }
@@ -657,8 +659,8 @@ function mostrarPlacares() {
   const inputsApostas = document.querySelectorAll(".aposta");
 
   inputsApostas.forEach((input) => {
-    input.style.display = ""; // Mostra o input
-    input.disabled = true; // Torna o input não editável
+    input.style.display = ""; // Mostra todos os placares
+    input.disabled = true; // Bloqueia a edição
   });
 }
 
@@ -682,7 +684,14 @@ function verificarEstadoPlacares() {
     }
   } else {
     toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
-    mostrarTabelaETitulo(); // Garante que a tabela e o título sejam exibidos
+
+    // Aplica o estado atual dos placares para outros usuários
+    const isHidden = localStorage.getItem("placaresOcultos") === "true";
+    if (isHidden) {
+      ocultarPlacares();
+    } else {
+      mostrarPlacares();
+    }
   }
 }
 
