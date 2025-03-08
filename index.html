@@ -766,20 +766,24 @@ async function login() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  // Busca as senhas criptografadas do backend
   const senhasCriptografadas = await buscarSenhasCriptografadas();
 
   if (senhasCriptografadas[username]) {
-    // Descriptografa a senha usando o backend
     const senhaDescriptografada = await descriptografar(senhasCriptografadas[username]);
 
     if (senhaDescriptografada === password) {
       localStorage.setItem("loggedInUser", username);
       document.getElementById("login-container").classList.add("hidden");
       document.getElementById("main-content").classList.remove("hidden");
-      verificarEstadoPlacares(); // Verificar o estado dos placares ao fazer login
-      bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
-      carregarApostas(); // Carrega as apostas salvas
+
+      // Garante que a tabela e o título sejam exibidos
+      document.querySelector(".table-container").style.display = "";
+      document.querySelector(".container-titulo").style.display = "";
+
+      // Aplica o estado dos placares
+      verificarEstadoPlacares();
+      bloquearColunasOutrosJogadores();
+      carregarApostas();
     } else {
       alert("Nome de usuário ou senha incorretos!");
     }
