@@ -665,18 +665,24 @@ function verificarEstadoPlacares() {
 
   // Mostrar o botão apenas para o jogador Jardel
   if (loggedInUser === "Jardel") {
-    toggleButton.classList.remove("hidden");
-    toggleButton.addEventListener("click", toggleVisibility);
+    toggleButton.classList.remove("hidden"); // Mostra o botão
+    toggleButton.addEventListener("click", toggleVisibility); // Adiciona o evento de clique
+  } else {
+    toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
   }
 
   // Verificar se os placares estão ocultos
   const isHidden = localStorage.getItem("placaresOcultos") === "true";
   if (isHidden) {
     ocultarPlacares();
-    document.getElementById("toggle-text").textContent = "Revelar Placar";
+    if (loggedInUser === "Jardel") {
+      document.getElementById("toggle-text").textContent = "Revelar Placar";
+    }
   } else {
     mostrarPlacares();
-    document.getElementById("toggle-text").textContent = "Ocultar Placar";
+    if (loggedInUser === "Jardel") {
+      document.getElementById("toggle-text").textContent = "Ocultar Placar";
+    }
   }
 }
 
