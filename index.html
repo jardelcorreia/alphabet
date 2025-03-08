@@ -235,16 +235,15 @@
         }
       }
 
-      #toggle-visibility {
-  position: absolute;
-  top: 10px;
-  right: 120px;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+#toggle-visibility {
+    margin-top: 10px; /* Distância do título */
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block; /* Coloca o botão em uma nova linha */
 }
 
 #toggle-visibility.hidden {
@@ -514,16 +513,16 @@
       <div class="container-titulo">
         <!-- As letras do título serão inseridas aqui pelo script -->
       </div>
+      
+      <!-- Botão de ocultar/revelar (visível apenas para Jardel) -->
+  <button id="toggle-visibility" class="hidden">
+    <span id="toggle-text">Ocultar Placar</span>
+  </button>
 
       <button class="logout-button" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i>
         <span class="logout-text">SAIR</span>
       </button>
-
-      <!-- Botão de ocultar/revelar (visível apenas para Jardel) -->
-  <button id="toggle-visibility" class="hidden">
-    <span id="toggle-text">Ocultar Placar</span>
-  </button>
 
       <div class="table-container">
         <table>
