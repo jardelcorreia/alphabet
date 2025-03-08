@@ -235,6 +235,22 @@
         }
       }
 
+      #toggle-visibility {
+  position: absolute;
+  top: 10px;
+  right: 120px;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#toggle-visibility.hidden {
+  display: none;
+}
+
       .table-container {
         display: flex;
         width: 100%;
@@ -499,6 +515,11 @@
         <span class="logout-text">SAIR</span>
       </button>
 
+      <!-- Botão de ocultar/revelar (visível apenas para Jardel) -->
+  <button id="toggle-visibility" class="hidden">
+    <span id="toggle-text">Ocultar Placar</span>
+  </button>
+
       <div class="table-container">
         <table>
           <thead>
@@ -555,59 +576,117 @@
 
     <script>
       // Função debounce para evitar múltiplas chamadas ao servidor
-      function debounce(func, wait) {
-        let timeout;
-        return function (...args) {
-          clearTimeout(timeout);
-          timeout = setTimeout(() => func.apply(this, args), wait);
-        };
+function debounce(func, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func.apply(this, args), wait);
+  };
+}
+
+// Função para salvar as apostas com debounce
+const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
+
+// Adiciona eventos de input, change, blur e keydown para salvar automaticamente
+function adicionarEventosSalvamento() {
+  const inputs = document.querySelectorAll(
+    ".aposta, .resultado, .input-jogo, #nome-rodada"
+  );
+  inputs.forEach((input) => {
+    input.addEventListener("input", salvarApostasDebounced);
+    input.addEventListener("change", salvarApostasDebounced);
+    input.addEventListener("blur", salvarApostasDebounced);
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Delete" || event.key === "Backspace") {
+        salvarApostasDebounced();
       }
+    });
+  });
+}
 
-      // Função para salvar as apostas com debounce
-      const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
+// Função para alternar a visibilidade dos placares
+function toggleVisibility() {
+  const isHidden = localStorage.getItem("placaresOcultos") === "true";
+  const toggleButton = document.getElementById("toggle-visibility");
+  const toggleText = document.getElementById("toggle-text");
 
-      // Adiciona eventos de input, change, blur e keydown para salvar automaticamente
-      function adicionarEventosSalvamento() {
-        const inputs = document.querySelectorAll(
-          ".aposta, .resultado, .input-jogo, #nome-rodada"
-        );
-        inputs.forEach((input) => {
-          input.addEventListener("input", salvarApostasDebounced);
-          input.addEventListener("change", salvarApostasDebounced);
-          input.addEventListener("blur", salvarApostasDebounced);
-          input.addEventListener("keydown", function (event) {
-            if (event.key === "Delete" || event.key === "Backspace") {
-              salvarApostasDebounced();
-            }
-          });
-        });
-      }
+  if (isHidden) {
+    // Revelar placares
+    localStorage.setItem("placaresOcultos", "false");
+    toggleText.textContent = "Ocultar Placar";
+    mostrarPlacares();
+  } else {
+    // Ocultar placares
+    localStorage.setItem("placaresOcultos", "true");
+    toggleText.textContent = "Revelar Placar";
+    ocultarPlacares();
+  }
+}
 
-      // Restante do JavaScript permanece o mesmo
-      const titulo = "Brasileirão AlphaBet 2025";
-      const containerTitulo = document.querySelector(".container-titulo");
+// Função para ocultar os placares dos outros jogadores
+function ocultarPlacares() {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const inputsApostas = document.querySelectorAll(".aposta");
 
-      // Adiciona as letras do título com animação
-      titulo.split("").forEach((letra, index) => {
-        const span = document.createElement("span");
-        span.textContent = letra;
-        span.classList.add("letra");
-        span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
-        containerTitulo.appendChild(span);
-      });
+  inputsApostas.forEach((input) => {
+    const colunaJogador = input.classList.contains("jogador0")
+      ? "Jardel"
+      : input.classList.contains("jogador1")
+      ? "Werbet"
+      : input.classList.contains("jogador2")
+      ? "Nailton"
+      : input.classList.contains("jogador3")
+      ? "Phillipe"
+      : null;
 
-      // Remove o usuário logado ao carregar a página
-      // Remove o usuário logado ao carregar a página
-localStorage.removeItem("loggedInUser");
+    // Oculta os placares dos outros jogadores
+    if (colunaJogador && colunaJogador !== loggedInUser) {
+      input.style.display = "none";
+    } else {
+      input.style.display = ""; // Mostra os placares do jogador logado
+    }
+  });
+}
+
+// Função para mostrar todos os placares (não editáveis)
+function mostrarPlacares() {
+  const inputsApostas = document.querySelectorAll(".aposta");
+
+  inputsApostas.forEach((input) => {
+    input.style.display = ""; // Mostra o input
+    input.disabled = true; // Torna o input não editável
+  });
+}
+
+// Verificar o estado do botão ao carregar a página
+function verificarEstadoPlacares() {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const toggleButton = document.getElementById("toggle-visibility");
+
+  // Mostrar o botão apenas para o jogador Jardel
+  if (loggedInUser === "Jardel") {
+    toggleButton.classList.remove("hidden");
+    toggleButton.addEventListener("click", toggleVisibility);
+  }
+
+  // Verificar se os placares estão ocultos
+  const isHidden = localStorage.getItem("placaresOcultos") === "true";
+  if (isHidden) {
+    ocultarPlacares();
+    document.getElementById("toggle-text").textContent = "Revelar Placar";
+  } else {
+    mostrarPlacares();
+    document.getElementById("toggle-text").textContent = "Ocultar Placar";
+  }
+}
 
 // Função para fazer logout
 function logout() {
-  localStorage.removeItem("loggedInUser"); // Remove o usuário logado
-  document.getElementById("login-container").classList.remove("hidden"); // Exibe a tela de login
-  document.getElementById("main-content").classList.add("hidden"); // Oculta o conteúdo principal
+  localStorage.removeItem("loggedInUser");
+  document.getElementById("login-container").classList.remove("hidden");
+  document.getElementById("main-content").classList.add("hidden");
 }
 
-// Senhas criptografadas (substitua pelos valores que você gerou)
 // Função para buscar as senhas criptografadas do backend
 async function buscarSenhasCriptografadas() {
   try {
@@ -662,6 +741,7 @@ async function login() {
       localStorage.setItem("loggedInUser", username);
       document.getElementById("login-container").classList.add("hidden");
       document.getElementById("main-content").classList.remove("hidden");
+      verificarEstadoPlacares(); // Verificar o estado dos placares ao fazer login
       bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores
       carregarApostas(); // Carrega as apostas salvas
     } else {
@@ -677,6 +757,7 @@ const loggedInUser = localStorage.getItem("loggedInUser");
 if (loggedInUser) {
   document.getElementById("login-container").classList.add("hidden");
   document.getElementById("main-content").classList.remove("hidden");
+  verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
   bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
   carregarApostas(); // Carrega as apostas salvas
 }
@@ -700,133 +781,34 @@ function bloquearColunasOutrosJogadores() {
       ? "Phillipe"
       : null;
 
-    // Se o input pertence a outro jogador, bloqueia a edição
-    if (colunaJogador && colunaJogador !== loggedInUser) {
+    // Se o input pertence a outro jogador e os placares estão visíveis, bloqueia a edição
+    if (colunaJogador && colunaJogador !== loggedInUser && localStorage.getItem("placaresOcultos") !== "true") {
       input.disabled = true;
-      input.style.backgroundColor = "#f0f0f0"; // Estilo visual para indicar que está bloqueado
+      input.style.backgroundColor = "#f0f0f0";
     } else {
       input.disabled = false;
-      input.style.backgroundColor = ""; // Remove o estilo de bloqueio
+      input.style.backgroundColor = "";
     }
   });
 }
 
-      // Restante do JavaScript para a tabela e funcionalidades
-      const JSONBIN_API_KEY =
-        "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
-      const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
+// Restante do JavaScript para a tabela e funcionalidades
+const JSONBIN_API_KEY = "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
+const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
 
-      document.addEventListener("DOMContentLoaded", function () {
-        criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
-        adicionarNavegacao();
-        adicionarNavegacaoJogos();
-        adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
-        adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
-        carregarApostas(); // Carrega as apostas salvas
+document.addEventListener("DOMContentLoaded", function () {
+  criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
+  adicionarNavegacao();
+  adicionarNavegacaoJogos();
+  adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
+  adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
+  carregarApostas(); // Carrega as apostas salvas
 
-        // Adiciona evento de input para o nome da rodada
-        document
-          .getElementById("nome-rodada")
-          .addEventListener("input", salvarApostasDebounced);
-      });
-
-      function adicionarNavegacaoJogos() {
-        const inputsJogos = document.querySelectorAll(".input-jogo");
-        inputsJogos.forEach((input, index) => {
-          input.addEventListener("keydown", function (event) {
-            if (event.key === "Enter" || event.key === "Tab") {
-              event.preventDefault();
-              const nextIndex = index + 1;
-              if (nextIndex < inputsJogos.length) {
-                inputsJogos[nextIndex].focus();
-              }
-            }
-
-            // Adiciona a lógica de apagar com Delete ou Backspace
-            if (event.key === "Delete" || event.key === "Backspace") {
-              event.preventDefault();
-
-              // Se houver texto no campo, remove o último caractere
-              if (input.value.length > 0) {
-                input.value = input.value.slice(0, -1); // Remove o último caractere
-              } else {
-                // Se o campo estiver vazio, move o foco para o campo anterior na mesma coluna
-                const prevIndex = index - 1;
-                if (prevIndex >= 0) {
-                  inputsJogos[prevIndex].focus();
-                }
-                // Se estiver no primeiro campo da coluna, o foco para aqui
-              }
-            }
-          });
-        });
-      }
-
-      function adicionarNavegacao() {
-        // Navegação para as colunas dos jogadores
-        for (let i = 0; i < 4; i++) {
-          const coluna = document.querySelectorAll(`input.jogador${i}`);
-          coluna.forEach((input, index) => {
-            input.addEventListener("input", (event) => {
-              if (event.target.value.length === 1) {
-                // Verifica se um número foi digitado
-                let nextIndex = index + 1;
-                if (nextIndex < coluna.length) {
-                  coluna[nextIndex].focus(); // Move o foco para o próximo campo na mesma coluna
-                }
-              }
-            });
-
-            input.addEventListener("keydown", (event) => {
-              if (event.key === "Delete" || event.key === "Backspace") {
-                event.preventDefault();
-                if (input.value === "") {
-                  // Move o foco para o campo anterior na mesma coluna
-                  const prevIndex = index - 1;
-                  if (prevIndex >= 0) {
-                    coluna[prevIndex].focus();
-                  }
-                  // Se estiver no primeiro campo da coluna, o foco para aqui
-                } else {
-                  // Limpa o campo atual
-                  input.value = "";
-                }
-              }
-            });
-          });
-        }
-
-        // Navegação para os campos de resultado
-        const placarReal = document.querySelectorAll("input.resultado");
-        placarReal.forEach((input, index) => {
-          input.addEventListener("input", (event) => {
-            if (event.target.value.length === 1) {
-              // Verifica se um número foi digitado
-              let nextIndex = index + 1;
-              if (nextIndex < placarReal.length) {
-                placarReal[nextIndex].focus(); // Move o foco para o próximo campo de resultado
-              }
-            }
-          });
-
-          input.addEventListener("keydown", (event) => {
-            if (event.key === "Delete" || event.key === "Backspace") {
-              event.preventDefault();
-              if (input.value === "") {
-                // Move o foco para o campo anterior na mesma coluna
-                const prevIndex = index - 1;
-                if (prevIndex >= 0) {
-                  placarReal[prevIndex].focus();
-                }
-                // Se estiver no primeiro campo da coluna, o foco para aqui
-              } else {
-                // Limpa o campo atual
-                input.value = "";
-              }
-            }
-          });
-        });
-      }
+  // Adiciona evento de input para o nome da rodada
+  document
+    .getElementById("nome-rodada")
+    .addEventListener("input", salvarApostasDebounced);
+});
 
       function criarLinhasTabela() {
         const tabela = document.getElementById("tabela-apostas");
