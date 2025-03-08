@@ -723,6 +723,9 @@ function mostrarTabelaETitulo() {
 // Função para fazer logout
 function logout() {
   localStorage.removeItem("loggedInUser");
+  console.log("Usuário fez logout."); // Log para depuração
+
+  // Exibe a tela de login e oculta a tela principal
   document.getElementById("login-container").classList.remove("hidden");
   document.getElementById("main-content").classList.add("hidden");
 }
@@ -765,34 +768,45 @@ async function descriptografar(textoCriptografado) {
   }
 }
 
-// Função de login
 async function login() {
   const username = document.getElementById("username").value;
   const password = document.getElementById("password").value;
 
-  const senhasCriptografadas = await buscarSenhasCriptografadas();
+  console.log("Tentando fazer login com:", username); // Log para depuração
 
-  if (senhasCriptografadas[username]) {
-    const senhaDescriptografada = await descriptografar(senhasCriptografadas[username]);
+  try {
+    const senhasCriptografadas = await buscarSenhasCriptografadas();
+    console.log("Senhas criptografadas carregadas:", senhasCriptografadas); // Log para depuração
 
-    if (senhaDescriptografada === password) {
-      localStorage.setItem("loggedInUser", username);
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("main-content").classList.remove("hidden");
+    if (senhasCriptografadas[username]) {
+      const senhaDescriptografada = await descriptografar(senhasCriptografadas[username]);
+      console.log("Senha descriptografada:", senhaDescriptografada); // Log para depuração
 
-      // Garante que a tabela e o título sejam exibidos
-      document.querySelector(".table-container").style.display = "";
-      document.querySelector(".container-titulo").style.display = "";
+      if (senhaDescriptografada === password) {
+        localStorage.setItem("loggedInUser", username);
+        console.log("Login bem-sucedido para:", username); // Log para depuração
 
-      // Aplica o estado dos placares
-      verificarEstadoPlacares();
-      bloquearColunasOutrosJogadores();
-      carregarApostas();
+        // Oculta a tela de login e exibe a tela principal
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("main-content").classList.remove("hidden");
+
+        // Garante que a tabela e o título sejam exibidos
+        document.querySelector(".table-container").style.display = "";
+        document.querySelector(".container-titulo").style.display = "";
+
+        // Aplica o estado dos placares
+        verificarEstadoPlacares();
+        bloquearColunasOutrosJogadores();
+        carregarApostas();
+      } else {
+        alert("Nome de usuário ou senha incorretos!");
+      }
     } else {
       alert("Nome de usuário ou senha incorretos!");
     }
-  } else {
-    alert("Nome de usuário ou senha incorretos!");
+  } catch (error) {
+    console.error("Erro durante o login:", error); // Log para depuração
+    alert("Erro ao fazer login. Tente novamente.");
   }
 }
 
@@ -804,14 +818,27 @@ function handleKeyPress(event) {
 
 
 // Verificar se o usuário já está logado ao carregar a página
-const loggedInUser = localStorage.getItem("loggedInUser");
-if (loggedInUser) {
-  document.getElementById("login-container").classList.add("hidden");
-  document.getElementById("main-content").classList.remove("hidden");
-  verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
-  bloquearColunasOutrosJogadores(); // Bloqueia as colunas dos outros jogadores ao carregar a página
-  carregarApostas(); // Carrega as apostas salvas
-}
+document.addEventListener("DOMContentLoaded", function () {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    console.log("Usuário já logado:", loggedInUser); // Log para depuração
+
+    // Oculta a tela de login e exibe a tela principal
+    document.getElementById("login-container").classList.add("hidden");
+    document.getElementById("main-content").classList.remove("hidden");
+
+    // Garante que a tabela e o título sejam exibidos
+    document.querySelector(".table-container").style.display = "";
+    document.querySelector(".container-titulo").style.display = "";
+
+    // Aplica o estado dos placares
+    verificarEstadoPlacares();
+    bloquearColunasOutrosJogadores();
+    carregarApostas();
+  } else {
+    console.log("Nenhum usuário logado."); // Log para depuração
+  }
+});
 
 // Função para bloquear as colunas dos outros jogadores
 function bloquearColunasOutrosJogadores() {
