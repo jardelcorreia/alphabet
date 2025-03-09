@@ -599,19 +599,18 @@
     </footer>
 
     <script>
-      // Verificar se o usuário já está logado ao carregar a página
-      window.addEventListener("load", function () {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        if (loggedInUser) {
-          document.getElementById("login-container").classList.add("hidden");
-          document.getElementById("main-content").classList.remove("hidden");
-          verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
-          carregarApostas(); // Carrega as apostas salvas
-        } else {
-          document.getElementById("login-container").classList.remove("hidden");
-          document.getElementById("main-content").classList.add("hidden");
-        }
-      });
+      window.addEventListener("load", async function () {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    document.getElementById("login-container").classList.add("hidden");
+    document.getElementById("main-content").classList.remove("hidden");
+    await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
+    carregarApostas(); // Carrega as apostas salvas
+  } else {
+    document.getElementById("login-container").classList.remove("hidden");
+    document.getElementById("main-content").classList.add("hidden");
+  }
+});
 
       function handleKeyPress(event) {
         if (event.key === "Enter") {
@@ -660,86 +659,119 @@
         containerTitulo.appendChild(span);
       });
 
-      // Função para alternar a visibilidade dos placares
-      function toggleVisibility() {
-        const isHidden = localStorage.getItem("placaresOcultos") === "true";
-        const toggleButton = document.getElementById("toggle-visibility");
-        const toggleText = document.getElementById("toggle-text");
+      async function toggleVisibility() {
+  const isHidden = await carregarEstadoVisibilidade();
+  const novoEstado = !isHidden;
 
-        if (isHidden) {
-          // Revelar placares
-          localStorage.setItem("placaresOcultos", "false");
-          toggleText.textContent = "Ocultar Placar";
-          mostrarPlacares();
-        } else {
-          // Ocultar placares
-          localStorage.setItem("placaresOcultos", "true");
-          toggleText.textContent = "Revelar Placar";
-          ocultarPlacares();
-        }
-      }
+  await salvarEstadoVisibilidade(novoEstado);
+  verificarEstadoPlacares();
+}
 
-      // Função para ocultar os placares dos outros jogadores
-      function ocultarPlacares() {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        const inputsApostas = document.querySelectorAll(".aposta");
+function ocultarPlacares() {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const inputsApostas = document.querySelectorAll(".aposta");
 
-        inputsApostas.forEach((input) => {
-          const colunaJogador = input.classList.contains("jogador0")
-            ? "Jardel"
-            : input.classList.contains("jogador1")
-            ? "Werbet"
-            : input.classList.contains("jogador2")
-            ? "Nailton"
-            : input.classList.contains("jogador3")
-            ? "Phillipe"
-            : null;
+  inputsApostas.forEach((input) => {
+    const colunaJogador = input.classList.contains("jogador0")
+      ? "Jardel"
+      : input.classList.contains("jogador1")
+      ? "Werbet"
+      : input.classList.contains("jogador2")
+      ? "Nailton"
+      : input.classList.contains("jogador3")
+      ? "Phillipe"
+      : null;
 
-          // Oculta os placares dos outros jogadores
-          if (colunaJogador && colunaJogador !== loggedInUser) {
-            input.style.display = "none";
-          } else {
-            input.style.display = ""; // Mostra os placares do jogador logado
-            input.disabled = false; // Permite edição apenas para o jogador logado
-            input.style.backgroundColor = "";
-          }
-        });
-      }
+    // Oculta os placares dos outros jogadores
+    if (colunaJogador && colunaJogador !== loggedInUser) {
+      input.style.display = "none";
+    } else {
+      input.style.display = ""; // Mostra os placares do jogador logado
+      input.disabled = false; // Permite edição apenas para o jogador logado
+      input.style.backgroundColor = "";
+    }
+  });
+}
 
-      // Função para mostrar todos os placares (não editáveis)
-      function mostrarPlacares() {
-        const inputsApostas = document.querySelectorAll(".aposta");
+function mostrarPlacares() {
+  const inputsApostas = document.querySelectorAll(".aposta");
 
-        inputsApostas.forEach((input) => {
-          input.style.display = ""; // Mostra o input
-          input.disabled = true; // Torna o input não editável
-          input.style.backgroundColor = "#f0f0f0";
-        });
-      }
+  inputsApostas.forEach((input) => {
+    input.style.display = ""; // Mostra o input
+    input.disabled = true; // Torna o input não editável
+    input.style.backgroundColor = "#f0f0f0";
+  });
+}
 
-      // Verificar o estado do botão ao carregar a página
-      function verificarEstadoPlacares() {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        const toggleButton = document.getElementById("toggle-visibility");
+async function salvarEstadoVisibilidade(estado) {
+  try {
+    // 1. Carrega os dados atuais do JSONBin
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      headers: {
+        "X-Master-Key": JSONBIN_API_KEY,
+      },
+    });
+    const data = await response.json();
+    const dadosAtuais = data.record;
 
-        // Mostrar o botão apenas para o jogador Jardel
-        if (loggedInUser === "Jardel") {
-          toggleButton.classList.remove("hidden");
-          toggleButton.addEventListener("click", toggleVisibility);
-        } else {
-          toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
-        }
+    // 2. Atualiza apenas a chave `placaresOcultos`
+    dadosAtuais.placaresOcultos = estado;
 
-        // Verificar se os placares estão ocultos
-        const isHidden = localStorage.getItem("placaresOcultos") === "true";
-        if (isHidden) {
-          ocultarPlacares();
-          document.getElementById("toggle-text").textContent = "Revelar Placar";
-        } else {
-          mostrarPlacares();
-          document.getElementById("toggle-text").textContent = "Ocultar Placar";
-        }
-      }
+    // 3. Salva o objeto completo de volta no JSONBin
+    const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": JSONBIN_API_KEY,
+      },
+      body: JSON.stringify(dadosAtuais),
+    });
+
+    const saveData = await saveResponse.json();
+    console.log("Estado de visibilidade salvo:", saveData);
+  } catch (error) {
+    console.error("Erro ao salvar estado de visibilidade:", error);
+  }
+}
+
+async function carregarEstadoVisibilidade() {
+  try {
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      headers: {
+        "X-Master-Key": JSONBIN_API_KEY,
+      },
+    });
+    const data = await response.json();
+    const estado = data.record.placaresOcultos || false;
+    return estado;
+  } catch (error) {
+    console.error("Erro ao carregar estado de visibilidade:", error);
+    return false;
+  }
+}
+async function verificarEstadoPlacares() {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const toggleButton = document.getElementById("toggle-visibility");
+  const toggleText = document.getElementById("toggle-text");
+
+  // Mostrar o botão apenas para o jogador Jardel
+  if (loggedInUser === "Jardel") {
+    toggleButton.classList.remove("hidden");
+    toggleButton.addEventListener("click", toggleVisibility);
+  } else {
+    toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
+  }
+
+  // Verificar o estado de visibilidade no backend
+  const isHidden = await carregarEstadoVisibilidade();
+  if (isHidden) {
+    ocultarPlacares();
+    toggleText.textContent = "Revelar Placar";
+  } else {
+    mostrarPlacares();
+    toggleText.textContent = "Ocultar Placar";
+  }
+}
 
       // Função para fazer logout
       function logout() {
@@ -1000,52 +1032,75 @@
       }
 
       function carregarApostas() {
-        fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          headers: {
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log("Dados carregados:", data); // Verifique os dados carregados
-            const { nomeRodada, jogos, apostas, resultados } = data.record;
+  fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+    headers: {
+      "X-Master-Key": JSONBIN_API_KEY,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      const { nomeRodada, jogos, apostas, resultados, placaresOcultos } = data.record;
 
-            // Preenche o nome da rodada
-            document.getElementById("nome-rodada").value = nomeRodada || "";
+      // Preenche o nome da rodada
+      document.getElementById("nome-rodada").value = nomeRodada || "";
 
-            // Verifica se jogos é um array
-            if (!Array.isArray(jogos)) {
-              console.error("Erro: jogos não é um array");
-              return;
-            }
-
-            preencherTabela(jogos, apostas, resultados);
-            calcularPontuacao(); // Calcula a pontuação após carregar os dados
-          })
-          .catch((error) => console.error("Erro ao carregar apostas:", error));
+      // Verifica se jogos é um array
+      if (!Array.isArray(jogos)) {
+        console.error("Erro: jogos não é um array");
+        return;
       }
 
-      function salvarApostas() {
-        const nomeRodada = document.getElementById("nome-rodada").value;
-        const jogos = obterJogosDaTabela();
-        console.log("Jogos a serem salvos:", jogos); // Verifique os jogos coletados
-        const apostas = obterApostasDaTabela();
-        const resultados = obterResultadosDaTabela();
+      preencherTabela(jogos, apostas, resultados);
+      calcularPontuacao(); // Calcula a pontuação após carregar os dados
 
-        const dados = { nomeRodada, jogos, apostas, resultados };
-
-        fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-          body: JSON.stringify(dados),
-        })
-          .then((response) => response.json())
-          .then((data) => console.log("Dados salvos com sucesso:", data))
-          .catch((error) => console.error("Erro ao salvar dados:", error));
+      // Aplica o estado de visibilidade
+      if (placaresOcultos) {
+        ocultarPlacares();
+      } else {
+        mostrarPlacares();
       }
+    })
+    .catch((error) => console.error("Erro ao carregar apostas:", error));
+}
+
+async function salvarApostas() {
+  try {
+    // 1. Carrega os dados atuais do JSONBin
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      headers: {
+        "X-Master-Key": JSONBIN_API_KEY,
+      },
+    });
+    const data = await response.json();
+    const dadosAtuais = data.record;
+
+    // 2. Atualiza as chaves necessárias
+    dadosAtuais.nomeRodada = document.getElementById("nome-rodada").value;
+    dadosAtuais.jogos = obterJogosDaTabela();
+    dadosAtuais.apostas = obterApostasDaTabela();
+    dadosAtuais.resultados = obterResultadosDaTabela();
+    dadosAtuais.placaresOcultos = await carregarEstadoVisibilidade();
+
+    // 3. Salva o objeto completo de volta no JSONBin
+    const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": JSONBIN_API_KEY,
+      },
+      body: JSON.stringify(dadosAtuais),
+    });
+
+    const saveData = await saveResponse.json();
+    console.log("Dados salvos com sucesso:", saveData);
+  } catch (error) {
+    console.error("Erro ao salvar dados:", error);
+  }
+}
+
+setInterval(async () => {
+  await verificarEstadoPlacares();
+}, 5000); // Verifica a cada 5 segundos
 
       function preencherTabela(jogos, apostas, resultados) {
         console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
