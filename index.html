@@ -123,7 +123,7 @@
         font-weight: bold;
         text-transform: uppercase;
         padding: 20px;
-        margin-bottom: 20px;
+        margin-bottom: 2px;
         background: linear-gradient(
           90deg,
           rgba(0, 123, 255, 0.9),
@@ -234,10 +234,16 @@
         }
       }
 
+      .toggle-visibility-container {
+        display: flex;
+        width: 100%;
+        max-width: 800px;
+        margin: 0%;
+      }
+
+      /* Estilos para o botão de ocultar/revelar */
       #toggle-visibility {
-        position: absolute;
-        top: 70px;
-        left: 205px;
+        position: relative;
         padding: 10px;
         background-color: #007bff;
         color: white;
@@ -245,17 +251,34 @@
         border-radius: 5px;
         cursor: pointer;
         font-size: small;
+        z-index: 1000; /* Garante que o botão fique acima de outros elementos */
       }
 
       #toggle-visibility.hidden {
         display: none;
       }
 
+      /* Ajustes para telas menores (tablets e dispositivos móveis) */
+      @media (max-width: 768px) {
+        #toggle-visibility {
+          font-size: 12px; /* Reduz o tamanho da fonte */
+          padding: 8px 16px; /* Ajusta o padding */
+        }
+      }
+
+      /* Ajustes para telas muito pequenas (smartphones em modo retrato) */
+      @media (max-width: 480px) {
+        #toggle-visibility {
+          font-size: 10px; /* Reduz ainda mais o tamanho da fonte */
+          padding: 6px 12px; /* Ajusta o padding */
+        }
+      }
+
       .table-container {
         display: flex;
         width: 100%;
         max-width: 800px;
-        margin: 10px auto;
+        margin: 0px auto;
         overflow-x: auto;
         background: rgba(255, 255, 255, 0.9);
         border-radius: 10px;
@@ -511,9 +534,11 @@
       </div>
 
       <!-- Botão de ocultar/revelar (visível apenas para Jardel) -->
-      <button id="toggle-visibility" class="hidden">
-        <span id="toggle-text">Ocultar Placar</span>
-      </button>
+      <div class="toggle-visibility-container">
+        <button id="toggle-visibility" class="hidden">
+          <span id="toggle-text">Ocultar Placar</span>
+        </button>
+      </div>
 
       <button class="logout-button" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i>
