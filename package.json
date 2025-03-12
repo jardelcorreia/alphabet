@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "crypto-js": "^4.2.0"
+    "@supabase/supabase-js": "^2.49.1"
   }
 }
