@@ -1180,19 +1180,20 @@ setInterval(async () => {
 
       // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
       function calcularPontuacao() {
-        const apostas = obterApostasDaTabela();
-        const resultados = obterResultadosDaTabela();
-        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-        const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+    const apostas = obterApostasDaTabela();
+    const resultados = obterResultadosDaTabela();
+    const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+    const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+    const placaresExatos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
 
-        for (let i = 0; i < 10; i++) {
-          const resultadoCasa = resultados[i].time1;
-          const resultadoFora = resultados[i].time2;
+    for (let i = 0; i < 10; i++) {
+        const resultadoCasa = resultados[i].time1;
+        const resultadoFora = resultados[i].time2;
 
-          // Ignora jogos sem resultado
-          if (resultadoCasa === "" || resultadoFora === "") continue;
+        // Ignora jogos sem resultado
+        if (resultadoCasa === "" || resultadoFora === "") continue;
 
-          jogadores.forEach((jogador) => {
+        jogadores.forEach((jogador) => {
             const apostaCasa = apostas[jogador][i].time1;
             const apostaFora = apostas[jogador][i].time2;
 
@@ -1200,46 +1201,50 @@ setInterval(async () => {
             if (apostaCasa === "" || apostaFora === "") return;
 
             if (apostaCasa === resultadoCasa && apostaFora === resultadoFora) {
-              pontos[jogador] += 3; // Acertou o placar exato
+                pontos[jogador] += 3; // Acertou o placar exato
+                placaresExatos[jogador] += 1; // Incrementa o contador de placares exatos
             } else if (
-              (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
-              (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
-              (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
+                (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
+                (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
+                (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
             ) {
-              pontos[jogador] += 1; // Acertou o vencedor ou empate
+                pontos[jogador] += 1; // Acertou o vencedor ou empate
             }
-          });
-        }
-
-        // Ordena os jogadores por pontuação (do maior para o menor)
-        const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
-          if (b[1] !== a[1]) {
-            return b[1] - a[1]; // Ordena por pontuação decrescente
-          } else {
-            return a[0].localeCompare(b[0]); // Em caso de empate, ordena alfabeticamente
-          }
         });
+    }
 
-        // Verifica se há um único vencedor (sem empate)
-        const [primeiroJogador, primeiraPontuacao] = jogadoresOrdenados[0];
-        const [segundoJogador, segundaPontuacao] = jogadoresOrdenados[1];
+    // Ordena os jogadores por pontuação (do maior para o menor)
+    const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
+        if (b[1] !== a[1]) {
+            return b[1] - a[1]; // Ordena por pontuação decrescente
+        } else {
+            // Em caso de empate, ordena pelo número de placares exatos
+            const placaresExatosA = placaresExatos[a[0]];
+            const placaresExatosB = placaresExatos[b[0]];
+            return placaresExatosB - placaresExatosA;
+        }
+    });
 
-        const haEmpate = primeiraPontuacao === segundaPontuacao;
+    // Verifica a pontuação máxima
+    const pontuacaoMaxima = jogadoresOrdenados[0][1];
 
-        // Atualiza a exibição da pontuação
-        const pontuacaoHTML = jogadoresOrdenados
-          .map(([jogador, pontuacao]) => {
-            const isVencedor = !haEmpate && jogador === primeiroJogador;
+    // Filtra os jogadores com a pontuação máxima
+    const vencedores = jogadoresOrdenados.filter(([_, pontuacao]) => pontuacao === pontuacaoMaxima);
+
+    // Atualiza a exibição da pontuação
+    const pontuacaoHTML = jogadoresOrdenados
+        .map(([jogador, pontuacao]) => {
+            const isVencedor = vencedores.some(([vencedor]) => vencedor === jogador);
             return `<div class="pontuacao-card ${
-              isVencedor ? "vencedor" : ""
+                isVencedor ? "vencedor" : ""
             }"><h3>${jogador}</h3>
                     <span>
                     <p>${pontuacao} pontos</p></div>`;
-          })
-          .join("");
+        })
+        .join("");
 
-        document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
-      }
+    document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+}
 
       // Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
       function adicionarEventosCalculoPontuacao() {

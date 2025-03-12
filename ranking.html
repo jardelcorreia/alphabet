@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking - AlphaBet 2025</title>
+  <style>
+    body {
+      font-family: "Kanit", "Roboto", sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .main-container {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: flex-start;
+    }
+
+    .ranking-container {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .ranking-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    .input-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .rodada-label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #007bff;
+      min-width: 30px;
+      text-align: right;
+    }
+
+    .ranking-container input {
+      width: 200px;
+      padding: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.8);
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .ranking-container input:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+      outline: none;
+    }
+
+    .vitorias-container {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      max-height: 80vh;
+      overflow-y: auto;
+      margin: auto;
+    }
+
+    .vitorias-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    #vitorias {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .vitoria-card {
+      background: rgba(0, 123, 255, 0.1);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+
+      .ranking-container,
+      .vitorias-container {
+        max-height: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container">
+    <!-- Coluna 1: Inputs de ranking -->
+    <div class="ranking-container">
+      <h2>Ranking - Vencedores por Rodada</h2>
+      <div id="inputs-ranking"></div>
+    </div>
+
+    <!-- Coluna 2: Seção de vitórias -->
+    <div class="vitorias-container">
+      <h2>Vitórias por Jogador</h2>
+      <div id="vitorias"></div>
+    </div>
+  </div>
+
+  <script>
+    const JSONBIN_API_KEY = "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
+    const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
+
+    // Função debounce para evitar múltiplas chamadas ao servidor
+    function debounce(func, wait) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
+    // Cria os 38 inputs para as rodadas
+    const inputsRanking = document.getElementById("inputs-ranking");
+    for (let i = 1; i <= 38; i++) {
+      const container = document.createElement("div");
+      container.className = "input-container";
+
+      const label = document.createElement("label");
+      label.textContent = `${i}.`;
+      label.className = "rodada-label";
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = `Vencedor da Rodada ${i}`;
+      input.id = `rodada-${i}`;
+
+      container.appendChild(label);
+      container.appendChild(input);
+      inputsRanking.appendChild(container);
+
+      // Adiciona o evento de input com debounce
+      input.addEventListener("input", debounce(salvarRanking, 500));
+    }
+
+    // Carrega os dados salvos do JSONBin
+    async function carregarRanking() {
+      try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          headers: {
+            "X-Master-Key": JSONBIN_API_KEY,
+          },
+        });
+        const data = await response.json();
+        const dadosAtuais = data.record;
+
+        // Preenche os inputs
+        dadosAtuais.ranking.forEach((vencedores, index) => {
+          const input = document.getElementById(`rodada-${index + 1}`);
+          if (input) input.value = vencedores;
+        });
+
+        // Exibe as vitórias e empates
+        const resultados = calcularVitoriasEmpates(dadosAtuais.ranking);
+        exibirVitorias(resultados);
+      } catch (error) {
+        console.error("Erro ao carregar ranking:", error);
+      }
+    }
+
+    // Salva os dados no JSONBin
+    async function salvarRanking() {
+      try {
+        const ranking = [];
+        for (let i = 1; i <= 38; i++) {
+          const input = document.getElementById(`rodada-${i}`);
+          ranking.push(input.value);
+        }
+
+        // 1. Carrega os dados atuais do JSONBin
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          headers: {
+            "X-Master-Key": JSONBIN_API_KEY,
+          },
+        });
+        const data = await response.json();
+        const dadosAtuais = data.record;
+
+        // 2. Atualiza as chaves necessárias
+        dadosAtuais.ranking = ranking;
+        dadosAtuais.vitoriasEmpates = calcularVitoriasEmpates(ranking);
+
+        // 3. Salva o objeto completo de volta no JSONBin
+        const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": JSONBIN_API_KEY,
+          },
+          body: JSON.stringify(dadosAtuais),
+        });
+
+        const saveData = await saveResponse.json();
+        console.log("Dados salvos com sucesso:", saveData);
+
+        // 4. Calcula e exibe as vitórias e empates
+        const resultados = calcularVitoriasEmpates(ranking);
+        exibirVitorias(resultados);
+      } catch (error) {
+        console.error("Erro ao salvar ranking:", error);
+      }
+    }
+
+    // Conta as vitórias e empates de cada jogador
+    function calcularVitoriasEmpates(ranking) {
+      const vitoriasEmpates = {
+        Jardel: { vitorias: 0, empates: 0 },
+        Werbet: { vitorias: 0, empates: 0 },
+        Nailton: { vitorias: 0, empates: 0 },
+        Phillipe: { vitorias: 0, empates: 0 }
+      };
+
+      ranking.forEach((vencedores) => {
+        const listaVencedores = vencedores.split(",").map((nome) => nome.trim());
+
+        if (listaVencedores.length === 1) {
+          // Vitória única
+          const vencedor = listaVencedores[0];
+          if (vencedor && vitoriasEmpates[vencedor]) {
+            vitoriasEmpates[vencedor].vitorias++;
+          }
+        } else if (listaVencedores.length > 1) {
+          // Empate (múltiplos vencedores)
+          listaVencedores.forEach((vencedor) => {
+            if (vencedor && vitoriasEmpates[vencedor]) {
+              vitoriasEmpates[vencedor].empates++;
+            }
+          });
+        }
+      });
+
+      return vitoriasEmpates;
+    }
+
+    // Exibe as vitórias e empates na página
+    function exibirVitorias(resultados) {
+      const vitoriasContainer = document.getElementById("vitorias");
+      vitoriasContainer.innerHTML = "";
+
+      // Converte o objeto em um array e ordena por número de vitórias (decrescente)
+      const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
+        const totalA = a[1].vitorias + a[1].empates;
+        const totalB = b[1].vitorias + b[1].empates;
+        return totalB - totalA;
+      });
+
+      resultadosOrdenados.forEach(([jogador, { vitorias, empates }]) => {
+        const card = document.createElement("div");
+        card.className = "vitoria-card";
+        card.innerHTML = `
+          <strong>${jogador}</strong>:
+          ${vitorias} vitória(s),
+          ${empates} empate(s)
+        `;
+        vitoriasContainer.appendChild(card);
+      });
+    }
+
+    // Carrega os dados ao abrir a página
+    carregarRanking();
+  </script>
+</body>
+</html>
