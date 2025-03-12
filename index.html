@@ -9,522 +9,522 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-       @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
-/* Reset CSS */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+      /* Reset CSS */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-body {
-  font-family: "Kanit", "Roboto", sans-serif;
-  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  margin: 0;
-}
+      body {
+        font-family: "Kanit", "Roboto", sans-serif;
+        background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+      }
 
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(
-    135deg,
-    rgba(0, 123, 255, 0.9),
-    rgba(50, 205, 50, 0.9)
-  );
-  backdrop-filter: blur(10px);
-}
+      .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 123, 255, 0.9),
+          rgba(50, 205, 50, 0.9)
+        );
+        backdrop-filter: blur(10px);
+      }
 
-.box-container {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
-  width: 310px;
-  position: absolute;
-  top: 15%;
-  backdrop-filter: blur(5px);
-}
+      .box-container {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        width: 310px;
+        position: absolute;
+        top: 15%;
+        backdrop-filter: blur(5px);
+      }
 
-.alpha-bet-title {
-  font-size: 32px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: #007bff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
+      .alpha-bet-title {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: #007bff;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-.login-container h2 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
-}
+      .login-container h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+      }
 
-.login-container input {
-  font-family: inherit;
-  width: 93%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  font-size: 16px;
-  background: rgba(255, 255, 255, 0.8);
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
+      .login-container input {
+        font-family: inherit;
+        width: 93%;
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.8);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
 
-.login-container input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
-  outline: none;
-}
+      .login-container input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        outline: none;
+      }
 
-.login-container button {
-  width: 100%;
-  padding: 12px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s, transform 0.2s;
-}
+      .login-container button {
+        width: 100%;
+        padding: 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.3s, transform 0.2s;
+      }
 
-.login-container button:hover {
-  background: #0056b3;
-  transform: translateY(-2px);
-}
+      .login-container button:hover {
+        background: #0056b3;
+        transform: translateY(-2px);
+      }
 
-.hidden {
-  display: none;
-}
+      .hidden {
+        display: none;
+      }
 
-input:disabled {
-  background-color: rgba(240, 240, 240, 0.8);
-  cursor: not-allowed;
-}
+      input:disabled {
+        background-color: rgba(240, 240, 240, 0.8);
+        cursor: not-allowed;
+      }
 
-.container-titulo {
-  display: block;
-  justify-content: center;
-  text-align: center;
-  font-family: "Kanit", "Poppins", Arial, sans-serif;
-  font-size: 2.5em;
-  font-weight: bold;
-  text-transform: uppercase;
-  padding: 20px;
-  margin-bottom: 2px;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 123, 255, 0.9),
-    rgba(255, 99, 71, 0.9),
-    rgba(50, 205, 50, 0.9)
-  );
-  background-size: 300% 300%;
-  color: white;
-  border-radius: 0px;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  animation: fadeIn 1.5s ease-in-out forwards,
-    colorShift 6s infinite alternate;
-}
+      .container-titulo {
+        display: block;
+        justify-content: center;
+        text-align: center;
+        font-family: "Kanit", "Poppins", Arial, sans-serif;
+        font-size: 2.5em;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 20px;
+        margin-bottom: 2px;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 123, 255, 0.9),
+          rgba(255, 99, 71, 0.9),
+          rgba(50, 205, 50, 0.9)
+        );
+        background-size: 300% 300%;
+        color: white;
+        border-radius: 0px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        animation: fadeIn 1.5s ease-in-out forwards,
+          colorShift 6s infinite alternate;
+      }
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
+      @keyframes fadeIn {
+        to {
+          opacity: 1;
+        }
+      }
 
-@keyframes colorShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
+      @keyframes colorShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        100% {
+          background-position: 100% 50%;
+        }
+      }
 
-.letra {
-  opacity: 0;
-  transform: translateX(-100px);
-  animation: moveIn 1.5s ease-out forwards;
-}
+      .letra {
+        opacity: 0;
+        transform: translateX(-100px);
+        animation: moveIn 1.5s ease-out forwards;
+      }
 
-.letra:nth-child(even) {
-  transform: translateX(100px);
-}
+      .letra:nth-child(even) {
+        transform: translateX(100px);
+      }
 
-@keyframes moveIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
+      @keyframes moveIn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
 
-.logout-button {
-  padding: 8px 16px; /* Aumentei o padding para melhorar o toque em dispositivos móveis */
-  font-size: 14px; /* Tamanho de fonte um pouco maior para melhor legibilidade */
-  right: 10px; /* Distância da borda direita */
-  top: 10px; /* Distância do topo */
-  position: absolute;
-  background: rgba(255, 99, 71, 0.9); /* Cor de fundo com transparência */
-  color: white;
-  border: none;
-  border-radius: 8px; /* Bordas mais arredondadas */
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  z-index: 1000; /* Garante que o botão fique acima de outros elementos */
-  display: flex;
-  align-items: center;
-  gap: 5px; /* Espaçamento entre o ícone e o texto */
-}
+      .logout-button {
+        padding: 8px 16px; /* Aumentei o padding para melhorar o toque em dispositivos móveis */
+        font-size: 14px; /* Tamanho de fonte um pouco maior para melhor legibilidade */
+        right: 10px; /* Distância da borda direita */
+        top: 10px; /* Distância do topo */
+        position: absolute;
+        background: rgba(255, 99, 71, 0.9); /* Cor de fundo com transparência */
+        color: white;
+        border: none;
+        border-radius: 8px; /* Bordas mais arredondadas */
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+        z-index: 1000; /* Garante que o botão fique acima de outros elementos */
+        display: flex;
+        align-items: center;
+        gap: 5px; /* Espaçamento entre o ícone e o texto */
+      }
 
-.logout-button:hover {
-  background: rgba(255, 69, 58, 0.9); /* Cor de fundo ao passar o mouse */
-  transform: translateY(-2px); /* Efeito de levantar ao passar o mouse */
-}
+      .logout-button:hover {
+        background: rgba(255, 69, 58, 0.9); /* Cor de fundo ao passar o mouse */
+        transform: translateY(-2px); /* Efeito de levantar ao passar o mouse */
+      }
 
-/* Estilo para o ícone dentro do botão */
-.logout-button i {
-  font-size: 16px; /* Tamanho do ícone */
-}
+      /* Estilo para o ícone dentro do botão */
+      .logout-button i {
+        font-size: 16px; /* Tamanho do ícone */
+      }
 
-/* Ajustes para telas menores (mobile) */
-@media (max-width: 768px) {
-  .logout-button {
-    padding: 6px 12px; /* Padding menor para telas pequenas */
-    font-size: 12px; /* Fonte menor para telas pequenas */
-    right: 5px; /* Mais próximo da borda */
-    top: 5px; /* Mais próximo do topo */
-  }
+      /* Ajustes para telas menores (mobile) */
+      @media (max-width: 768px) {
+        .logout-button {
+          padding: 6px 12px; /* Padding menor para telas pequenas */
+          font-size: 12px; /* Fonte menor para telas pequenas */
+          right: 5px; /* Mais próximo da borda */
+          top: 5px; /* Mais próximo do topo */
+        }
 
-  .logout-button i {
-    font-size: 14px; /* Ícone menor para telas pequenas */
-  }
-}
+        .logout-button i {
+          font-size: 14px; /* Ícone menor para telas pequenas */
+        }
+      }
 
-/* Ajustes para telas muito pequenas (ex.: smartphones em modo retrato) */
-@media (max-width: 480px) {
-  .logout-button {
-    padding: 4px 8px; /* Padding ainda menor */
-    font-size: 10px; /* Fonte ainda menor */
-    right: 2px; /* Próximo da borda */
-    top: 2px; /* Próximo do topo */
-  }
+      /* Ajustes para telas muito pequenas (ex.: smartphones em modo retrato) */
+      @media (max-width: 480px) {
+        .logout-button {
+          padding: 4px 8px; /* Padding ainda menor */
+          font-size: 10px; /* Fonte ainda menor */
+          right: 2px; /* Próximo da borda */
+          top: 2px; /* Próximo do topo */
+        }
 
-  .logout-button i {
-    font-size: 12px; /* Ícone ainda menor */
-  }
+        .logout-button i {
+          font-size: 12px; /* Ícone ainda menor */
+        }
 
-  .logout-text {
-    display: none; /* Oculta o texto "SAIR" em telas muito pequenas */
-  }
-}
+        .logout-text {
+          display: none; /* Oculta o texto "SAIR" em telas muito pequenas */
+        }
+      }
 
-.toggle-visibility-container {
-  display: flex;
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
+      .toggle-visibility-container {
+        display: flex;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+      }
 
-/* Estilos para o botão de ocultar/revelar */
-#toggle-visibility {
+      /* Estilos para o botão de ocultar/revelar */
+      #toggle-visibility {
+        position: relative;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: small;
+        z-index: 1000; /* Garante que o botão fique acima de outros elementos */
+      }
+
+      #toggle-visibility.hidden {
+        display: none;
+      }
+
+      /* Ajustes para telas menores (tablets e dispositivos móveis) */
+      @media (max-width: 768px) {
+        #toggle-visibility {
+          font-size: 12px; /* Reduz o tamanho da fonte */
+          padding: 8px 16px; /* Ajusta o padding */
+        }
+      }
+
+      /* Ajustes para telas muito pequenas (smartphones em modo retrato) */
+      @media (max-width: 480px) {
+        #toggle-visibility {
+          font-size: 10px; /* Reduz ainda mais o tamanho da fonte */
+          padding: 6px 12px; /* Ajusta o padding */
+        }
+      }
+
+      #ranking-button {
   position: relative;
   padding: 10px;
-  background-color: #007bff;
+  background-color: #28a745; /* Cor verde */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-size: small;
+  margin-left: 10px; /* Espaçamento entre os botões */
   z-index: 1000; /* Garante que o botão fique acima de outros elementos */
 }
 
-#toggle-visibility.hidden {
-  display: none;
-}
-
-/* Ajustes para telas menores (tablets e dispositivos móveis) */
-@media (max-width: 768px) {
-  #toggle-visibility {
-    font-size: 12px; /* Reduz o tamanho da fonte */
-    padding: 8px 16px; /* Ajusta o padding */
-  }
-}
-
-/* Ajustes para telas muito pequenas (smartphones em modo retrato) */
-@media (max-width: 480px) {
-  #toggle-visibility {
-    font-size: 10px; /* Reduz ainda mais o tamanho da fonte */
-    padding: 6px 12px; /* Ajusta o padding */
-  }
-}
-
-#ranking-button {
-position: relative;
-padding: 10px;
-background-color: #28a745; /* Cor verde */
-color: white;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-font-size: small;
-margin-left: 10px; /* Espaçamento entre os botões */
-z-index: 1000; /* Garante que o botão fique acima de outros elementos */
-}
-
 #ranking-button:hover {
-background-color: #218838; /* Cor verde mais escura ao passar o mouse */
+  background-color: #218838; /* Cor verde mais escura ao passar o mouse */
 }
 
-.table-container {
-  display: flex;
-  width: 100%;
-  max-width: 800px;
-  margin: 0px auto;
-  overflow-x: auto;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-}
+      .table-container {
+        display: flex;
+        width: 100%;
+        max-width: 800px;
+        margin: 0px auto;
+        overflow-x: auto;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+      }
 
-table {
-  width: 100%;
-  min-width: 800px;
-  border-collapse: collapse;
-}
+      table {
+        width: 100%;
+        min-width: 800px;
+        border-collapse: collapse;
+      }
 
-td {
-  padding: 0px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
+      td {
+        padding: 0px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
 
-th {
-  padding: 10px;
-  background: rgba(0, 123, 255, 0.9);
-  color: white;
-  font-size: 19px;
-  font-weight: 500;
-}
+      th {
+        padding: 10px;
+        background: rgba(0, 123, 255, 0.9);
+        color: white;
+        font-size: 19px;
+        font-weight: 500;
+      }
 
-th:first-child,
-td:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 1;
-  background: white;
-  outline: none;
-  width: 140px;
-  padding: 5px;
-}
+      th:first-child,
+      td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: white;
+        outline: none;
+        width: 140px;
+        padding: 5px;
+      }
 
-th:first-child {
-  background-color: #007bff;
-}
+      th:first-child {
+        background-color: #007bff;
+      }
 
-tr:nth-child(even) {
-  background-color: rgba(249, 249, 249, 0.8);
-}
+      tr:nth-child(even) {
+        background-color: rgba(249, 249, 249, 0.8);
+      }
 
-.input-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
+      .input-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+      }
 
-#nome-rodada {
-  position: sticky;
-  background: rgba(0, 123, 255, 0.9); /* Mesma cor dos cabeçalhos */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-family: inherit;
-  font-size: 19px;
-  font-weight: 500;
-  text-align: center;
-  width: 140px;
-  text-transform: uppercase;
-  padding: 10px;
-  box-shadow: none; /* Remova sombras se necessário */
-  outline: none; /* Remova outlines se necessário */
-  backdrop-filter: none; /* Remova backdrop-filter se necessário */
-}
+      #nome-rodada {
+        position: sticky;
+        background: rgba(0, 123, 255, 0.9); /* Mesma cor dos cabeçalhos */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-family: inherit;
+        font-size: 19px;
+        font-weight: 500;
+        text-align: center;
+        width: 140px;
+        text-transform: uppercase;
+        padding: 10px;
+        box-shadow: none; /* Remova sombras se necessário */
+        outline: none; /* Remova outlines se necessário */
+        backdrop-filter: none; /* Remova backdrop-filter se necessário */
+      }
 
-#nome-rodada::placeholder {
-  color: rgba(255, 255, 255, 0.7);
-}
+      #nome-rodada::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
 
-.input-placar,
-.input-jogo {
-  font-family: inherit;
-  width: 40px;
-  text-align: center;
-  padding: 2px;
-  font-size: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
-  box-sizing: border-box;
-  background: rgba(255, 255, 255, 0.8);
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
+      .input-placar,
+      .input-jogo {
+        font-family: inherit;
+        width: 40px;
+        text-align: center;
+        padding: 2px;
+        font-size: 20px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        box-sizing: border-box;
+        background: rgba(255, 255, 255, 0.8);
+        transition: border-color 0.3s, box-shadow 0.3s;
+      }
 
-.input-jogo {
-  background-color: rgba(0, 123, 255, 0.9);
-  color: white;
-  border: none;
-  font-size: 16px;
-  font-weight: 500;
-  text-transform: uppercase;
-  text-align: center;
-  width: 100%;
-  box-sizing: border-box;
-  outline: none;
-  margin: 0;
-  border-radius: 5px;
-  padding: 4px;
-  transition: background-color 0.3s, transform 0.2s;
-}
+      .input-jogo {
+        background-color: rgba(0, 123, 255, 0.9);
+        color: white;
+        border: none;
+        font-size: 16px;
+        font-weight: 500;
+        text-transform: uppercase;
+        text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+        outline: none;
+        margin: 0;
+        border-radius: 5px;
+        padding: 4px;
+        transition: background-color 0.3s, transform 0.2s;
+      }
 
-.input-jogo:focus {
-  background-color: rgba(0, 123, 255, 1);
-  transform: translateY(-2px);
-}
+      .input-jogo:focus {
+        background-color: rgba(0, 123, 255, 1);
+        transform: translateY(-2px);
+      }
 
-.placar-separador {
-  font-size: 18px;
-  color: rgba(119, 119, 119, 0.8);
-}
+      .placar-separador {
+        font-size: 18px;
+        color: rgba(119, 119, 119, 0.8);
+      }
 
-.pontuacao-container {
-  display: flex;
-  flex-direction: column;
-  max-width: 1000px;
-  gap: 10px;
-  margin: 20px auto;
-}
+      .pontuacao-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 1000px;
+        gap: 10px;
+        margin: 20px auto;
+      }
 
-.pontuacao-card {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 12px;
-  border-radius: 10px;
-  font-size: 22px;
-  text-align: center;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
-  display: block;
-  align-items: center;
-  justify-content: center;
-  min-height: 60px;
-  width: 80%;
-  margin: auto;
-  backdrop-filter: blur(5px);
-}
+      .pontuacao-card {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 22px;
+        text-align: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        display: block;
+        align-items: center;
+        justify-content: center;
+        min-height: 60px;
+        width: 80%;
+        margin: auto;
+        backdrop-filter: blur(5px);
+      }
 
-.pontuacao-card:hover {
-  transform: scale(1.02);
-}
+      .pontuacao-card:hover {
+        transform: scale(1.02);
+      }
 
-@media (min-width: 768px) {
-  .pontuacao-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+      @media (min-width: 768px) {
+        .pontuacao-container {
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: center;
+        }
 
-  .pontuacao-card {
-    flex: 1 1 180px;
-    max-width: 200px;
-    min-height: 80px;
-    font-size: 20px;
-  }
-}
+        .pontuacao-card {
+          flex: 1 1 180px;
+          max-width: 200px;
+          min-height: 80px;
+          font-size: 20px;
+        }
+      }
 
-.pontuacao-card.vencedor {
-  background: linear-gradient(to right, #fde68a, #fbbf24);
-  color: black;
-  font-weight: bold;
-  border: 2px solid rgba(255, 235, 59, 0.9);
-}
+      .pontuacao-card.vencedor {
+        background: linear-gradient(to right, #fde68a, #fbbf24);
+        color: black;
+        font-weight: bold;
+        border: 2px solid rgba(255, 235, 59, 0.9);
+      }
 
-.buttons {
-  margin-top: 20px;
-  text-align: center;
-  display: inline-block;
-}
+      .buttons {
+        margin-top: 20px;
+        text-align: center;
+        display: inline-block;
+      }
 
-button {
-  font-family: "Kanit", "Poppins", Arial, sans-serif;
-  background: rgba(0, 123, 255, 0.9);
-  color: white;
-  border: none;
-  padding: 16px 32px;
-  font-size: 22px;
-  cursor: pointer;
-  margin: 5px;
-  border-radius: 8px;
-  transition: background-color 0.3s, transform 0.2s;
-}
+      button {
+        font-family: "Kanit", "Poppins", Arial, sans-serif;
+        background: rgba(0, 123, 255, 0.9);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        font-size: 22px;
+        cursor: pointer;
+        margin: 5px;
+        border-radius: 8px;
+        transition: background-color 0.3s, transform 0.2s;
+      }
 
-button:hover {
-  background: rgba(0, 86, 179, 0.9);
-  transform: translateY(-2px);
-}
+      button:hover {
+        background: rgba(0, 86, 179, 0.9);
+        transform: translateY(-2px);
+      }
 
-footer {
-  margin-top: auto;
-  text-align: center;
-  padding: 5px;
-  background-color: rgba(240, 240, 240, 0.9);
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
+      footer {
+        margin-top: auto;
+        text-align: center;
+        padding: 5px;
+        background-color: rgba(240, 240, 240, 0.9);
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+      }
 
-footer p {
-  margin: 5px 0;
-}
+      footer p {
+        margin: 5px 0;
+      }
 
-.fab.fa-instagram {
-  font-size: 24px;
-  color: rgba(225, 48, 108, 0.9);
-  transition: color 0.3s ease;
-}
+      .fab.fa-instagram {
+        font-size: 24px;
+        color: rgba(225, 48, 108, 0.9);
+        transition: color 0.3s ease;
+      }
 
-.fab.fa-instagram:hover {
-  color: rgba(193, 53, 132, 0.9);
-}
+      .fab.fa-instagram:hover {
+        color: rgba(193, 53, 132, 0.9);
+      }
 
-.iframe-container {
-  width: 95%;
-  max-width: 1000px;
-  margin: 20px auto;
-  height: 500px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-}
+      .iframe-container {
+        width: 95%;
+        max-width: 1000px;
+        margin: 20px auto;
+        height: 500px;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(5px);
+      }
 
-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
     </style>
   </head>
 
@@ -617,315 +617,171 @@ iframe {
     </footer>
 
     <script>
-      // Configuração do Supabase
-      import { createClient } from '@supabase/supabase-js'
-      const supabaseUrl = "https://leuyfasvbfwdaloapmrs.supabase.co";
-      const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4";
-      const supabase = createClient(supabaseUrl, supabaseKey);
+      window.addEventListener("load", async function () {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    document.getElementById("login-container").classList.add("hidden");
+    document.getElementById("main-content").classList.remove("hidden");
+    await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
+    carregarApostas(); // Carrega as apostas salvas
+  } else {
+    document.getElementById("login-container").classList.remove("hidden");
+    document.getElementById("main-content").classList.add("hidden");
+  }
+});
 
-      // Função para verificar o estado dos placares
-      async function verificarEstadoPlacares() {
-        const loggedInUser = localStorage.getItem("loggedInUser");
-        const toggleButton = document.getElementById("toggle-visibility");
-        const toggleText = document.getElementById("toggle-text");
-
-        if (loggedInUser === "Jardel") {
-          toggleButton.classList.remove("hidden");
-          toggleButton.addEventListener("click", toggleVisibility);
-        } else {
-          toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
-        }
-
-        const isHidden = await carregarEstadoVisibilidade();
-        if (isHidden) {
-          ocultarPlacares();
-          toggleText.textContent = "Revelar Placar";
-        } else {
-          mostrarPlacares();
-          toggleText.textContent = "Ocultar Placar";
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          login();
         }
       }
 
-      // Função para alternar a visibilidade dos placares
-      async function toggleVisibility() {
-        const isHidden = await carregarEstadoVisibilidade();
-        const novoEstado = !isHidden;
-
-        await salvarEstadoVisibilidade(novoEstado);
-        verificarEstadoPlacares();
+      // Função debounce para evitar múltiplas chamadas ao servidor
+      function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
       }
 
-      // Função para salvar o estado de visibilidade no Supabase
-      async function salvarEstadoVisibilidade(estado) {
-        const { data: rodadas, error } = await supabase
-          .from("rodadas")
-          .select("*")
-          .order("id", { ascending: false })
-          .limit(1);
+      // Função para salvar as apostas com debounce
+      const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
 
-        if (error || rodadas.length === 0) {
-          console.error("Erro ao carregar rodadas:", error);
-          return;
-        }
-
-        const rodadaId = rodadas[0].id;
-
-        const { error: updateError } = await supabase
-          .from("rodadas")
-          .update({ placares_ocultos: estado })
-          .eq("id", rodadaId);
-
-        if (updateError) {
-          console.error("Erro ao salvar estado de visibilidade:", updateError);
-        }
-      }
-
-      // Função para carregar o estado de visibilidade do Supabase
-      async function carregarEstadoVisibilidade() {
-        const { data: rodadas, error } = await supabase
-          .from("rodadas")
-          .select("*")
-          .order("id", { ascending: false })
-          .limit(1);
-
-        if (error || rodadas.length === 0) {
-          console.error("Erro ao carregar rodadas:", error);
-          return false;
-        }
-
-        return rodadas[0].placares_ocultos || false;
-      }
-
-      // Função para salvar as apostas no Supabase
-      async function salvarApostas() {
-        const nomeRodada = document.getElementById("nome-rodada").value;
-        const jogos = obterJogosDaTabela();
-        const apostas = obterApostasDaTabela();
-        const resultados = obterResultadosDaTabela();
-        const placaresOcultos = await carregarEstadoVisibilidade();
-
-        // Salvar rodada
-        const { data: rodada, error: rodadaError } = await supabase
-          .from("rodadas")
-          .insert([{ nome: nomeRodada, placares_ocultos: placaresOcultos }])
-          .select();
-
-        if (rodadaError) {
-          console.error("Erro ao salvar rodada:", rodadaError);
-          return;
-        }
-
-        const rodadaId = rodada[0].id;
-
-        // Salvar jogos e apostas
-        for (let i = 0; i < jogos.length; i++) {
-          const [time1, time2] = jogos[i].split(" x ");
-          const { data: jogo, error: jogoError } = await supabase
-            .from("jogos")
-            .insert([{ rodada_id: rodadaId, time1, time2 }])
-            .select();
-
-          if (jogoError) {
-            console.error("Erro ao salvar jogo:", jogoError);
-            continue;
-          }
-
-          const jogoId = jogo[0].id;
-
-          // Salvar apostas
-          for (const jogador in apostas) {
-            const { time1, time2 } = apostas[jogador][i];
-            const { error: apostaError } = await supabase
-              .from("apostas")
-              .insert([{ rodada_id: rodadaId, jogo_id: jogoId, jogador, time1, time2 }]);
-
-            if (apostaError) {
-              console.error("Erro ao salvar aposta:", apostaError);
-            }
-          }
-
-          // Salvar resultados
-          const { time1: resultadoTime1, time2: resultadoTime2 } = resultados[i];
-          const { error: resultadoError } = await supabase
-            .from("resultados")
-            .insert([{ rodada_id: rodadaId, jogo_id: jogoId, time1: resultadoTime1, time2: resultadoTime2 }]);
-
-          if (resultadoError) {
-            console.error("Erro ao salvar resultado:", resultadoError);
-          }
-        }
-
-        console.log("Dados salvos com sucesso no Supabase!");
-      }
-
-      // Função para carregar as apostas do Supabase
-      async function carregarApostas() {
-        const { data: rodadas, error: rodadasError } = await supabase
-          .from("rodadas")
-          .select("*")
-          .order("id", { ascending: false })
-          .limit(1);
-
-        if (rodadasError || rodadas.length === 0) {
-          console.error("Erro ao carregar rodadas:", rodadasError);
-          return;
-        }
-
-        const rodadaId = rodadas[0].id;
-        document.getElementById("nome-rodada").value = rodadas[0].nome;
-
-        const { data: jogos, error: jogosError } = await supabase
-          .from("jogos")
-          .select("*")
-          .eq("rodada_id", rodadaId);
-
-        if (jogosError) {
-          console.error("Erro ao carregar jogos:", jogosError);
-          return;
-        }
-
-        const { data: apostas, error: apostasError } = await supabase
-          .from("apostas")
-          .select("*")
-          .eq("rodada_id", rodadaId);
-
-        if (apostasError) {
-          console.error("Erro ao carregar apostas:", apostasError);
-          return;
-        }
-
-        const { data: resultados, error: resultadosError } = await supabase
-          .from("resultados")
-          .select("*")
-          .eq("rodada_id", rodadaId);
-
-        if (resultadosError) {
-          console.error("Erro ao carregar resultados:", resultadosError);
-          return;
-        }
-
-        preencherTabela(jogos, apostas, resultados);
-        calcularPontuacao();
-      }
-
-      // Função para preencher a tabela com os dados carregados
-      function preencherTabela(jogos, apostas, resultados) {
-        const inputsJogos = document.querySelectorAll(".input-jogo");
-        const inputsApostas = document.querySelectorAll(".aposta");
-        const inputsResultados = document.querySelectorAll(".resultado");
-
-        // Preenche os nomes dos times
-        inputsJogos.forEach((input, index) => {
-          input.value = jogos[index]?.time1 + " x " + jogos[index]?.time2 || "";
-        });
-
-        // Preenche as apostas dos jogadores
-        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-        jogadores.forEach((jogador, jogadorIndex) => {
-          for (let i = 0; i < 10; i++) {
-            const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
-            const indexFora = indexCasa + 1; // Índice do time2
-            inputsApostas[indexCasa].value = apostas.find(
-              (aposta) => aposta.jogador === jogador && aposta.jogo_id === jogos[i].id
-            )?.time1 || "";
-            inputsApostas[indexFora].value = apostas.find(
-              (aposta) => aposta.jogador === jogador && aposta.jogo_id === jogos[i].id
-            )?.time2 || "";
-          }
-        });
-
-        // Preenche os resultados
-        for (let i = 0; i < 10; i++) {
-          inputsResultados[i * 2].value = resultados.find(
-            (resultado) => resultado.jogo_id === jogos[i].id
-          )?.time1 || "";
-          inputsResultados[i * 2 + 1].value = resultados.find(
-            (resultado) => resultado.jogo_id === jogos[i].id
-          )?.time2 || "";
-        }
-      }
-
-      // Função para calcular a pontuação
-      async function calcularPontuacao() {
-        const apostas = obterApostasDaTabela();
-        const resultados = obterResultadosDaTabela();
-        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-        const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
-        const placaresExatos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
-
-        for (let i = 0; i < 10; i++) {
-          const resultadoCasa = resultados[i].time1;
-          const resultadoFora = resultados[i].time2;
-
-          if (resultadoCasa === "" || resultadoFora === "") continue;
-
-          jogadores.forEach((jogador) => {
-            const apostaCasa = apostas[jogador][i].time1;
-            const apostaFora = apostas[jogador][i].time2;
-
-            if (apostaCasa === "" || apostaFora === "") return;
-
-            if (apostaCasa === resultadoCasa && apostaFora === resultadoFora) {
-              pontos[jogador] += 3;
-              placaresExatos[jogador] += 1;
-            } else if (
-              (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
-              (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
-              (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
-            ) {
-              pontos[jogador] += 1;
+      // Adiciona eventos de input, change, blur e keydown para salvar automaticamente
+      function adicionarEventosSalvamento() {
+        const inputs = document.querySelectorAll(
+          ".aposta, .resultado, .input-jogo, #nome-rodada"
+        );
+        inputs.forEach((input) => {
+          input.addEventListener("input", salvarApostasDebounced);
+          input.addEventListener("change", salvarApostasDebounced);
+          input.addEventListener("blur", salvarApostasDebounced);
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced();
             }
           });
-        }
-
-        const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => b[1] - a[1]);
-        const pontuacaoMaxima = jogadoresOrdenados[0][1];
-        const vencedores = pontuacaoMaxima > 0
-          ? jogadoresOrdenados.filter(([_, pontuacao]) => pontuacao === pontuacaoMaxima)
-          : [];
-
-        const pontuacaoHTML = jogadoresOrdenados
-          .map(([jogador, pontuacao]) => {
-            const isVencedor = vencedores.some(([vencedor]) => vencedor === jogador);
-            return `<div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
-                      <h3>${jogador}</h3>
-                      <p>${pontuacao} pontos</p>
-                    </div>`;
-          })
-          .join("");
-
-        document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
-
-        // Salvar ranking no Supabase
-        await salvarRanking(jogadoresOrdenados);
+        });
       }
 
-      // Função para salvar o ranking no Supabase
-      async function salvarRanking(jogadoresOrdenados) {
-        const { data: rodadas, error: rodadasError } = await supabase
-          .from("rodadas")
-          .select("*")
-          .order("id", { ascending: false })
-          .limit(1);
+      const titulo = "Brasileirão AlphaBet 2025";
+      const containerTitulo = document.querySelector(".container-titulo");
 
-        if (rodadasError || rodadas.length === 0) {
-          console.error("Erro ao carregar rodadas:", rodadasError);
-          return;
-        }
+      // Adiciona as letras do título com animação
+      titulo.split("").forEach((letra, index) => {
+        const span = document.createElement("span");
+        span.textContent = letra;
+        span.classList.add("letra");
+        span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
+        containerTitulo.appendChild(span);
+      });
 
-        const rodadaId = rodadas[0].id;
+      async function toggleVisibility() {
+  const isHidden = await carregarEstadoVisibilidade();
+  const novoEstado = !isHidden;
 
-        for (let i = 0; i < jogadoresOrdenados.length; i++) {
-          const [jogador, pontuacao] = jogadoresOrdenados[i];
-          const { error } = await supabase
-            .from("ranking")
-            .insert([{ rodada_id: rodadaId, jogador, posicao: i + 1 }]);
+  await salvarEstadoVisibilidade(novoEstado);
+  verificarEstadoPlacares();
+}
 
-          if (error) {
-            console.error("Erro ao salvar ranking:", error);
-          }
-        }
-      }
+function ocultarPlacares() {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const inputsApostas = document.querySelectorAll(".aposta");
+
+  inputsApostas.forEach((input) => {
+    const colunaJogador = input.classList.contains("jogador0")
+      ? "Jardel"
+      : input.classList.contains("jogador1")
+      ? "Werbet"
+      : input.classList.contains("jogador2")
+      ? "Nailton"
+      : input.classList.contains("jogador3")
+      ? "Phillipe"
+      : null;
+
+    // Oculta os placares dos outros jogadores
+    if (colunaJogador && colunaJogador !== loggedInUser) {
+      input.style.display = "none";
+    } else {
+      input.style.display = ""; // Mostra os placares do jogador logado
+      input.disabled = false; // Permite edição apenas para o jogador logado
+      input.style.backgroundColor = "";
+    }
+  });
+}
+
+function mostrarPlacares() {
+  const inputsApostas = document.querySelectorAll(".aposta");
+
+  inputsApostas.forEach((input) => {
+    input.style.display = ""; // Mostra o input
+    input.disabled = true; // Torna o input não editável
+    input.style.backgroundColor = "#f0f0f0";
+  });
+}
+
+async function salvarEstadoVisibilidade(estado) {
+    const { data: rodadas, error: rodadasError } = await supabase
+        .from('rodadas')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(1);
+
+    if (rodadasError || rodadas.length === 0) {
+        console.error("Erro ao carregar rodadas:", rodadasError);
+        return;
+    }
+
+    const rodadaId = rodadas[0].id;
+
+    const { error } = await supabase
+        .from('rodadas')
+        .update({ placares_ocultos: estado })
+        .eq('id', rodadaId);
+
+    if (error) {
+        console.error("Erro ao salvar estado de visibilidade:", error);
+    }
+}
+
+async function carregarEstadoVisibilidade() {
+    const { data: rodadas, error: rodadasError } = await supabase
+        .from('rodadas')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(1);
+
+    if (rodadasError || rodadas.length === 0) {
+        console.error("Erro ao carregar rodadas:", rodadasError);
+        return false;
+    }
+
+    return rodadas[0].placares_ocultos || false;
+}
+async function verificarEstadoPlacares() {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  const toggleButton = document.getElementById("toggle-visibility");
+  const toggleText = document.getElementById("toggle-text");
+
+  // Mostrar o botão apenas para o jogador Jardel
+  if (loggedInUser === "Jardel") {
+    toggleButton.classList.remove("hidden");
+    toggleButton.addEventListener("click", toggleVisibility);
+  } else {
+    toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
+  }
+
+  // Verificar o estado de visibilidade no backend
+  const isHidden = await carregarEstadoVisibilidade();
+  if (isHidden) {
+    ocultarPlacares();
+    toggleText.textContent = "Revelar Placar";
+  } else {
+    mostrarPlacares();
+    toggleText.textContent = "Ocultar Placar";
+  }
+}
 
       // Função para fazer logout
       function logout() {
@@ -934,45 +790,8 @@ iframe {
         document.getElementById("main-content").classList.add("hidden");
       }
 
-      // Função para abrir o ranking
-      function abrirRanking() {
-        window.open("ranking.html", "_blank");
-      }
-
-      // Função para lidar com o pressionamento de teclas
-      function handleKeyPress(event) {
-        if (event.key === "Enter") {
-          login();
-        }
-      }
-
-      // Função para fazer login (mantida conforme original)
-      async function login() {
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        // Lógica de login original (não alterada)
-        const senhasCriptografadas = await buscarSenhasCriptografadas();
-
-        if (senhasCriptografadas[username]) {
-          const senhaDescriptografada = await descriptografar(senhasCriptografadas[username]);
-
-          if (senhaDescriptografada === password) {
-            localStorage.setItem("loggedInUser", username);
-            document.getElementById("login-container").classList.add("hidden");
-            document.getElementById("main-content").classList.remove("hidden");
-            verificarEstadoPlacares();
-            carregarApostas();
-          } else {
-            alert("Nome de usuário ou senha incorretos!");
-          }
-        } else {
-          alert("Nome de usuário ou senha incorretos!");
-        }
-      }
-
-      // Função para buscar senhas criptografadas (mantida conforme original)
-        async function buscarSenhasCriptografadas() {
+      // Função para buscar as senhas criptografadas do backend
+      async function buscarSenhasCriptografadas() {
         try {
           const response = await fetch("/.netlify/functions/senhas");
           if (!response.ok) {
@@ -987,7 +806,7 @@ iframe {
         }
       }
 
-      // Função para descriptografar (mantida conforme original)
+      // Função para descriptografar usando o backend
       async function descriptografar(textoCriptografado) {
         try {
           const response = await fetch("/.netlify/functions/descriptografar", {
@@ -1009,7 +828,191 @@ iframe {
         }
       }
 
-      // Função para criar as linhas da tabela
+      // Função de login
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
+
+        // Busca as senhas criptografadas do backend
+        const senhasCriptografadas = await buscarSenhasCriptografadas();
+
+        if (senhasCriptografadas[username]) {
+          // Descriptografa a senha usando o backend
+          const senhaDescriptografada = await descriptografar(
+            senhasCriptografadas[username]
+          );
+
+          if (senhaDescriptografada === password) {
+            localStorage.setItem("loggedInUser", username);
+            document.getElementById("login-container").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            verificarEstadoPlacares(); // Verificar o estado dos placares ao fazer login
+            carregarApostas(); // Carrega as apostas salvas
+          } else {
+            alert("Nome de usuário ou senha incorretos!");
+          }
+        } else {
+          alert("Nome de usuário ou senha incorretos!");
+        }
+      }
+
+      // Função para bloquear as colunas dos outros jogadores
+      function bloquearColunasOutrosJogadores() {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        if (!loggedInUser) return;
+
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        const inputsApostas = document.querySelectorAll(".aposta");
+
+        inputsApostas.forEach((input) => {
+          const colunaJogador = input.classList.contains("jogador0")
+            ? "Jardel"
+            : input.classList.contains("jogador1")
+            ? "Werbet"
+            : input.classList.contains("jogador2")
+            ? "Nailton"
+            : input.classList.contains("jogador3")
+            ? "Phillipe"
+            : null;
+
+          // Se o input pertence a outro jogador e os placares estão visíveis, bloqueia a edição
+          if (
+            colunaJogador &&
+            colunaJogador !== loggedInUser &&
+            localStorage.getItem("placaresOcultos") !== "true"
+          ) {
+            input.disabled = true;
+            input.style.backgroundColor = "#f0f0f0";
+          } else {
+            input.disabled = false;
+            input.style.backgroundColor = "";
+          }
+        });
+      }
+
+      function abrirRanking() {
+  window.open("ranking.html", "_blank");
+}
+
+
+      import { createClient } from '@supabase/supabase-js'      
+
+      const supabaseUrl = 'https://leuyfasvbfwdaloapmrs.supabase.co';
+      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4';
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      document.addEventListener("DOMContentLoaded", function () {
+        criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
+        adicionarNavegacao();
+        adicionarNavegacaoJogos();
+        adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
+        adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
+        carregarApostas(); // Carrega as apostas salvas
+
+        // Adiciona evento de input para o nome da rodada
+        document
+          .getElementById("nome-rodada")
+          .addEventListener("input", salvarApostasDebounced);
+      });
+
+      function adicionarNavegacaoJogos() {
+        const inputsJogos = document.querySelectorAll(".input-jogo");
+        inputsJogos.forEach((input, index) => {
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === "Tab") {
+              event.preventDefault();
+              const nextIndex = index + 1;
+              if (nextIndex < inputsJogos.length) {
+                inputsJogos[nextIndex].focus();
+              }
+            }
+
+            // Adiciona a lógica de apagar com Delete ou Backspace
+            if (event.key === "Delete" || event.key === "Backspace") {
+              event.preventDefault();
+
+              // Se houver texto no campo, remove o último caractere
+              if (input.value.length > 0) {
+                input.value = input.value.slice(0, -1); // Remove o último caractere
+              } else {
+                // Se o campo estiver vazio, move o foco para o campo anterior na mesma coluna
+                const prevIndex = index - 1;
+                if (prevIndex >= 0) {
+                  inputsJogos[prevIndex].focus();
+                }
+                // Se estiver no primeiro campo da coluna, o foco para aqui
+              }
+            }
+          });
+        });
+      }
+
+      function adicionarNavegacao() {
+        // Navegação para as colunas dos jogadores
+        for (let i = 0; i < 4; i++) {
+          const coluna = document.querySelectorAll(`input.jogador${i}`);
+          coluna.forEach((input, index) => {
+            input.addEventListener("input", (event) => {
+              if (event.target.value.length === 1) {
+                // Verifica se um número foi digitado
+                let nextIndex = index + 1;
+                if (nextIndex < coluna.length) {
+                  coluna[nextIndex].focus(); // Move o foco para o próximo campo na mesma coluna
+                }
+              }
+            });
+
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                event.preventDefault();
+                if (input.value === "") {
+                  // Move o foco para o campo anterior na mesma coluna
+                  const prevIndex = index - 1;
+                  if (prevIndex >= 0) {
+                    coluna[prevIndex].focus();
+                  }
+                  // Se estiver no primeiro campo da coluna, o foco para aqui
+                } else {
+                  // Limpa o campo atual
+                  input.value = "";
+                }
+              }
+            });
+          });
+        }
+
+        // Navegação para os campos de resultado
+        const placarReal = document.querySelectorAll("input.resultado");
+        placarReal.forEach((input, index) => {
+          input.addEventListener("input", (event) => {
+            if (event.target.value.length === 1) {
+              // Verifica se um número foi digitado
+              let nextIndex = index + 1;
+              if (nextIndex < placarReal.length) {
+                placarReal[nextIndex].focus(); // Move o foco para o próximo campo de resultado
+              }
+            }
+          });
+
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              event.preventDefault();
+              if (input.value === "") {
+                // Move o foco para o campo anterior na mesma coluna
+                const prevIndex = index - 1;
+                if (prevIndex >= 0) {
+                  placarReal[prevIndex].focus();
+                }
+                // Se estiver no primeiro campo da coluna, o foco para aqui
+              } else {
+                // Limpa o campo atual
+                input.value = "";
+              }
+            }
+          });
+        });
+      }
+
       function criarLinhasTabela() {
         const tabela = document.getElementById("tabela-apostas");
 
@@ -1044,7 +1047,145 @@ iframe {
         }
       }
 
-      // Função para obter os jogos da tabela
+      async function carregarApostas() {
+    const { data: rodadas, error: rodadasError } = await supabase
+        .from('rodadas')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(1);
+
+    if (rodadasError || rodadas.length === 0) {
+        console.error("Erro ao carregar rodadas:", rodadasError);
+        return;
+    }
+
+    const rodadaId = rodadas[0].id;
+    document.getElementById("nome-rodada").value = rodadas[0].nome;
+
+    const { data: jogos, error: jogosError } = await supabase
+        .from('jogos')
+        .select('*')
+        .eq('rodada_id', rodadaId);
+
+    if (jogosError) {
+        console.error("Erro ao carregar jogos:", jogosError);
+        return;
+    }
+
+    const { data: apostas, error: apostasError } = await supabase
+        .from('apostas')
+        .select('*')
+        .eq('rodada_id', rodadaId);
+
+    if (apostasError) {
+        console.error("Erro ao carregar apostas:", apostasError);
+        return;
+    }
+
+    const { data: resultados, error: resultadosError } = await supabase
+        .from('resultados')
+        .select('*')
+        .eq('rodada_id', rodadaId);
+
+    if (resultadosError) {
+        console.error("Erro ao carregar resultados:", resultadosError);
+        return;
+    }
+
+    preencherTabela(jogos, apostas, resultados);
+    calcularPontuacao();
+}
+
+async function salvarApostas() {
+    const nomeRodada = document.getElementById("nome-rodada").value;
+    const jogos = obterJogosDaTabela();
+    const apostas = obterApostasDaTabela();
+    const resultados = obterResultadosDaTabela();
+    const placaresOcultos = await carregarEstadoVisibilidade();
+
+    // Salvar rodada
+    const { data: rodada, error: rodadaError } = await supabase
+        .from('rodadas')
+        .insert([{ nome: nomeRodada, placares_ocultos: placaresOcultos }])
+        .select();
+
+    if (rodadaError) {
+        console.error("Erro ao salvar rodada:", rodadaError);
+        return;
+    }
+
+    const rodadaId = rodada[0].id;
+
+    // Salvar jogos
+    for (let i = 0; i < jogos.length; i++) {
+        const [time1, time2] = jogos[i].split(' x ');
+        const { data: jogo, error: jogoError } = await supabase
+            .from('jogos')
+            .insert([{ rodada_id: rodadaId, time1, time2 }])
+            .select();
+
+        if (jogoError) {
+            console.error("Erro ao salvar jogo:", jogoError);
+            continue;
+        }
+
+        const jogoId = jogo[0].id;
+
+        // Salvar apostas
+        for (const jogador in apostas) {
+            const { time1, time2 } = apostas[jogador][i];
+            const { error: apostaError } = await supabase
+                .from('apostas')
+                .insert([{ rodada_id: rodadaId, jogo_id: jogoId, jogador, time1, time2 }]);
+
+            if (apostaError) {
+                console.error("Erro ao salvar aposta:", apostaError);
+            }
+        }
+
+        // Salvar resultados
+        const { time1: resultadoTime1, time2: resultadoTime2 } = resultados[i];
+        const { error: resultadoError } = await supabase
+            .from('resultados')
+            .insert([{ rodada_id: rodadaId, jogo_id: jogoId, time1: resultadoTime1, time2: resultadoTime2 }]);
+
+        if (resultadoError) {
+            console.error("Erro ao salvar resultado:", resultadoError);
+        }
+    }
+
+    console.log("Dados salvos com sucesso no Supabase!");
+}
+
+      function preencherTabela(jogos, apostas, resultados) {
+        console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
+        const inputsJogos = document.querySelectorAll(".input-jogo");
+        const inputsApostas = document.querySelectorAll(".aposta");
+        const inputsResultados = document.querySelectorAll(".resultado");
+
+        // Preenche os nomes dos times
+        inputsJogos.forEach((input, index) => {
+          input.value = jogos[index] || "";
+        });
+
+        // Preenche as apostas dos jogadores
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        jogadores.forEach((jogador, jogadorIndex) => {
+          for (let i = 0; i < 10; i++) {
+            const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
+            const indexFora = indexCasa + 1; // Índice do time2
+            inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+            inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
+          }
+        });
+
+        // Preenche os resultados
+        for (let i = 0; i < 10; i++) {
+          inputsResultados[i * 2].value = resultados[i].time1 || "";
+          inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+        }
+      }
+
       function obterJogosDaTabela() {
         const jogos = [];
         const inputs = document.querySelectorAll(".input-jogo");
@@ -1052,7 +1193,6 @@ iframe {
         return jogos;
       }
 
-      // Função para obter as apostas da tabela
       function obterApostasDaTabela() {
         const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
         const inputs = document.querySelectorAll(".aposta");
@@ -1079,7 +1219,6 @@ iframe {
         return apostas;
       }
 
-      // Função para obter os resultados da tabela
       function obterResultadosDaTabela() {
         const resultados = [];
         const inputs = document.querySelectorAll(".resultado");
@@ -1093,6 +1232,119 @@ iframe {
 
         return resultados;
       }
+
+      // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
+      function calcularPontuacao() {
+    const apostas = obterApostasDaTabela();
+    const resultados = obterResultadosDaTabela();
+    const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+    const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+    const placaresExatos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+
+    for (let i = 0; i < 10; i++) {
+        const resultadoCasa = resultados[i].time1;
+        const resultadoFora = resultados[i].time2;
+
+        // Ignora jogos sem resultado
+        if (resultadoCasa === "" || resultadoFora === "") continue;
+
+        jogadores.forEach((jogador) => {
+            const apostaCasa = apostas[jogador][i].time1;
+            const apostaFora = apostas[jogador][i].time2;
+
+            // Ignora apostas em branco
+            if (apostaCasa === "" || apostaFora === "") return;
+
+            if (apostaCasa === resultadoCasa && apostaFora === resultadoFora) {
+                pontos[jogador] += 3; // Acertou o placar exato
+                placaresExatos[jogador] += 1; // Incrementa o contador de placares exatos
+            } else if (
+                (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
+                (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
+                (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
+            ) {
+                pontos[jogador] += 1; // Acertou o vencedor ou empate
+            }
+        });
+    }
+
+    // Ordena os jogadores por pontuação (do maior para o menor)
+    const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
+        if (b[1] !== a[1]) {
+            return b[1] - a[1]; // Ordena por pontuação decrescente
+        } else {
+            // Em caso de empate, ordena pelo número de placares exatos
+            const placaresExatosA = placaresExatos[a[0]];
+            const placaresExatosB = placaresExatos[b[0]];
+            return placaresExatosB - placaresExatosA;
+        }
+    });
+
+    // Verifica a pontuação máxima
+    const pontuacaoMaxima = jogadoresOrdenados[0][1];
+
+    // Filtra os jogadores com a pontuação máxima
+    const vencedores = pontuacaoMaxima > 0
+        ? jogadoresOrdenados.filter(([_, pontuacao]) => pontuacao === pontuacaoMaxima)
+        : [];
+
+    // Atualiza a exibição da pontuação
+    const pontuacaoHTML = jogadoresOrdenados
+        .map(([jogador, pontuacao]) => {
+            const isVencedor = vencedores.some(([vencedor]) => vencedor === jogador);
+            return `<div class="pontuacao-card ${
+                isVencedor ? "vencedor" : ""
+            }"><h3>${jogador}</h3>
+                    <span>
+                    <p>${pontuacao} pontos</p></div>`;
+        })
+        .join("");
+
+    document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+}
+
+      // Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
+      function adicionarEventosCalculoPontuacao() {
+        // Adiciona eventos aos campos de apostas
+        const inputsApostas = document.querySelectorAll(".aposta");
+        inputsApostas.forEach((input) => {
+          input.addEventListener("input", function () {
+            salvarApostasDebounced(); // Salva as apostas automaticamente
+            calcularPontuacao(); // Recalcula a pontuação
+          });
+
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
+            }
+          });
+        });
+
+        // Adiciona eventos aos campos de resultado
+        const inputsResultados = document.querySelectorAll(".resultado");
+        inputsResultados.forEach((input) => {
+          input.addEventListener("input", function () {
+            salvarApostasDebounced(); // Salva as apostas automaticamente
+            calcularPontuacao(); // Recalcula a pontuação
+          });
+
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
+            }
+          });
+        });
+      }
+
+      function limparApostas() {
+        document
+          .querySelectorAll("input")
+          .forEach((input) => (input.value = ""));
+        document.getElementById("pontuacao").innerHTML = "";
+      }
     </script>
+    </div>
   </body>
 </html>
