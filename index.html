@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AlphaBet 2025 - Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <link
       rel="stylesheet"
@@ -893,13 +894,11 @@ async function verificarEstadoPlacares() {
       function abrirRanking() {
   window.open("ranking.html", "_blank");
 }
-
-
-      import { createClient } from '@supabase/supabase-js'      
+     
 
       const supabaseUrl = 'https://leuyfasvbfwdaloapmrs.supabase.co';
       const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4';
-      const supabase = createClient(supabaseUrl, supabaseKey);
+      const supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
 
       document.addEventListener("DOMContentLoaded", function () {
         criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
@@ -1048,6 +1047,7 @@ async function verificarEstadoPlacares() {
       }
 
       async function carregarApostas() {
+        console.log("Iniciando carregamento de apostas...");
     const { data: rodadas, error: rodadasError } = await supabase
         .from('rodadas')
         .select('*')
@@ -1060,19 +1060,24 @@ async function verificarEstadoPlacares() {
     }
 
     const rodadaId = rodadas[0].id;
-    document.getElementById("nome-rodada").value = rodadas[0].nome;
+    document.getElementById("nome-rodada").value = rodadas[0].nome || "";
 
+    // Get jogos for this rodada
     const { data: jogos, error: jogosError } = await supabase
         .from('jogos')
         .select('*')
         .eq('rodada_id', rodadaId);
 
-    if (jogosError) {
+    if (jogosError || !jogos) {
         console.error("Erro ao carregar jogos:", jogosError);
         return;
     }
 
-    const { data: apostas, error: apostasError } = await supabase
+    // Format jogos for display
+    const jogosFormatados = jogos.map(jogo => `${jogo.time1 || ""} x ${jogo.time2 || ""}`);
+
+    // Get apostas for this rodada
+    const { data: apostasData, error: apostasError } = await supabase
         .from('apostas')
         .select('*')
         .eq('rodada_id', rodadaId);
@@ -1082,7 +1087,30 @@ async function verificarEstadoPlacares() {
         return;
     }
 
-    const { data: resultados, error: resultadosError } = await supabase
+    // Format apostas by jogador
+    const apostas = {
+        "Jardel": Array(10).fill().map(() => ({ time1: "", time2: "" })),
+        "Werbet": Array(10).fill().map(() => ({ time1: "", time2: "" })),
+        "Nailton": Array(10).fill().map(() => ({ time1: "", time2: "" })),
+        "Phillipe": Array(10).fill().map(() => ({ time1: "", time2: "" }))
+    };
+
+    // Group apostas by jogo_id and jogador
+    apostasData?.forEach(aposta => {
+        if (apostas[aposta.jogador]) {
+            // Find the index of the jogo in the jogos array
+            const jogoIndex = jogos.findIndex(jogo => jogo.id === aposta.jogo_id);
+            if (jogoIndex !== -1 && jogoIndex < 10) {
+                apostas[aposta.jogador][jogoIndex] = {
+                    time1: aposta.time1 || "",
+                    time2: aposta.time2 || ""
+                };
+            }
+        }
+    });
+
+    // Get resultados for this rodada
+    const { data: resultadosData, error: resultadosError } = await supabase
         .from('resultados')
         .select('*')
         .eq('rodada_id', rodadaId);
@@ -1092,7 +1120,26 @@ async function verificarEstadoPlacares() {
         return;
     }
 
-    preencherTabela(jogos, apostas, resultados);
+    // Format resultados by jogo_id
+    const resultados = Array(10).fill().map(() => ({ time1: "", time2: "" }));
+    
+    resultadosData?.forEach(resultado => {
+        const jogoIndex = jogos.findIndex(jogo => jogo.id === resultado.jogo_id);
+        if (jogoIndex !== -1 && jogoIndex < 10) {
+            resultados[jogoIndex] = {
+                time1: resultado.time1 || "",
+                time2: resultado.time2 || ""
+            };
+        }
+    });
+
+    // Fill only as many rows as we have data
+    const numJogos = Math.min(jogos.length, 10);
+    
+    // Make sure we have 10 entries (or as many as configured in the table)
+    while (jogosFormatados.length < 10) jogosFormatados.push("");
+    
+    preencherTabela(jogosFormatados, apostas, resultados);
     calcularPontuacao();
 }
 
@@ -1101,90 +1148,205 @@ async function salvarApostas() {
     const jogos = obterJogosDaTabela();
     const apostas = obterApostasDaTabela();
     const resultados = obterResultadosDaTabela();
-    const placaresOcultos = await carregarEstadoVisibilidade();
-
-    // Salvar rodada
-    const { data: rodada, error: rodadaError } = await supabase
-        .from('rodadas')
-        .insert([{ nome: nomeRodada, placares_ocultos: placaresOcultos }])
-        .select();
-
-    if (rodadaError) {
-        console.error("Erro ao salvar rodada:", rodadaError);
-        return;
-    }
-
-    const rodadaId = rodada[0].id;
-
-    // Salvar jogos
-    for (let i = 0; i < jogos.length; i++) {
-        const [time1, time2] = jogos[i].split(' x ');
-        const { data: jogo, error: jogoError } = await supabase
-            .from('jogos')
-            .insert([{ rodada_id: rodadaId, time1, time2 }])
-            .select();
-
-        if (jogoError) {
-            console.error("Erro ao salvar jogo:", jogoError);
-            continue;
+    
+    try {
+        // Check if we already have a current rodada
+        const { data: existingRodadas, error: rodadasCheckError } = await supabase
+            .from('rodadas')
+            .select('*')
+            .order('id', { ascending: false })
+            .limit(1);
+        
+        if (rodadasCheckError) throw rodadasCheckError;
+        
+        let rodadaId;
+        
+        // Update existing rodada or create a new one
+        if (existingRodadas && existingRodadas.length > 0) {
+            rodadaId = existingRodadas[0].id;
+            
+            // Update the rodada name if it changed
+            if (existingRodadas[0].nome !== nomeRodada) {
+                const { error: updateError } = await supabase
+                    .from('rodadas')
+                    .update({ nome: nomeRodada })
+                    .eq('id', rodadaId);
+                
+                if (updateError) throw updateError;
+            }
+        } else {
+            // Create a new rodada
+            const { data: rodada, error: rodadaError } = await supabase
+                .from('rodadas')
+                .insert([{ nome: nomeRodada, placares_ocultos: false }])
+                .select();
+            
+            if (rodadaError) throw rodadaError;
+            rodadaId = rodada[0].id;
         }
-
-        const jogoId = jogo[0].id;
-
-        // Salvar apostas
-        for (const jogador in apostas) {
-            const { time1, time2 } = apostas[jogador][i];
-            const { error: apostaError } = await supabase
-                .from('apostas')
-                .insert([{ rodada_id: rodadaId, jogo_id: jogoId, jogador, time1, time2 }]);
-
-            if (apostaError) {
-                console.error("Erro ao salvar aposta:", apostaError);
+        
+        // First, handle the jogos
+        for (let i = 0; i < jogos.length; i++) {
+            if (!jogos[i]) continue; // Skip empty games
+            
+            const [time1, time2] = jogos[i].split(' x ').map(t => t.trim());
+            
+            // Check if this jogo already exists
+            const { data: existingJogos, error: jogosCheckError } = await supabase
+                .from('jogos')
+                .select('*')
+                .eq('rodada_id', rodadaId)
+                .eq('posicao', i);
+            
+            if (jogosCheckError) throw jogosCheckError;
+            
+            let jogoId;
+            
+            if (existingJogos && existingJogos.length > 0) {
+                // Update existing jogo
+                jogoId = existingJogos[0].id;
+                const { error: updateError } = await supabase
+                    .from('jogos')
+                    .update({ time1, time2 })
+                    .eq('id', jogoId);
+                
+                if (updateError) throw updateError;
+            } else {
+                // Create new jogo
+                const { data: jogo, error: jogoError } = await supabase
+                    .from('jogos')
+                    .insert([{ rodada_id: rodadaId, time1, time2, posicao: i }])
+                    .select();
+                
+                if (jogoError) throw jogoError;
+                jogoId = jogo[0].id;
+            }
+            
+            // Handle apostas for this jogo
+            for (const jogador in apostas) {
+                const apostaData = apostas[jogador][i];
+                
+                // Check if aposta already exists
+                const { data: existingApostas, error: apostasCheckError } = await supabase
+                    .from('apostas')
+                    .select('*')
+                    .eq('rodada_id', rodadaId)
+                    .eq('jogo_id', jogoId)
+                    .eq('jogador', jogador);
+                
+                if (apostasCheckError) throw apostasCheckError;
+                
+                if (existingApostas && existingApostas.length > 0) {
+                    // Update existing aposta
+                    const { error: updateError } = await supabase
+                        .from('apostas')
+                        .update({ time1: apostaData.time1, time2: apostaData.time2 })
+                        .eq('id', existingApostas[0].id);
+                    
+                    if (updateError) throw updateError;
+                } else {
+                    // Create new aposta
+                    const { error: apostaError } = await supabase
+                        .from('apostas')
+                        .insert([{
+                            rodada_id: rodadaId,
+                            jogo_id: jogoId,
+                            jogador,
+                            time1: apostaData.time1,
+                            time2: apostaData.time2
+                        }]);
+                    
+                    if (apostaError) throw apostaError;
+                }
+            }
+            
+            // Handle resultado for this jogo
+            const resultadoData = resultados[i];
+            
+            // Check if resultado already exists
+            const { data: existingResultados, error: resultadosCheckError } = await supabase
+                .from('resultados')
+                .select('*')
+                .eq('rodada_id', rodadaId)
+                .eq('jogo_id', jogoId);
+            
+            if (resultadosCheckError) throw resultadosCheckError;
+            
+            if (existingResultados && existingResultados.length > 0) {
+                // Update existing resultado
+                const { error: updateError } = await supabase
+                    .from('resultados')
+                    .update({ time1: resultadoData.time1, time2: resultadoData.time2 })
+                    .eq('id', existingResultados[0].id);
+                
+                if (updateError) throw updateError;
+            } else {
+                // Create new resultado
+                const { error: resultadoError } = await supabase
+                    .from('resultados')
+                    .insert([{
+                        rodada_id: rodadaId,
+                        jogo_id: jogoId,
+                        time1: resultadoData.time1,
+                        time2: resultadoData.time2
+                    }]);
+                
+                if (resultadoError) throw resultadoError;
             }
         }
-
-        // Salvar resultados
-        const { time1: resultadoTime1, time2: resultadoTime2 } = resultados[i];
-        const { error: resultadoError } = await supabase
-            .from('resultados')
-            .insert([{ rodada_id: rodadaId, jogo_id: jogoId, time1: resultadoTime1, time2: resultadoTime2 }]);
-
-        if (resultadoError) {
-            console.error("Erro ao salvar resultado:", resultadoError);
-        }
+        console.log("Dados salvos com sucesso no Supabase!");
+        
+    } catch (error) {
+        console.error("Erro ao salvar dados:", error);
+        alert("Erro ao salvar dados. Verifique o console para mais detalhes.");
     }
-
-    console.log("Dados salvos com sucesso no Supabase!");
 }
 
-      function preencherTabela(jogos, apostas, resultados) {
-        console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
-        const inputsJogos = document.querySelectorAll(".input-jogo");
-        const inputsApostas = document.querySelectorAll(".aposta");
-        const inputsResultados = document.querySelectorAll(".resultado");
 
-        // Preenche os nomes dos times
-        inputsJogos.forEach((input, index) => {
-          input.value = jogos[index] || "";
-        });
+function preencherTabela(jogos, apostas, resultados) {
+    console.log("Preenchendo tabela com jogos:", jogos);
+    const inputsJogos = document.querySelectorAll(".input-jogo");
+    const inputsApostas = document.querySelectorAll(".aposta");
+    const inputsResultados = document.querySelectorAll(".resultado");
 
-        // Preenche as apostas dos jogadores
-        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-        jogadores.forEach((jogador, jogadorIndex) => {
-          for (let i = 0; i < 10; i++) {
-            const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
-            const indexFora = indexCasa + 1; // Índice do time2
-            inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
-            inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
-          }
-        });
-
-        // Preenche os resultados
-        for (let i = 0; i < 10; i++) {
-          inputsResultados[i * 2].value = resultados[i].time1 || "";
-          inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+    // Preenche os nomes dos times
+    inputsJogos.forEach((input, index) => {
+        if (index < jogos.length) {
+            input.value = jogos[index] || "";
+        } else {
+            input.value = "";
         }
-      }
+    });
+
+    // Preenche as apostas dos jogadores
+    const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+    jogadores.forEach((jogador, jogadorIndex) => {
+        for (let i = 0; i < 10; i++) {
+            const indexCasa = i * 8 + jogadorIndex * 2;
+            const indexFora = indexCasa + 1;
+            
+            // Verifica se temos dados para este índice
+            if (i < jogos.length && apostas[jogador] && apostas[jogador][i]) {
+                inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+                inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
+            } else {
+                inputsApostas[indexCasa].value = "";
+                inputsApostas[indexFora].value = "";
+            }
+        }
+    });
+
+    // Preenche os resultados
+    for (let i = 0; i < 10; i++) {
+        if (i < resultados.length) {
+            inputsResultados[i * 2].value = resultados[i].time1 || "";
+            inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+        } else {
+            inputsResultados[i * 2].value = "";
+            inputsResultados[i * 2 + 1].value = "";
+        }
+    }
+}
 
       function obterJogosDaTabela() {
         const jogos = [];
