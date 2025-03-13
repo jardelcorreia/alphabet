@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AlphaBet 2025 - Login</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <link
       rel="stylesheet"
@@ -723,43 +723,37 @@ function mostrarPlacares() {
 }
 
 async function salvarEstadoVisibilidade(estado) {
-    const { data: rodadas, error: rodadasError } = await supabase
-        .from('rodadas')
-        .select('*')
-        .order('id', { ascending: false })
-        .limit(1);
+  try {
+    const { data: rodada, error } = await supabase
+      .from("rodadas")
+      .upsert({ placares_ocultos: estado })
+      .select()
+      .single();
 
-    if (rodadasError || rodadas.length === 0) {
-        console.error("Erro ao carregar rodadas:", rodadasError);
-        return;
-    }
-
-    const rodadaId = rodadas[0].id;
-
-    const { error } = await supabase
-        .from('rodadas')
-        .update({ placares_ocultos: estado })
-        .eq('id', rodadaId);
-
-    if (error) {
-        console.error("Erro ao salvar estado de visibilidade:", error);
-    }
+    if (error) throw error;
+    console.log("Estado de visibilidade salvo:", rodada);
+  } catch (error) {
+    console.error("Erro ao salvar estado de visibilidade:", error);
+  }
 }
 
 async function carregarEstadoVisibilidade() {
-    const { data: rodadas, error: rodadasError } = await supabase
-        .from('rodadas')
-        .select('*')
-        .order('id', { ascending: false })
-        .limit(1);
+  try {
+    const { data: rodada, error } = await supabase
+      .from("rodadas")
+      .select("placares_ocultos")
+      .order("id", { ascending: false })
+      .limit(1)
+      .single();
 
-    if (rodadasError || rodadas.length === 0) {
-        console.error("Erro ao carregar rodadas:", rodadasError);
-        return false;
-    }
-
-    return rodadas[0].placares_ocultos || false;
+    if (error) throw error;
+    return rodada.placares_ocultos || false;
+  } catch (error) {
+    console.error("Erro ao carregar estado de visibilidade:", error);
+    return false;
+  }
 }
+
 async function verificarEstadoPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const toggleButton = document.getElementById("toggle-visibility");
@@ -894,11 +888,11 @@ async function verificarEstadoPlacares() {
       function abrirRanking() {
   window.open("ranking.html", "_blank");
 }
-     
 
-      const supabaseUrl = 'https://leuyfasvbfwdaloapmrs.supabase.co';
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4';
-      const supabase = supabaseClient.createClient(supabaseUrl, supabaseKey);
+      // Restante do JavaScript para a tabela e funcionalidades
+      const JSONBIN_API_KEY =
+        "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
+      const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
 
       document.addEventListener("DOMContentLoaded", function () {
         criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
@@ -1047,352 +1041,143 @@ async function verificarEstadoPlacares() {
       }
 
       async function carregarApostas() {
-    console.log("Iniciando carregamento de apostas...");
-    try {
-        const { data: rodadas, error: rodadasError } = await supabase
-            .from('rodadas')
-            .select('*')
-            .order('id', { ascending: false })
-            .limit(1);
+  try {
+    // Busca a rodada atual
+    const { data: rodada, error: rodadaError } = await supabase
+      .from("rodadas")
+      .select("*")
+      .order("id", { ascending: false })
+      .limit(1)
+      .single();
 
-        console.log("Rodadas retornadas:", rodadas);
-        
-        if (rodadasError) {
-            console.error("Erro ao carregar rodadas:", rodadasError);
-            return;
-        }
-        
-        if (!rodadas || rodadas.length === 0) {
-            console.log("Nenhuma rodada encontrada. Criando tabela vazia.");
-            // Preencher tabela vazia
-            const jogos = Array(10).fill("");
-            const apostas = {
-                "Jardel": Array(10).fill().map(() => ({ time1: "", time2: "" })),
-                "Werbet": Array(10).fill().map(() => ({ time1: "", time2: "" })),
-                "Nailton": Array(10).fill().map(() => ({ time1: "", time2: "" })),
-                "Phillipe": Array(10).fill().map(() => ({ time1: "", time2: "" }))
-            };
-            const resultados = Array(10).fill().map(() => ({ time1: "", time2: "" }));
-            
-            preencherTabela(jogos, apostas, resultados);
-            return;
-        }
+    if (rodadaError) throw rodadaError;
 
-        const rodadaId = rodadas[0].id;
-        document.getElementById("nome-rodada").value = rodadas[0].nome || "";
-        
-        console.log("Carregando jogos para rodada ID:", rodadaId);
+    // Busca os jogos da rodada
+    const { data: jogos, error: jogosError } = await supabase
+      .from("jogos")
+      .select("*")
+      .eq("rodada_id", rodada.id);
 
-        // Get jogos for this rodada
-        const { data: jogos, error: jogosError } = await supabase
-            .from('jogos')
-            .select('*')
-            .eq('rodada_id', rodadaId)
-            .order('posicao', { ascending: true });
+    if (jogosError) throw jogosError;
 
-        console.log("Jogos retornados:", jogos);
-        
-        if (jogosError) {
-            console.error("Erro ao carregar jogos:", jogosError);
-            return;
-        }
+    // Busca as apostas da rodada
+    const { data: apostas, error: apostasError } = await supabase
+      .from("apostas")
+      .select("*")
+      .in(
+        "jogo_id",
+        jogos.map((jogo) => jogo.id)
+      );
 
-        // Format jogos for display
-        const jogosFormatados = Array(10).fill("");
-        if (jogos && jogos.length > 0) {
-            jogos.forEach(jogo => {
-                if (jogo.posicao >= 0 && jogo.posicao < 10) {
-                    jogosFormatados[jogo.posicao] = `${jogo.time1 || ""} x ${jogo.time2 || ""}`;
-                }
-            });
-        }
-        
-        console.log("Jogos formatados:", jogosFormatados);
-        console.log("Carregando apostas para rodada ID:", rodadaId);
+    if (apostasError) throw apostasError;
 
-        // Get apostas for this rodada
-        const { data: apostasData, error: apostasError } = await supabase
-            .from('apostas')
-            .select('*')
-            .eq('rodada_id', rodadaId);
+    // Busca os resultados da rodada
+    const { data: resultados, error: resultadosError } = await supabase
+      .from("resultados")
+      .select("*")
+      .in(
+        "jogo_id",
+        jogos.map((jogo) => jogo.id)
+      );
 
-        console.log("Apostas retornadas:", apostasData);
-        
-        if (apostasError) {
-            console.error("Erro ao carregar apostas:", apostasError);
-            return;
-        }
+    if (resultadosError) throw resultadosError;
 
-        // Format apostas by jogador
-        const apostas = {
-            "Jardel": Array(10).fill().map(() => ({ time1: "", time2: "" })),
-            "Werbet": Array(10).fill().map(() => ({ time1: "", time2: "" })),
-            "Nailton": Array(10).fill().map(() => ({ time1: "", time2: "" })),
-            "Phillipe": Array(10).fill().map(() => ({ time1: "", time2: "" }))
-        };
+    // Preenche a tabela com os dados
+    preencherTabela(jogos, apostas, resultados);
 
-        // Group apostas by jogo_id and jogador
-        if (apostasData && apostasData.length > 0) {
-    for (const aposta of apostasData) {
-        const { data: jogoData } = await supabase
-            .from('jogos')
-            .select('posicao')
-            .eq('id', aposta.jogo_id)
-            .single();
-            
-        if (jogoData && apostas[aposta.jogador]) {
-            apostas[aposta.jogador][jogoData.posicao] = {
-                time1: aposta.time1 || "",
-                time2: aposta.time2 || ""
-            };
-        }
+    // Aplica o estado de visibilidade
+    if (rodada.placares_ocultos) {
+      ocultarPlacares();
+    } else {
+      mostrarPlacares();
     }
-}
-        
-        console.log("Apostas formatadas:", apostas);
-        console.log("Carregando resultados para rodada ID:", rodadaId);
-
-        // Get resultados for this rodada
-        const { data: resultadosData, error: resultadosError } = await supabase
-            .from('resultados')
-            .select('*, jogos!inner(*)')
-            .eq('rodada_id', rodadaId);
-
-        console.log("Resultados retornados:", resultadosData);
-        
-        if (resultadosError) {
-            console.error("Erro ao carregar resultados:", resultadosError);
-            return;
-        }
-
-        // Format resultados by jogo_id
-        const resultados = Array(10).fill().map(() => ({ time1: "", time2: "" }));
-        
-        if (resultadosData && resultadosData.length > 0) {
-            resultadosData.forEach(resultado => {
-                if (resultado.jogos && resultado.jogos.posicao >= 0 && resultado.jogos.posicao < 10) {
-                    resultados[resultado.jogos.posicao] = {
-                        time1: resultado.time1 || "",
-                        time2: resultado.time2 || ""
-                    };
-                }
-            });
-        }
-        
-        console.log("Resultados formatados:", resultados);
-        
-        // Preencher a tabela com os dados recuperados
-        preencherTabela(jogosFormatados, apostas, resultados);
-        calcularPontuacao();
-        
-        console.log("Tabela preenchida com sucesso!");
-    } catch (error) {
-        console.error("Erro ao carregar apostas:", error);
-    }
+  } catch (error) {
+    console.error("Erro ao carregar apostas:", error);
+  }
 }
 
 async function salvarApostas() {
-    const nomeRodada = document.getElementById("nome-rodada").value;
+  try {
+    // Busca ou cria a rodada atual
+    const { data: rodada, error: rodadaError } = await supabase
+      .from("rodadas")
+      .upsert({ nome_rodada: document.getElementById("nome-rodada").value })
+      .select()
+      .single();
+
+    if (rodadaError) throw rodadaError;
+
+    // Salva os jogos
     const jogos = obterJogosDaTabela();
-    const apostas = obterApostasDaTabela();
-    const resultados = obterResultadosDaTabela();
-    
-    try {
-        // Check if we already have a current rodada
-        const { data: existingRodadas, error: rodadasCheckError } = await supabase
-            .from('rodadas')
-            .select('*')
-            .order('id', { ascending: false })
-            .limit(1);
-        
-        if (rodadasCheckError) throw rodadasCheckError;
-        
-        let rodadaId;
-        
-        // Update existing rodada or create a new one
-        if (existingRodadas && existingRodadas.length > 0) {
-            rodadaId = existingRodadas[0].id;
-            
-            // Update the rodada name if it changed
-            if (existingRodadas[0].nome !== nomeRodada) {
-                const { error: updateError } = await supabase
-                    .from('rodadas')
-                    .update({ nome: nomeRodada })
-                    .eq('id', rodadaId);
-                
-                if (updateError) throw updateError;
-            }
-        } else {
-            // Create a new rodada
-            const { data: rodada, error: rodadaError } = await supabase
-                .from('rodadas')
-                .insert([{ nome: nomeRodada, placares_ocultos: false }])
-                .select();
-            
-            if (rodadaError) throw rodadaError;
-            rodadaId = rodada[0].id;
-        }
-        
-        // First, handle the jogos
-        for (let i = 0; i < jogos.length; i++) {
-            if (!jogos[i]) continue; // Skip empty games
-            
-            const [time1, time2] = jogos[i].split(' x ').map(t => t.trim());
-            
-            // Check if this jogo already exists
-            const { data: existingJogos, error: jogosCheckError } = await supabase
-                .from('jogos')
-                .select('*')
-                .eq('rodada_id', rodadaId)
-                .eq('posicao', i);
-            
-            if (jogosCheckError) throw jogosCheckError;
-            
-            let jogoId;
-            
-            if (existingJogos && existingJogos.length > 0) {
-                // Update existing jogo
-                jogoId = existingJogos[0].id;
-                const { error: updateError } = await supabase
-                    .from('jogos')
-                    .update({ time1, time2 })
-                    .eq('id', jogoId);
-                
-                if (updateError) throw updateError;
-            } else {
-                // Create new jogo
-                const { data: jogo, error: jogoError } = await supabase
-                    .from('jogos')
-                    .insert([{ rodada_id: rodadaId, time1, time2, posicao: i }])
-                    .select();
-                
-                if (jogoError) throw jogoError;
-                jogoId = jogo[0].id;
-            }
-            
-            // Handle apostas for this jogo
-            for (const jogador in apostas) {
-                const apostaData = apostas[jogador][i];
-                
-                // Check if aposta already exists
-                const { data: existingApostas, error: apostasCheckError } = await supabase
-                    .from('apostas')
-                    .select('*')
-                    .eq('rodada_id', rodadaId)
-                    .eq('jogo_id', jogoId)
-                    .eq('jogador', jogador);
-                
-                if (apostasCheckError) throw apostasCheckError;
-                
-                if (existingApostas && existingApostas.length > 0) {
-                    // Update existing aposta
-                    const { error: updateError } = await supabase
-                        .from('apostas')
-                        .update({ time1: apostaData.time1, time2: apostaData.time2 })
-                        .eq('id', existingApostas[0].id);
-                    
-                    if (updateError) throw updateError;
-                } else {
-                    // Create new aposta
-                    const { error: apostaError } = await supabase
-                        .from('apostas')
-                        .insert([{
-                            rodada_id: rodadaId,
-                            jogo_id: jogoId,
-                            jogador,
-                            time1: apostaData.time1,
-                            time2: apostaData.time2
-                        }]);
-                    
-                    if (apostaError) throw apostaError;
-                }
-            }
-            
-            // Handle resultado for this jogo
-            const resultadoData = resultados[i];
-            
-            // Check if resultado already exists
-            const { data: existingResultados, error: resultadosCheckError } = await supabase
-                .from('resultados')
-                .select('*')
-                .eq('rodada_id', rodadaId)
-                .eq('jogo_id', jogoId);
-            
-            if (resultadosCheckError) throw resultadosCheckError;
-            
-            if (existingResultados && existingResultados.length > 0) {
-                // Update existing resultado
-                const { error: updateError } = await supabase
-                    .from('resultados')
-                    .update({ time1: resultadoData.time1, time2: resultadoData.time2 })
-                    .eq('id', existingResultados[0].id);
-                
-                if (updateError) throw updateError;
-            } else {
-                // Create new resultado
-                const { error: resultadoError } = await supabase
-                    .from('resultados')
-                    .insert([{
-                        rodada_id: rodadaId,
-                        jogo_id: jogoId,
-                        time1: resultadoData.time1,
-                        time2: resultadoData.time2
-                    }]);
-                
-                if (resultadoError) throw resultadoError;
-            }
-        }
-        console.log("Dados salvos com sucesso no Supabase!");
-        
-    } catch (error) {
-        console.error("Erro ao salvar dados:", error);
-        alert("Erro ao salvar dados. Verifique o console para mais detalhes.");
+    for (const jogo of jogos) {
+      const { data: jogoSalvo, error: jogoError } = await supabase
+        .from("jogos")
+        .upsert({ rodada_id: rodada.id, jogo })
+        .select()
+        .single();
+
+      if (jogoError) throw jogoError;
+
+      // Salva as apostas para o jogo
+      const apostas = obterApostasDaTabela();
+      for (const jogador in apostas) {
+        const aposta = apostas[jogador][jogos.indexOf(jogo)];
+        await supabase.from("apostas").upsert({
+          jogo_id: jogoSalvo.id,
+          jogador,
+          time1: aposta.time1,
+          time2: aposta.time2,
+        });
+      }
+
+      // Salva os resultados para o jogo
+      const resultados = obterResultadosDaTabela();
+      const resultado = resultados[jogos.indexOf(jogo)];
+      await supabase.from("resultados").upsert({
+        jogo_id: jogoSalvo.id,
+        time1: resultado.time1,
+        time2: resultado.time2,
+      });
     }
+
+    console.log("Dados salvos com sucesso!");
+  } catch (error) {
+    console.error("Erro ao salvar dados:", error);
+  }
 }
 
+setInterval(async () => {
+  await verificarEstadoPlacares();
+}, 5000); // Verifica a cada 5 segundos
 
-function preencherTabela(jogos, apostas, resultados) {
-    console.log("Preenchendo tabela com dados:", { jogos, apostas, resultados });
-    
-    const inputsJogos = document.querySelectorAll(".input-jogo");
-    const inputsApostas = document.querySelectorAll(".aposta");
-    const inputsResultados = document.querySelectorAll(".resultado");
+      function preencherTabela(jogos, apostas, resultados) {
+        console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
+        const inputsJogos = document.querySelectorAll(".input-jogo");
+        const inputsApostas = document.querySelectorAll(".aposta");
+        const inputsResultados = document.querySelectorAll(".resultado");
 
-    // Preenche os nomes dos times
-    inputsJogos.forEach((input, index) => {
-        input.value = index < jogos.length ? jogos[index] : "";
-    });
+        // Preenche os nomes dos times
+        inputsJogos.forEach((input, index) => {
+          input.value = jogos[index] || "";
+        });
 
-    // Preenche as apostas dos jogadores
-    const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-    jogadores.forEach((jogador, jogadorIndex) => {
+        // Preenche as apostas dos jogadores
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        jogadores.forEach((jogador, jogadorIndex) => {
+          for (let i = 0; i < 10; i++) {
+            const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
+            const indexFora = indexCasa + 1; // Índice do time2
+            inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+            inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
+          }
+        });
+
+        // Preenche os resultados
         for (let i = 0; i < 10; i++) {
-            const indexCasa = i * 8 + jogadorIndex * 2;
-            const indexFora = indexCasa + 1;
-            
-            if (apostas[jogador] && apostas[jogador][i]) {
-                if (indexCasa < inputsApostas.length) {
-                    inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
-                }
-                
-                if (indexFora < inputsApostas.length) {
-                    inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
-                }
-            }
+          inputsResultados[i * 2].value = resultados[i].time1 || "";
+          inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
         }
-    });
-
-    // Preenche os resultados
-    for (let i = 0; i < 10; i++) {
-        const indexCasa = i * 2;
-        const indexFora = indexCasa + 1;
-        
-        if (indexCasa < inputsResultados.length && indexFora < inputsResultados.length) {
-            inputsResultados[indexCasa].value = resultados[i]?.time1 || "";
-            inputsResultados[indexFora].value = resultados[i]?.time2 || "";
-        }
-    }
-}
+      }
 
       function obterJogosDaTabela() {
         const jogos = [];
@@ -1402,39 +1187,30 @@ function preencherTabela(jogos, apostas, resultados) {
       }
 
       function obterApostasDaTabela() {
-    const apostas = {
-        "Jardel": [],
-        "Werbet": [],
-        "Nailton": [],
-        "Phillipe": []
-    };
-    
-    const inputs = document.querySelectorAll(".aposta");
-    
-    for (let i = 0; i < 10; i++) {
-        apostas.Jardel.push({
-            time1: inputs[i * 8]?.value || "",
-            time2: inputs[i * 8 + 1]?.value || ""
-        });
-        
-        apostas.Werbet.push({
-            time1: inputs[i * 8 + 2]?.value || "",
-            time2: inputs[i * 8 + 3]?.value || ""
-        });
-        
-        apostas.Nailton.push({
-            time1: inputs[i * 8 + 4]?.value || "",
-            time2: inputs[i * 8 + 5]?.value || ""
-        });
-        
-        apostas.Phillipe.push({
-            time1: inputs[i * 8 + 6]?.value || "",
-            time2: inputs[i * 8 + 7]?.value || ""
-        });
-    }
-    
-    return apostas;
-}
+        const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
+        const inputs = document.querySelectorAll(".aposta");
+
+        for (let i = 0; i < 10; i++) {
+          apostas.Jardel.push({
+            time1: inputs[i * 8].value,
+            time2: inputs[i * 8 + 1].value,
+          });
+          apostas.Werbet.push({
+            time1: inputs[i * 8 + 2].value,
+            time2: inputs[i * 8 + 3].value,
+          });
+          apostas.Nailton.push({
+            time1: inputs[i * 8 + 4].value,
+            time2: inputs[i * 8 + 5].value,
+          });
+          apostas.Phillipe.push({
+            time1: inputs[i * 8 + 6].value,
+            time2: inputs[i * 8 + 7].value,
+          });
+        }
+
+        return apostas;
+      }
 
       function obterResultadosDaTabela() {
         const resultados = [];
