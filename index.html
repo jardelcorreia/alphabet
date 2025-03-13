@@ -646,7 +646,10 @@
       }
 
       // Função para salvar as apostas com debounce
-      const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
+      const salvarApostasDebounced = debounce(() => {
+        console.log("Salvando apostas...");
+        salvarApostas();
+      }, 500); // 500ms de delay
 
       // Adiciona eventos de input, change, blur e keydown para salvar automaticamente
       function adicionarEventosSalvamento() {
