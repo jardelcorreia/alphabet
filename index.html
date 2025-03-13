@@ -891,9 +891,26 @@ async function verificarEstadoPlacares() {
   window.open("ranking.html", "_blank");
 }
 
-      const supabaseUrl = 'https://leuyfasvbfwdaloapmrs.supabase.co'
-      const supabaseKey = process.env.SUPABASE_KEY
-      const supabase = createClient(supabaseUrl, supabaseKey)
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_KEY;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      async function testarConexaoSupabase() {
+              try {
+                const { data, error } = await supabase
+                  .from("rodadas")
+                  .select("*")
+                  .limit(1);
+            
+                if (error) throw error;
+                console.log("Conexão com o Supabase funcionando:", data);
+              } catch (error) {
+                console.error("Erro ao conectar ao Supabase:", error);
+              }
+            }
+            
+            // Chame a função para testar a conexão
+            testarConexaoSupabase();
 
       document.addEventListener("DOMContentLoaded", function () {
         criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
