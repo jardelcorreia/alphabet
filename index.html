@@ -617,81 +617,67 @@
     </footer>
 
     <script>
-// Inicialização do Supabase
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Função para testar a conexão com o Supabase
-async function testarConexaoSupabase() {
-  try {
-    const { data, error } = await supabase
-      .from("rodadas")
-      .select("*")
-      .limit(1);
-
-    if (error) throw error;
-    console.log("Conexão com o Supabase funcionando:", data);
-  } catch (error) {
-    console.error("Erro ao conectar ao Supabase:", error);
+      window.addEventListener("load", async function () {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    document.getElementById("login-container").classList.add("hidden");
+    document.getElementById("main-content").classList.remove("hidden");
+    await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
+    carregarApostas(); // Carrega as apostas salvas
+  } else {
+    document.getElementById("login-container").classList.remove("hidden");
+    document.getElementById("main-content").classList.add("hidden");
   }
-}
-
-// Testa a conexão com o Supabase ao carregar a página
-testarConexaoSupabase();
-
-// Função para lidar com o pressionamento de teclas
-function handleKeyPress(event) {
-  if (event.key === "Enter") {
-    login();
-  }
-}
-
-// Função debounce para evitar múltiplas chamadas ao servidor
-function debounce(func, wait) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
-  };
-}
-
-// Função para salvar as apostas com debounce
-const salvarApostasDebounced = debounce(() => {
-  console.log("Salvando apostas...");
-  salvarApostas();
-}, 500); // 500ms de delay
-
-// Adiciona eventos de input, change, blur e keydown para salvar automaticamente
-function adicionarEventosSalvamento() {
-  const inputs = document.querySelectorAll(
-    ".aposta, .resultado, .input-jogo, #nome-rodada"
-  );
-  inputs.forEach((input) => {
-    input.addEventListener("input", salvarApostasDebounced);
-    input.addEventListener("change", salvarApostasDebounced);
-    input.addEventListener("blur", salvarApostasDebounced);
-    input.addEventListener("keydown", function (event) {
-      if (event.key === "Delete" || event.key === "Backspace") {
-        salvarApostasDebounced();
-      }
-    });
-  });
-}
-
-// Adiciona as letras do título com animação
-const titulo = "Brasileirão AlphaBet 2025";
-const containerTitulo = document.querySelector(".container-titulo");
-titulo.split("").forEach((letra, index) => {
-  const span = document.createElement("span");
-  span.textContent = letra;
-  span.classList.add("letra");
-  span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
-  containerTitulo.appendChild(span);
 });
 
-// Função para alternar a visibilidade dos placares
-async function toggleVisibility() {
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          login();
+        }
+      }
+
+      // Função debounce para evitar múltiplas chamadas ao servidor
+      function debounce(func, wait) {
+        let timeout;
+        return function (...args) {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => func.apply(this, args), wait);
+        };
+      }
+
+      // Função para salvar as apostas com debounce
+      const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
+
+      // Adiciona eventos de input, change, blur e keydown para salvar automaticamente
+      function adicionarEventosSalvamento() {
+        const inputs = document.querySelectorAll(
+          ".aposta, .resultado, .input-jogo, #nome-rodada"
+        );
+        inputs.forEach((input) => {
+          input.addEventListener("input", salvarApostasDebounced);
+          input.addEventListener("change", salvarApostasDebounced);
+          input.addEventListener("blur", salvarApostasDebounced);
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced();
+            }
+          });
+        });
+      }
+
+      const titulo = "Brasileirão AlphaBet 2025";
+      const containerTitulo = document.querySelector(".container-titulo");
+
+      // Adiciona as letras do título com animação
+      titulo.split("").forEach((letra, index) => {
+        const span = document.createElement("span");
+        span.textContent = letra;
+        span.classList.add("letra");
+        span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
+        containerTitulo.appendChild(span);
+      });
+
+      async function toggleVisibility() {
   const isHidden = await carregarEstadoVisibilidade();
   const novoEstado = !isHidden;
 
@@ -699,7 +685,6 @@ async function toggleVisibility() {
   verificarEstadoPlacares();
 }
 
-// Função para ocultar os placares dos outros jogadores
 function ocultarPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const inputsApostas = document.querySelectorAll(".aposta");
@@ -726,7 +711,6 @@ function ocultarPlacares() {
   });
 }
 
-// Função para mostrar todos os placares
 function mostrarPlacares() {
   const inputsApostas = document.querySelectorAll(".aposta");
 
@@ -737,41 +721,38 @@ function mostrarPlacares() {
   });
 }
 
-// Função para salvar o estado de visibilidade no Supabase
 async function salvarEstadoVisibilidade(estado) {
   try {
-    const { data: rodada, error } = await supabase
-      .from("rodadas")
-      .upsert({ placares_ocultos: estado })
-      .select()
-      .single();
+    const { data, error } = await supabase
+      .from('apostas')
+      .insert([
+        { placares_ocultos: estado }
+      ]);
 
     if (error) throw error;
-    console.log("Estado de visibilidade salvo:", rodada);
+
+    console.log("Estado de visibilidade salvo:", data);
   } catch (error) {
     console.error("Erro ao salvar estado de visibilidade:", error);
   }
 }
 
-// Função para carregar o estado de visibilidade do Supabase
 async function carregarEstadoVisibilidade() {
   try {
-    const { data: rodada, error } = await supabase
-      .from("rodadas")
-      .select("placares_ocultos")
-      .order("id", { ascending: false })
-      .limit(1)
-      .single();
+    const { data, error } = await supabase
+      .from('apostas')
+      .select('placares_ocultos')
+      .order('id', { ascending: false })
+      .limit(1);
 
     if (error) throw error;
-    return rodada.placares_ocultos || false;
+
+    return data[0]?.placares_ocultos || false;
   } catch (error) {
     console.error("Erro ao carregar estado de visibilidade:", error);
     return false;
   }
 }
-
-// Função para verificar o estado dos placares
 async function verificarEstadoPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const toggleButton = document.getElementById("toggle-visibility");
@@ -796,201 +777,290 @@ async function verificarEstadoPlacares() {
   }
 }
 
-// Função para fazer logout
-function logout() {
-  localStorage.removeItem("loggedInUser");
-  document.getElementById("login-container").classList.remove("hidden");
-  document.getElementById("main-content").classList.add("hidden");
-}
+      // Função para fazer logout
+      function logout() {
+        localStorage.removeItem("loggedInUser");
+        document.getElementById("login-container").classList.remove("hidden");
+        document.getElementById("main-content").classList.add("hidden");
+      }
 
-// Função para buscar as senhas criptografadas do backend
-async function buscarSenhasCriptografadas() {
-  try {
-    const response = await fetch("/.netlify/functions/senhas");
-    if (!response.ok) {
-      throw new Error("Erro ao buscar senhas");
-    }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    alert("Erro ao buscar senhas. Tente novamente.");
-    return {};
-  }
-}
+      // Função para buscar as senhas criptografadas do backend
+      async function buscarSenhasCriptografadas() {
+        try {
+          const response = await fetch("/.netlify/functions/senhas");
+          if (!response.ok) {
+            throw new Error("Erro ao buscar senhas");
+          }
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error("Erro na requisição:", error);
+          alert("Erro ao buscar senhas. Tente novamente.");
+          return {};
+        }
+      }
 
-// Função para descriptografar usando o backend
-async function descriptografar(textoCriptografado) {
-  try {
-    const response = await fetch("/.netlify/functions/descriptografar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ textoCriptografado }),
-    });
+      // Função para descriptografar usando o backend
+      async function descriptografar(textoCriptografado) {
+        try {
+          const response = await fetch("/.netlify/functions/descriptografar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ textoCriptografado }),
+          });
 
-    if (!response.ok) {
-      throw new Error("Erro ao descriptografar");
-    }
+          if (!response.ok) {
+            throw new Error("Erro ao descriptografar");
+          }
 
-    const data = await response.json();
-    return data.textoDescriptografado;
-  } catch (error) {
-    console.error("Erro na requisição:", error);
-    alert("Erro ao descriptografar. Tente novamente.");
-    return null;
-  }
-}
+          const data = await response.json();
+          return data.textoDescriptografado;
+        } catch (error) {
+          console.error("Erro na requisição:", error);
+          alert("Erro ao descriptografar. Tente novamente.");
+          return null;
+        }
+      }
 
-// Função de login
-async function login() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+      // Função de login
+      async function login() {
+        const username = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
 
-  // Busca as senhas criptografadas do backend
-  const senhasCriptografadas = await buscarSenhasCriptografadas();
+        // Busca as senhas criptografadas do backend
+        const senhasCriptografadas = await buscarSenhasCriptografadas();
 
-  if (senhasCriptografadas[username]) {
-    // Descriptografa a senha usando o backend
-    const senhaDescriptografada = await descriptografar(
-      senhasCriptografadas[username]
-    );
+        if (senhasCriptografadas[username]) {
+          // Descriptografa a senha usando o backend
+          const senhaDescriptografada = await descriptografar(
+            senhasCriptografadas[username]
+          );
 
-    if (senhaDescriptografada === password) {
-      localStorage.setItem("loggedInUser", username);
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("main-content").classList.remove("hidden");
-      verificarEstadoPlacares(); // Verificar o estado dos placares ao fazer login
-      carregarApostas(); // Carrega as apostas salvas
-    } else {
-      alert("Nome de usuário ou senha incorretos!");
-    }
-  } else {
-    alert("Nome de usuário ou senha incorretos!");
-  }
-}
+          if (senhaDescriptografada === password) {
+            localStorage.setItem("loggedInUser", username);
+            document.getElementById("login-container").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            verificarEstadoPlacares(); // Verificar o estado dos placares ao fazer login
+            carregarApostas(); // Carrega as apostas salvas
+          } else {
+            alert("Nome de usuário ou senha incorretos!");
+          }
+        } else {
+          alert("Nome de usuário ou senha incorretos!");
+        }
+      }
 
-// Função para bloquear as colunas dos outros jogadores
-function bloquearColunasOutrosJogadores() {
-  const loggedInUser = localStorage.getItem("loggedInUser");
-  if (!loggedInUser) return;
+      // Função para bloquear as colunas dos outros jogadores
+      function bloquearColunasOutrosJogadores() {
+        const loggedInUser = localStorage.getItem("loggedInUser");
+        if (!loggedInUser) return;
 
-  const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-  const inputsApostas = document.querySelectorAll(".aposta");
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        const inputsApostas = document.querySelectorAll(".aposta");
 
-  inputsApostas.forEach((input) => {
-    const colunaJogador = input.classList.contains("jogador0")
-      ? "Jardel"
-      : input.classList.contains("jogador1")
-      ? "Werbet"
-      : input.classList.contains("jogador2")
-      ? "Nailton"
-      : input.classList.contains("jogador3")
-      ? "Phillipe"
-      : null;
+        inputsApostas.forEach((input) => {
+          const colunaJogador = input.classList.contains("jogador0")
+            ? "Jardel"
+            : input.classList.contains("jogador1")
+            ? "Werbet"
+            : input.classList.contains("jogador2")
+            ? "Nailton"
+            : input.classList.contains("jogador3")
+            ? "Phillipe"
+            : null;
 
-    // Se o input pertence a outro jogador e os placares estão visíveis, bloqueia a edição
-    if (
-      colunaJogador &&
-      colunaJogador !== loggedInUser &&
-      localStorage.getItem("placaresOcultos") !== "true"
-    ) {
-      input.disabled = true;
-      input.style.backgroundColor = "#f0f0f0";
-    } else {
-      input.disabled = false;
-      input.style.backgroundColor = "";
-    }
-  });
-}
+          // Se o input pertence a outro jogador e os placares estão visíveis, bloqueia a edição
+          if (
+            colunaJogador &&
+            colunaJogador !== loggedInUser &&
+            localStorage.getItem("placaresOcultos") !== "true"
+          ) {
+            input.disabled = true;
+            input.style.backgroundColor = "#f0f0f0";
+          } else {
+            input.disabled = false;
+            input.style.backgroundColor = "";
+          }
+        });
+      }
 
-// Função para abrir a página de ranking
-function abrirRanking() {
+      function abrirRanking() {
   window.open("ranking.html", "_blank");
 }
 
-// Função para criar as linhas da tabela
-function criarLinhasTabela() {
-  const tabela = document.getElementById("tabela-apostas");
 
-  for (let i = 1; i <= 10; i++) {
-    const linha = document.createElement("tr");
-    linha.innerHTML = `
-      <td>
-          <input type="text" class="input-jogo" placeholder="casa x fora">
-      </td>
-      ${["Jardel", "Werbet", "Nailton", "Phillipe"]
-        .map(
-          (jogador, jogadorIndex) => `
-          <td>
-              <div class="input-container">
-                  <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
-                  <span class="placar-separador">x</span>
-                  <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
-              </div>
-          </td>
-      `
-        )
-        .join("")}
-      <td>
-          <div class="input-container">
-              <input type="number" class="resultado input-placar" min="0">
-              <span class="placar-separador">x</span>
-              <input type="number" class="resultado input-placar" min="0">
-          </div>
-      </td>
-    `;
-    tabela.appendChild(linha);
-  }
-}
+      document.addEventListener("DOMContentLoaded", function () {
+        criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
+        adicionarNavegacao();
+        adicionarNavegacaoJogos();
+        adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
+        adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
+        carregarApostas(); // Carrega as apostas salvas
 
-// Função para carregar as apostas do Supabase
-async function carregarApostas() {
+        // Adiciona evento de input para o nome da rodada
+        document
+          .getElementById("nome-rodada")
+          .addEventListener("input", salvarApostasDebounced);
+      });
+
+      function adicionarNavegacaoJogos() {
+        const inputsJogos = document.querySelectorAll(".input-jogo");
+        inputsJogos.forEach((input, index) => {
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === "Tab") {
+              event.preventDefault();
+              const nextIndex = index + 1;
+              if (nextIndex < inputsJogos.length) {
+                inputsJogos[nextIndex].focus();
+              }
+            }
+
+            // Adiciona a lógica de apagar com Delete ou Backspace
+            if (event.key === "Delete" || event.key === "Backspace") {
+              event.preventDefault();
+
+              // Se houver texto no campo, remove o último caractere
+              if (input.value.length > 0) {
+                input.value = input.value.slice(0, -1); // Remove o último caractere
+              } else {
+                // Se o campo estiver vazio, move o foco para o campo anterior na mesma coluna
+                const prevIndex = index - 1;
+                if (prevIndex >= 0) {
+                  inputsJogos[prevIndex].focus();
+                }
+                // Se estiver no primeiro campo da coluna, o foco para aqui
+              }
+            }
+          });
+        });
+      }
+
+      function adicionarNavegacao() {
+        // Navegação para as colunas dos jogadores
+        for (let i = 0; i < 4; i++) {
+          const coluna = document.querySelectorAll(`input.jogador${i}`);
+          coluna.forEach((input, index) => {
+            input.addEventListener("input", (event) => {
+              if (event.target.value.length === 1) {
+                // Verifica se um número foi digitado
+                let nextIndex = index + 1;
+                if (nextIndex < coluna.length) {
+                  coluna[nextIndex].focus(); // Move o foco para o próximo campo na mesma coluna
+                }
+              }
+            });
+
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                event.preventDefault();
+                if (input.value === "") {
+                  // Move o foco para o campo anterior na mesma coluna
+                  const prevIndex = index - 1;
+                  if (prevIndex >= 0) {
+                    coluna[prevIndex].focus();
+                  }
+                  // Se estiver no primeiro campo da coluna, o foco para aqui
+                } else {
+                  // Limpa o campo atual
+                  input.value = "";
+                }
+              }
+            });
+          });
+        }
+
+        // Navegação para os campos de resultado
+        const placarReal = document.querySelectorAll("input.resultado");
+        placarReal.forEach((input, index) => {
+          input.addEventListener("input", (event) => {
+            if (event.target.value.length === 1) {
+              // Verifica se um número foi digitado
+              let nextIndex = index + 1;
+              if (nextIndex < placarReal.length) {
+                placarReal[nextIndex].focus(); // Move o foco para o próximo campo de resultado
+              }
+            }
+          });
+
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              event.preventDefault();
+              if (input.value === "") {
+                // Move o foco para o campo anterior na mesma coluna
+                const prevIndex = index - 1;
+                if (prevIndex >= 0) {
+                  placarReal[prevIndex].focus();
+                }
+                // Se estiver no primeiro campo da coluna, o foco para aqui
+              } else {
+                // Limpa o campo atual
+                input.value = "";
+              }
+            }
+          });
+        });
+      }
+
+      function criarLinhasTabela() {
+        const tabela = document.getElementById("tabela-apostas");
+
+        for (let i = 1; i <= 10; i++) {
+          const linha = document.createElement("tr");
+          linha.innerHTML = `
+            <td>
+                <input type="text" class="input-jogo" placeholder="casa x fora">
+            </td>
+            ${["Jardel", "Werbet", "Nailton", "Phillipe"]
+              .map(
+                (jogador, jogadorIndex) => `
+                <td>
+                    <div class="input-container">
+                        <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
+                        <span class="placar-separador">x</span>
+                        <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
+                    </div>
+                </td>
+            `
+              )
+              .join("")}
+            <td>
+                <div class="input-container">
+                    <input type="number" class="resultado input-placar" min="0">
+                    <span class="placar-separador">x</span>
+                    <input type="number" class="resultado input-placar" min="0">
+                </div>
+            </td>
+        `;
+          tabela.appendChild(linha);
+        }
+      }
+
+      async function carregarApostas() {
   try {
-    // Busca a rodada atual
-    const { data: rodada, error: rodadaError } = await supabase
-      .from("rodadas")
-      .select("*")
-      .order("id", { ascending: false })
-      .limit(1)
-      .single();
+    const { data, error } = await supabase
+      .from('apostas')
+      .select('*')
+      .order('id', { ascending: false })
+      .limit(1);
 
-    if (rodadaError) throw rodadaError;
+    if (error) throw error;
 
-    // Busca os jogos da rodada
-    const { data: jogos, error: jogosError } = await supabase
-      .from("jogos")
-      .select("*")
-      .eq("rodada_id", rodada.id);
+    const { nome_rodada, jogos, apostas, resultados, placares_ocultos } = data[0];
 
-    if (jogosError) throw jogosError;
+    // Preenche o nome da rodada
+    document.getElementById("nome-rodada").value = nome_rodada || "";
 
-    // Busca as apostas da rodada
-    const { data: apostas, error: apostasError } = await supabase
-      .from("apostas")
-      .select("*")
-      .in(
-        "jogo_id",
-        jogos.map((jogo) => jogo.id)
-      );
+    // Verifica se jogos é um array
+    if (!Array.isArray(jogos)) {
+      console.error("Erro: jogos não é um array");
+      return;
+    }
 
-    if (apostasError) throw apostasError;
-
-    // Busca os resultados da rodada
-    const { data: resultados, error: resultadosError } = await supabase
-      .from("resultados")
-      .select("*")
-      .in(
-        "jogo_id",
-        jogos.map((jogo) => jogo.id)
-      );
-
-    if (resultadosError) throw resultadosError;
-
-    // Preenche a tabela com os dados
     preencherTabela(jogos, apostas, resultados);
+    calcularPontuacao(); // Calcula a pontuação após carregar os dados
 
     // Aplica o estado de visibilidade
-    if (rodada.placares_ocultos) {
+    if (placares_ocultos) {
       ocultarPlacares();
     } else {
       mostrarPlacares();
@@ -1000,279 +1070,227 @@ async function carregarApostas() {
   }
 }
 
-// Função para salvar as apostas no Supabase
 async function salvarApostas() {
   try {
-    // Busca ou cria a rodada atual
-    const { data: rodada, error: rodadaError } = await supabase
-      .from("rodadas")
-      .upsert({ nome_rodada: document.getElementById("nome-rodada").value })
-      .select()
-      .single();
-
-    if (rodadaError) throw rodadaError;
-
-    // Salva os jogos
+    const nomeRodada = document.getElementById("nome-rodada").value;
     const jogos = obterJogosDaTabela();
-    for (const jogo of jogos) {
-      const { data: jogoSalvo, error: jogoError } = await supabase
-        .from("jogos")
-        .upsert({ rodada_id: rodada.id, jogo })
-        .select()
-        .single();
+    const apostas = obterApostasDaTabela();
+    const resultados = obterResultadosDaTabela();
+    const placaresOcultos = await carregarEstadoVisibilidade();
 
-      if (jogoError) throw jogoError;
+    const { data, error } = await supabase
+      .from('apostas')
+      .insert([
+        {
+          nome_rodada: nomeRodada,
+          jogos: jogos,
+          apostas: apostas,
+          resultados: resultados,
+          placares_ocultos: placaresOcultos
+        }
+      ]);
 
-      // Salva as apostas para o jogo
-      const apostas = obterApostasDaTabela();
-      for (const jogador in apostas) {
-        const aposta = apostas[jogador][jogos.indexOf(jogo)];
-        await supabase.from("apostas").upsert({
-          jogo_id: jogoSalvo.id,
-          jogador,
-          time1: aposta.time1,
-          time2: aposta.time2,
-        });
-      }
+    if (error) throw error;
 
-      // Salva os resultados para o jogo
-      const resultados = obterResultadosDaTabela();
-      const resultado = resultados[jogos.indexOf(jogo)];
-      await supabase.from("resultados").upsert({
-        jogo_id: jogoSalvo.id,
-        time1: resultado.time1,
-        time2: resultado.time2,
-      });
-    }
-
-    console.log("Dados salvos com sucesso!");
+    console.log("Dados salvos com sucesso:", data);
   } catch (error) {
     console.error("Erro ao salvar dados:", error);
   }
 }
 
-// Função para preencher a tabela com os dados
-function preencherTabela(jogos, apostas, resultados) {
-  console.log("Preenchendo tabela com jogos:", jogos);
-  const inputsJogos = document.querySelectorAll(".input-jogo");
-  const inputsApostas = document.querySelectorAll(".aposta");
-  const inputsResultados = document.querySelectorAll(".resultado");
+setInterval(async () => {
+  await verificarEstadoPlacares();
+}, 5000); // Verifica a cada 5 segundos
 
-  // Preenche os nomes dos times
-  inputsJogos.forEach((input, index) => {
-    input.value = jogos[index]?.jogo || "";
-  });
+      function preencherTabela(jogos, apostas, resultados) {
+        console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
+        const inputsJogos = document.querySelectorAll(".input-jogo");
+        const inputsApostas = document.querySelectorAll(".aposta");
+        const inputsResultados = document.querySelectorAll(".resultado");
 
-  // Preenche as apostas dos jogadores
-  const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-  jogadores.forEach((jogador, jogadorIndex) => {
+        // Preenche os nomes dos times
+        inputsJogos.forEach((input, index) => {
+          input.value = jogos[index] || "";
+        });
+
+        // Preenche as apostas dos jogadores
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        jogadores.forEach((jogador, jogadorIndex) => {
+          for (let i = 0; i < 10; i++) {
+            const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
+            const indexFora = indexCasa + 1; // Índice do time2
+            inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+            inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
+          }
+        });
+
+        // Preenche os resultados
+        for (let i = 0; i < 10; i++) {
+          inputsResultados[i * 2].value = resultados[i].time1 || "";
+          inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+        }
+      }
+
+      function obterJogosDaTabela() {
+        const jogos = [];
+        const inputs = document.querySelectorAll(".input-jogo");
+        inputs.forEach((input) => jogos.push(input.value));
+        return jogos;
+      }
+
+      function obterApostasDaTabela() {
+        const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
+        const inputs = document.querySelectorAll(".aposta");
+
+        for (let i = 0; i < 10; i++) {
+          apostas.Jardel.push({
+            time1: inputs[i * 8].value,
+            time2: inputs[i * 8 + 1].value,
+          });
+          apostas.Werbet.push({
+            time1: inputs[i * 8 + 2].value,
+            time2: inputs[i * 8 + 3].value,
+          });
+          apostas.Nailton.push({
+            time1: inputs[i * 8 + 4].value,
+            time2: inputs[i * 8 + 5].value,
+          });
+          apostas.Phillipe.push({
+            time1: inputs[i * 8 + 6].value,
+            time2: inputs[i * 8 + 7].value,
+          });
+        }
+
+        return apostas;
+      }
+
+      function obterResultadosDaTabela() {
+        const resultados = [];
+        const inputs = document.querySelectorAll(".resultado");
+
+        for (let i = 0; i < 10; i++) {
+          resultados.push({
+            time1: inputs[i * 2].value,
+            time2: inputs[i * 2 + 1].value,
+          });
+        }
+
+        return resultados;
+      }
+
+      // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
+      function calcularPontuacao() {
+    const apostas = obterApostasDaTabela();
+    const resultados = obterResultadosDaTabela();
+    const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+    const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+    const placaresExatos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+
     for (let i = 0; i < 10; i++) {
-      const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
-      const indexFora = indexCasa + 1; // Índice do time2
-      inputsApostas[indexCasa].value = apostas[jogador][i]?.time1 || "";
-      inputsApostas[indexFora].value = apostas[jogador][i]?.time2 || "";
+        const resultadoCasa = resultados[i].time1;
+        const resultadoFora = resultados[i].time2;
+
+        // Ignora jogos sem resultado
+        if (resultadoCasa === "" || resultadoFora === "") continue;
+
+        jogadores.forEach((jogador) => {
+            const apostaCasa = apostas[jogador][i].time1;
+            const apostaFora = apostas[jogador][i].time2;
+
+            // Ignora apostas em branco
+            if (apostaCasa === "" || apostaFora === "") return;
+
+            if (apostaCasa === resultadoCasa && apostaFora === resultadoFora) {
+                pontos[jogador] += 3; // Acertou o placar exato
+                placaresExatos[jogador] += 1; // Incrementa o contador de placares exatos
+            } else if (
+                (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
+                (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
+                (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
+            ) {
+                pontos[jogador] += 1; // Acertou o vencedor ou empate
+            }
+        });
     }
-  });
 
-  // Preenche os resultados
-  for (let i = 0; i < 10; i++) {
-    inputsResultados[i * 2].value = resultados[i]?.time1 || "";
-    inputsResultados[i * 2 + 1].value = resultados[i]?.time2 || "";
-  }
+    // Ordena os jogadores por pontuação (do maior para o menor)
+    const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
+        if (b[1] !== a[1]) {
+            return b[1] - a[1]; // Ordena por pontuação decrescente
+        } else {
+            // Em caso de empate, ordena pelo número de placares exatos
+            const placaresExatosA = placaresExatos[a[0]];
+            const placaresExatosB = placaresExatos[b[0]];
+            return placaresExatosB - placaresExatosA;
+        }
+    });
+
+    // Verifica a pontuação máxima
+    const pontuacaoMaxima = jogadoresOrdenados[0][1];
+
+    // Filtra os jogadores com a pontuação máxima
+    const vencedores = pontuacaoMaxima > 0
+        ? jogadoresOrdenados.filter(([_, pontuacao]) => pontuacao === pontuacaoMaxima)
+        : [];
+
+    // Atualiza a exibição da pontuação
+    const pontuacaoHTML = jogadoresOrdenados
+        .map(([jogador, pontuacao]) => {
+            const isVencedor = vencedores.some(([vencedor]) => vencedor === jogador);
+            return `<div class="pontuacao-card ${
+                isVencedor ? "vencedor" : ""
+            }"><h3>${jogador}</h3>
+                    <span>
+                    <p>${pontuacao} pontos</p></div>`;
+        })
+        .join("");
+
+    document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
 }
 
-// Função para obter os jogos da tabela
-function obterJogosDaTabela() {
-  const jogos = [];
-  const inputs = document.querySelectorAll(".input-jogo");
-  inputs.forEach((input) => jogos.push(input.value));
-  return jogos;
-}
+      // Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
+      function adicionarEventosCalculoPontuacao() {
+        // Adiciona eventos aos campos de apostas
+        const inputsApostas = document.querySelectorAll(".aposta");
+        inputsApostas.forEach((input) => {
+          input.addEventListener("input", function () {
+            salvarApostasDebounced(); // Salva as apostas automaticamente
+            calcularPontuacao(); // Recalcula a pontuação
+          });
 
-// Função para obter as apostas da tabela
-function obterApostasDaTabela() {
-  const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
-  const inputs = document.querySelectorAll(".aposta");
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
+            }
+          });
+        });
 
-  for (let i = 0; i < 10; i++) {
-    apostas.Jardel.push({
-      time1: inputs[i * 8].value,
-      time2: inputs[i * 8 + 1].value,
-    });
-    apostas.Werbet.push({
-      time1: inputs[i * 8 + 2].value,
-      time2: inputs[i * 8 + 3].value,
-    });
-    apostas.Nailton.push({
-      time1: inputs[i * 8 + 4].value,
-      time2: inputs[i * 8 + 5].value,
-    });
-    apostas.Phillipe.push({
-      time1: inputs[i * 8 + 6].value,
-      time2: inputs[i * 8 + 7].value,
-    });
-  }
+        // Adiciona eventos aos campos de resultado
+        const inputsResultados = document.querySelectorAll(".resultado");
+        inputsResultados.forEach((input) => {
+          input.addEventListener("input", function () {
+            salvarApostasDebounced(); // Salva as apostas automaticamente
+            calcularPontuacao(); // Recalcula a pontuação
+          });
 
-  return apostas;
-}
-
-// Função para obter os resultados da tabela
-function obterResultadosDaTabela() {
-  const resultados = [];
-  const inputs = document.querySelectorAll(".resultado");
-
-  for (let i = 0; i < 10; i++) {
-    resultados.push({
-      time1: inputs[i * 2].value,
-      time2: inputs[i * 2 + 1].value,
-    });
-  }
-
-  return resultados;
-}
-
-// Função para calcular a pontuação
-function calcularPontuacao() {
-  const apostas = obterApostasDaTabela();
-  const resultados = obterResultadosDaTabela();
-  const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-  const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
-  const placaresExatos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
-
-  for (let i = 0; i < 10; i++) {
-    const resultadoCasa = resultados[i].time1;
-    const resultadoFora = resultados[i].time2;
-
-    // Ignora jogos sem resultado
-    if (resultadoCasa === "" || resultadoFora === "") continue;
-
-    jogadores.forEach((jogador) => {
-      const apostaCasa = apostas[jogador][i].time1;
-      const apostaFora = apostas[jogador][i].time2;
-
-      // Ignora apostas em branco
-      if (apostaCasa === "" || apostaFora === "") return;
-
-      if (apostaCasa === resultadoCasa && apostaFora === resultadoFora) {
-        pontos[jogador] += 3; // Acertou o placar exato
-        placaresExatos[jogador] += 1; // Incrementa o contador de placares exatos
-      } else if (
-        (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
-        (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
-        (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
-      ) {
-        pontos[jogador] += 1; // Acertou o vencedor ou empate
+          input.addEventListener("keydown", function (event) {
+            if (event.key === "Delete" || event.key === "Backspace") {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
+            }
+          });
+        });
       }
-    });
-  }
 
-  // Ordena os jogadores por pontuação (do maior para o menor)
-  const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
-    if (b[1] !== a[1]) {
-      return b[1] - a[1]; // Ordena por pontuação decrescente
-    } else {
-      // Em caso de empate, ordena pelo número de placares exatos
-      const placaresExatosA = placaresExatos[a[0]];
-      const placaresExatosB = placaresExatos[b[0]];
-      return placaresExatosB - placaresExatosA;
-    }
-  });
-
-  // Verifica a pontuação máxima
-  const pontuacaoMaxima = jogadoresOrdenados[0][1];
-
-  // Filtra os jogadores com a pontuação máxima
-  const vencedores = pontuacaoMaxima > 0
-    ? jogadoresOrdenados.filter(([_, pontuacao]) => pontuacao === pontuacaoMaxima)
-    : [];
-
-  // Atualiza a exibição da pontuação
-  const pontuacaoHTML = jogadoresOrdenados
-    .map(([jogador, pontuacao]) => {
-      const isVencedor = vencedores.some(([vencedor]) => vencedor === jogador);
-      return `<div class="pontuacao-card ${
-        isVencedor ? "vencedor" : ""
-      }"><h3>${jogador}</h3>
-              <span>
-              <p>${pontuacao} pontos</p></div>`;
-    })
-    .join("");
-
-  document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
-}
-
-// Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
-function adicionarEventosCalculoPontuacao() {
-  // Adiciona eventos aos campos de apostas
-  const inputsApostas = document.querySelectorAll(".aposta");
-  inputsApostas.forEach((input) => {
-    input.addEventListener("input", function () {
-      salvarApostasDebounced(); // Salva as apostas automaticamente
-      calcularPontuacao(); // Recalcula a pontuação
-    });
-
-    input.addEventListener("keydown", function (event) {
-      if (event.key === "Delete" || event.key === "Backspace") {
-        salvarApostasDebounced(); // Salva as apostas automaticamente
-        calcularPontuacao(); // Recalcula a pontuação
+      function limparApostas() {
+        document
+          .querySelectorAll("input")
+          .forEach((input) => (input.value = ""));
+        document.getElementById("pontuacao").innerHTML = "";
       }
-    });
-  });
-
-  // Adiciona eventos aos campos de resultado
-  const inputsResultados = document.querySelectorAll(".resultado");
-  inputsResultados.forEach((input) => {
-    input.addEventListener("input", function () {
-      salvarApostasDebounced(); // Salva as apostas automaticamente
-      calcularPontuacao(); // Recalcula a pontuação
-    });
-
-    input.addEventListener("keydown", function (event) {
-      if (event.key === "Delete" || event.key === "Backspace") {
-        salvarApostasDebounced(); // Salva as apostas automaticamente
-        calcularPontuacao(); // Recalcula a pontuação
-      }
-    });
-  });
-}
-
-// Função para limpar as apostas
-function limparApostas() {
-  document
-    .querySelectorAll("input")
-    .forEach((input) => (input.value = ""));
-  document.getElementById("pontuacao").innerHTML = "";
-}
-
-// Evento de carregamento da página
-window.addEventListener("load", async function () {
-  const loggedInUser = localStorage.getItem("loggedInUser");
-  if (loggedInUser) {
-    document.getElementById("login-container").classList.add("hidden");
-    document.getElementById("main-content").classList.remove("hidden");
-    await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
-    carregarApostas(); // Carrega as apostas salvas
-  } else {
-    document.getElementById("login-container").classList.remove("hidden");
-    document.getElementById("main-content").classList.add("hidden");
-  }
-});
-
-// Adiciona eventos de navegação e salvamento ao carregar o DOM
-document.addEventListener("DOMContentLoaded", function () {
-  criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
-  adicionarNavegacao();
-  adicionarNavegacaoJogos();
-  adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
-  adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
-  carregarApostas(); // Carrega as apostas salvas
-
-  // Adiciona evento de input para o nome da rodada
-  document
-    .getElementById("nome-rodada")
-    .addEventListener("input", salvarApostasDebounced);
-});
     </script>
     </div>
   </body>
 </html>
+este código está funcionando perfeitamente. quero mudar as funções que utilizam jsonbin e passar a usar o supabase. me mostre os códigos que devem ser alterados, considerando q a url e key do supabase estarão num .env na raiz do projeto. o sistema de login utilizando netlify functions não será alterado
