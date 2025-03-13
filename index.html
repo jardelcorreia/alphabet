@@ -617,6 +617,28 @@
     </footer>
 
     <script>
+
+      const supabaseUrl = process.env.SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_KEY;
+      const supabase = createClient(supabaseUrl, supabaseKey);
+
+      async function testarConexaoSupabase() {
+              try {
+                const { data, error } = await supabase
+                  .from("rodadas")
+                  .select("*")
+                  .limit(1);
+            
+                if (error) throw error;
+                console.log("Conexão com o Supabase funcionando:", data);
+              } catch (error) {
+                console.error("Erro ao conectar ao Supabase:", error);
+              }
+            }
+            
+            // Chame a função para testar a conexão
+            testarConexaoSupabase();
+      
       window.addEventListener("load", async function () {
   const loggedInUser = localStorage.getItem("loggedInUser");
   if (loggedInUser) {
@@ -738,26 +760,7 @@ async function salvarEstadoVisibilidade(estado) {
     console.error("Erro ao salvar estado de visibilidade:", error);
   }
 }
-      const supabaseUrl = process.env.SUPABASE_URL;
-      const supabaseKey = process.env.SUPABASE_KEY;
-      const supabase = createClient(supabaseUrl, supabaseKey);
-
-      async function testarConexaoSupabase() {
-              try {
-                const { data, error } = await supabase
-                  .from("rodadas")
-                  .select("*")
-                  .limit(1);
-            
-                if (error) throw error;
-                console.log("Conexão com o Supabase funcionando:", data);
-              } catch (error) {
-                console.error("Erro ao conectar ao Supabase:", error);
-              }
-            }
-            
-            // Chame a função para testar a conexão
-            testarConexaoSupabase();
+      
 
 async function carregarEstadoVisibilidade() {
   try {
