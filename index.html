@@ -888,10 +888,9 @@ async function verificarEstadoPlacares() {
   window.open("ranking.html", "_blank");
 }
 
-      // Restante do JavaScript para a tabela e funcionalidades
-      const JSONBIN_API_KEY =
-        "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
-      const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
+      const supabaseUrl = 'https://leuyfasvbfwdaloapmrs.supabase.co'
+      const supabaseKey = process.env.SUPABASE_KEY
+      const supabase = createClient(supabaseUrl, supabaseKey)
 
       document.addEventListener("DOMContentLoaded", function () {
         criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
