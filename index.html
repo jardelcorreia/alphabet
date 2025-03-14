@@ -726,37 +726,48 @@ function mostrarPlacares() {
   });
 }
 
-async function salvarEstadoVisibilidade(estado) {
-  try {
-    // 1. Carrega os dados atuais do JSONBin
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-      headers: {
-        "X-Master-Key": JSONBIN_API_KEY,
-      },
-    });
-    const data = await response.json();
-    const dadosAtuais = data.record;
-
-    // 2. Atualiza apenas a chave `placaresOcultos`
-    dadosAtuais.placaresOcultos = estado;
-
-    // 3. Salva o objeto completo de volta no JSONBin
-    const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Master-Key": JSONBIN_API_KEY,
-      },
-      body: JSON.stringify(dadosAtuais),
-    });
-
-    const saveData = await saveResponse.json();
-    console.log("Estado de visibilidade salvo:", saveData);
-  } catch (error) {
-    console.error("Erro ao salvar estado de visibilidade:", error);
+// Função para salvar o estado de visibilidade no Supabase
+  async function salvarEstadoVisibilidade(estado) {
+    try {
+      // Busca o registro atual
+      const { data, error: fetchError } = await supabase
+        .from('apostas')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(1);
+      
+      if (fetchError) throw fetchError;
+      
+      // Se não existe registro, cria um novo
+      if (!data || data.length === 0) {
+        const { error: insertError } = await supabase
+          .from('apostas')
+          .insert({
+            nome_rodada: '',
+            jogos: [],
+            apostas: { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] },
+            resultados: [],
+            placares_ocultos: estado,
+            ranking: {},
+            vitorias_empates: {}
+          });
+        
+        if (insertError) throw insertError;
+      } else {
+        // Atualiza o registro existente
+        const { error: updateError } = await supabase
+          .from('apostas')
+          .update({ placares_ocultos: estado })
+          .eq('id', data[0].id);
+        
+        if (updateError) throw updateError;
+      }
+      
+      console.log("Estado de visibilidade salvo com sucesso");
+    } catch (error) {
+      console.error("Erro ao salvar estado de visibilidade:", error);
+    }
   }
-}
-
 async function carregarEstadoVisibilidade() {
   try {
     const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
