@@ -620,7 +620,7 @@
       // Initialize Supabase client
   const SUPABASE_URL = 'https://leuyfasvbfwdaloapmrs.supabase.co'; // Replace with your Supabase URL
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4'; // Replace with your Supabase anon key
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const supabaClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       
       window.addEventListener("load", async function () {
   const loggedInUser = localStorage.getItem("loggedInUser");
