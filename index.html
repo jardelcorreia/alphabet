@@ -784,6 +784,34 @@ async function carregarEstadoVisibilidade() {
       console.error("Erro ao carregar estado de visibilidade:", error);
       return false;
     }
+}
+      async function verificarEstadoPlacares() {
+  try {
+    const isHidden = await carregarEstadoVisibilidade();
+    const toggleButton = document.getElementById("toggle-visibility");
+    const toggleText = document.getElementById("toggle-text");
+    
+    // Verifica se o usuário é o administrador (Jardel)
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
+    
+    // Atualiza o texto do botão
+    toggleText.textContent = isHidden ? "Mostrar Placar" : "Ocultar Placar";
+    
+    // Configura o evento de clique
+    toggleButton.onclick = toggleVisibility;
+    
+    // Aplica o estado atual
+    if (isHidden) {
+      ocultarPlacares();
+    } else {
+      mostrarPlacares();
+      bloquearColunasOutrosJogadores();
+    }
+  } catch (error) {
+    console.error("Erro ao verificar estado dos placares:", error);
+  }
+}
       // Função para fazer logout
       function logout() {
         localStorage.removeItem("loggedInUser");
@@ -895,10 +923,6 @@ async function carregarEstadoVisibilidade() {
   window.open("ranking.html", "_blank");
 }
 
-      // Restante do JavaScript para a tabela e funcionalidades
-      const JSONBIN_API_KEY =
-        "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
-      const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
 
       document.addEventListener("DOMContentLoaded", function () {
         criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
@@ -1046,77 +1070,92 @@ async function carregarEstadoVisibilidade() {
         }
       }
 
-      function carregarApostas() {
-  fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-    headers: {
-      "X-Master-Key": JSONBIN_API_KEY,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      const { nomeRodada, jogos, apostas, resultados, placaresOcultos } = data.record;
-
-      // Preenche o nome da rodada
-      document.getElementById("nome-rodada").value = nomeRodada || "";
-
-      // Verifica se jogos é um array
-      if (!Array.isArray(jogos)) {
-        console.error("Erro: jogos não é um array");
-        return;
-      }
-
-      preencherTabela(jogos, apostas, resultados);
-      calcularPontuacao(); // Calcula a pontuação após carregar os dados
-
-      // Aplica o estado de visibilidade
-      if (placaresOcultos) {
-        ocultarPlacares();
-      } else {
-        mostrarPlacares();
-      }
-    })
-    .catch((error) => console.error("Erro ao carregar apostas:", error));
+      async function carregarApostas() {
+  try {
+    const { data, error } = await supabase
+      .from('apostas')
+      .select('*')
+      .order('id', { ascending: false })
+      .limit(1);
+    
+    if (error) throw error;
+    
+    if (!data || data.length === 0) {
+      console.log("Nenhum dado encontrado");
+      return;
+    }
+    
+    const { nome_rodada, jogos, apostas, resultados, placares_ocultos } = data[0];
+    
+    // Preenche o nome da rodada
+    document.getElementById("nome-rodada").value = nome_rodada || "";
+    
+    // Verifica se jogos é um array
+    if (!Array.isArray(jogos)) {
+      console.error("Erro: jogos não é um array");
+      return;
+    }
+    
+    preencherTabela(jogos, apostas, resultados);
+    calcularPontuacao(); // Calcula a pontuação após carregar os dados
+    
+    // Aplica o estado de visibilidade
+    if (placares_ocultos) {
+      ocultarPlacares();
+    } else {
+      mostrarPlacares();
+      bloquearColunasOutrosJogadores();
+    }
+  } catch (error) {
+    console.error("Erro ao carregar apostas:", error);
+  }
 }
 
 async function salvarApostas() {
   try {
-    // 1. Carrega os dados atuais do JSONBin
-    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-      headers: {
-        "X-Master-Key": JSONBIN_API_KEY,
-      },
-    });
-    const data = await response.json();
-    const dadosAtuais = data.record;
-
-    // 2. Atualiza as chaves necessárias
-    dadosAtuais.nomeRodada = document.getElementById("nome-rodada").value;
-    dadosAtuais.jogos = obterJogosDaTabela();
-    dadosAtuais.apostas = obterApostasDaTabela();
-    dadosAtuais.resultados = obterResultadosDaTabela();
-    dadosAtuais.placaresOcultos = await carregarEstadoVisibilidade();
-
-    // 3. Salva o objeto completo de volta no JSONBin
-    const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Master-Key": JSONBIN_API_KEY,
-      },
-      body: JSON.stringify(dadosAtuais),
-    });
-
-    const saveData = await saveResponse.json();
-    console.log("Dados salvos com sucesso:", saveData);
+    // Busca o registro atual
+    const { data, error: fetchError } = await supabase
+      .from('apostas')
+      .select('*')
+      .order('id', { ascending: false })
+      .limit(1);
+    
+    if (fetchError) throw fetchError;
+    
+    const novosDados = {
+      nome_rodada: document.getElementById("nome-rodada").value,
+      jogos: obterJogosDaTabela(),
+      apostas: obterApostasDaTabela(),
+      resultados: obterResultadosDaTabela(),
+      placares_ocultos: await carregarEstadoVisibilidade()
+    };
+    
+    // Se não existe registro, cria um novo
+    if (!data || data.length === 0) {
+      // Adiciona os campos que podem não estar presentes nos novos dados
+      novosDados.ranking = {};
+      novosDados.vitorias_empates = {};
+      
+      const { error: insertError } = await supabase
+        .from('apostas')
+        .insert(novosDados);
+      
+      if (insertError) throw insertError;
+    } else {
+      // Atualiza o registro existente
+      const { error: updateError } = await supabase
+        .from('apostas')
+        .update(novosDados)
+        .eq('id', data[0].id);
+      
+      if (updateError) throw updateError;
+    }
+    
+    console.log("Dados salvos com sucesso");
   } catch (error) {
     console.error("Erro ao salvar dados:", error);
   }
 }
-
-setInterval(async () => {
-  await verificarEstadoPlacares();
-}, 5000); // Verifica a cada 5 segundos
-
       function preencherTabela(jogos, apostas, resultados) {
         console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
         const inputsJogos = document.querySelectorAll(".input-jogo");
