@@ -783,30 +783,22 @@ async function carregarEstadoVisibilidade() {
     return false;
   }
 }
-async function verificarEstadoPlacares() {
-  const loggedInUser = localStorage.getItem("loggedInUser");
-  const toggleButton = document.getElementById("toggle-visibility");
-  const toggleText = document.getElementById("toggle-text");
-
-  // Mostrar o botão apenas para o jogador Jardel
-  if (loggedInUser === "Jardel") {
-    toggleButton.classList.remove("hidden");
-    toggleButton.addEventListener("click", toggleVisibility);
-  } else {
-    toggleButton.classList.add("hidden"); // Oculta o botão para outros usuários
-  }
-
-  // Verificar o estado de visibilidade no backend
-  const isHidden = await carregarEstadoVisibilidade();
-  if (isHidden) {
-    ocultarPlacares();
-    toggleText.textContent = "Revelar Placar";
-  } else {
-    mostrarPlacares();
-    toggleText.textContent = "Ocultar Placar";
-  }
-}
-
+      
+async function carregarEstadoVisibilidade() {
+    try {
+      const { data, error } = await supabase
+        .from('apostas')
+        .select('placares_ocultos')
+        .order('id', { ascending: false })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      return data && data.length > 0 ? data[0].placares_ocultos : false;
+    } catch (error) {
+      console.error("Erro ao carregar estado de visibilidade:", error);
+      return false;
+    }
       // Função para fazer logout
       function logout() {
         localStorage.removeItem("loggedInUser");
