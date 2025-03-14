@@ -783,6 +783,7 @@ function mostrarPlacares() {
       return false;
     }
   }
+      
 async function verificarEstadoPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const toggleButton = document.getElementById("toggle-visibility");
@@ -1064,24 +1065,22 @@ async function verificarEstadoPlacares() {
         }
       }
 
-      function carregarApostas() {
-  fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-    headers: {
-      "X-Master-Key": JSONBIN_API_KEY,
-    },
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      const { nomeRodada, jogos, apostas, resultados, placaresOcultos } = data.record;
-
-      // Preenche o nome da rodada
-      document.getElementById("nome-rodada").value = nomeRodada || "";
-
-      // Verifica se jogos é um array
-      if (!Array.isArray(jogos)) {
-        console.error("Erro: jogos não é um array");
-        return;
-      }
+      async function carregarEstadoVisibilidade() {
+    try {
+      const { data, error } = await supabase
+        .from('apostas')
+        .select('placares_ocultos')
+        .order('id', { ascending: false })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      return data && data.length > 0 ? data[0].placares_ocultos : false;
+    } catch (error) {
+      console.error("Erro ao carregar estado de visibilidade:", error);
+      return false;
+    }
+  }
 
       preencherTabela(jogos, apostas, resultados);
       calcularPontuacao(); // Calcula a pontuação após carregar os dados
