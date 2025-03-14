@@ -617,22 +617,18 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-      const SUPABASE_URL = 'https://leuyfasvbfwdaloapmrs.supabase.co'; // Replace with your Supabase URL
-      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4'; // Replace with your Supabase anon key
-      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  
-  window.addEventListener("load", async function () {
-    const loggedInUser = localStorage.getItem("loggedInUser");
-    if (loggedInUser) {
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("main-content").classList.remove("hidden");
-      await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
-      carregarApostas(); // Carrega as apostas salvas
-    } else {
-      document.getElementById("login-container").classList.remove("hidden");
-      document.getElementById("main-content").classList.add("hidden");
-    }
-  });
+      window.addEventListener("load", async function () {
+  const loggedInUser = localStorage.getItem("loggedInUser");
+  if (loggedInUser) {
+    document.getElementById("login-container").classList.add("hidden");
+    document.getElementById("main-content").classList.remove("hidden");
+    await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
+    carregarApostas(); // Carrega as apostas salvas
+  } else {
+    document.getElementById("login-container").classList.remove("hidden");
+    document.getElementById("main-content").classList.add("hidden");
+  }
+});
 
       function handleKeyPress(event) {
         if (event.key === "Enter") {
@@ -716,16 +712,16 @@ function ocultarPlacares() {
 }
 
 function mostrarPlacares() {
-    const inputsApostas = document.querySelectorAll(".aposta");
+  const inputsApostas = document.querySelectorAll(".aposta");
 
-    inputsApostas.forEach((input) => {
-      input.style.display = ""; // Mostra o input
-      input.disabled = true; // Torna o input não editável
-      input.style.backgroundColor = "#f0f0f0";
-    });
-  }
+  inputsApostas.forEach((input) => {
+    input.style.display = ""; // Mostra o input
+    input.disabled = true; // Torna o input não editável
+    input.style.backgroundColor = "#f0f0f0";
+  });
+}
 
-  async function salvarEstadoVisibilidade(estado) {
+async function salvarEstadoVisibilidade(estado) {
     try {
       // Busca o registro atual
       const { data, error: fetchError } = await supabase
@@ -767,7 +763,7 @@ function mostrarPlacares() {
     }
   }
 
-  async function carregarEstadoVisibilidade() {
+async function carregarEstadoVisibilidade() {
     try {
       const { data, error } = await supabase
         .from('apostas')
@@ -783,6 +779,7 @@ function mostrarPlacares() {
       return false;
     }
   }
+
       
 async function verificarEstadoPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
@@ -918,6 +915,8 @@ async function verificarEstadoPlacares() {
       function abrirRanking() {
   window.open("ranking.html", "_blank");
 }
+
+      
 
       document.addEventListener("DOMContentLoaded", function () {
         criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
@@ -1065,22 +1064,24 @@ async function verificarEstadoPlacares() {
         }
       }
 
-      async function carregarEstadoVisibilidade() {
-    try {
-      const { data, error } = await supabase
-        .from('apostas')
-        .select('placares_ocultos')
-        .order('id', { ascending: false })
-        .limit(1);
-      
-      if (error) throw error;
-      
-      return data && data.length > 0 ? data[0].placares_ocultos : false;
-    } catch (error) {
-      console.error("Erro ao carregar estado de visibilidade:", error);
-      return false;
-    }
-  }
+      function carregarApostas() {
+  fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+    headers: {
+      "X-Master-Key": JSONBIN_API_KEY,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      const { nomeRodada, jogos, apostas, resultados, placaresOcultos } = data.record;
+
+      // Preenche o nome da rodada
+      document.getElementById("nome-rodada").value = nomeRodada || "";
+
+      // Verifica se jogos é um array
+      if (!Array.isArray(jogos)) {
+        console.error("Erro: jogos não é um array");
+        return;
+      }
 
       preencherTabela(jogos, apostas, resultados);
       calcularPontuacao(); // Calcula a pontuação após carregar os dados
