@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AlphaBet 2025 - Login</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
     <link
       rel="stylesheet"
@@ -616,30 +615,24 @@
         </p>
       </div>
     </footer>
-    
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-      // Configure o Supabase globalmente
-    window.onload = function () {
-      const supabaseUrl = 'https://leuyfasvbfwdaloapmrs.supabase.co';
-      const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4';
-      const supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    
-      console.log("Supabase inicializado:", supabase);
-    };
-      
-      window.addEventListener("load", async function () {
-  const loggedInUser = localStorage.getItem("loggedInUser");
-  if (loggedInUser) {
-    document.getElementById("login-container").classList.add("hidden");
-    document.getElementById("main-content").classList.remove("hidden");
-    await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
-    carregarApostas(); // Carrega as apostas salvas
-  } else {
-    document.getElementById("login-container").classList.remove("hidden");
-    document.getElementById("main-content").classList.add("hidden");
-  }
-});
+      const SUPABASE_URL = 'https://leuyfasvbfwdaloapmrs.supabase.co'; // Replace with your Supabase URL
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4'; // Replace with your Supabase anon key
+      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  
+  window.addEventListener("load", async function () {
+    const loggedInUser = localStorage.getItem("loggedInUser");
+    if (loggedInUser) {
+      document.getElementById("login-container").classList.add("hidden");
+      document.getElementById("main-content").classList.remove("hidden");
+      await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
+      carregarApostas(); // Carrega as apostas salvas
+    } else {
+      document.getElementById("login-container").classList.remove("hidden");
+      document.getElementById("main-content").classList.add("hidden");
+    }
+  });
 
       function handleKeyPress(event) {
         if (event.key === "Enter") {
@@ -723,47 +716,73 @@ function ocultarPlacares() {
 }
 
 function mostrarPlacares() {
-  const inputsApostas = document.querySelectorAll(".aposta");
+    const inputsApostas = document.querySelectorAll(".aposta");
 
-  inputsApostas.forEach((input) => {
-    input.style.display = ""; // Mostra o input
-    input.disabled = true; // Torna o input não editável
-    input.style.backgroundColor = "#f0f0f0";
-  });
-}
-
-async function salvarEstadoVisibilidade(estado) {
-  try {
-    const { data, error } = await supabase
-      .from('apostas')
-      .insert([
-        { placares_ocultos: estado }
-      ]);
-
-    if (error) throw error;
-
-    console.log("Estado de visibilidade salvo:", data);
-  } catch (error) {
-    console.error("Erro ao salvar estado de visibilidade:", error);
+    inputsApostas.forEach((input) => {
+      input.style.display = ""; // Mostra o input
+      input.disabled = true; // Torna o input não editável
+      input.style.backgroundColor = "#f0f0f0";
+    });
   }
-}
 
-async function carregarEstadoVisibilidade() {
-  try {
-    const { data, error } = await supabase
-      .from('apostas')
-      .select('placares_ocultos')
-      .order('id', { ascending: false })
-      .limit(1);
-
-    if (error) throw error;
-
-    return data[0]?.placares_ocultos || false;
-  } catch (error) {
-    console.error("Erro ao carregar estado de visibilidade:", error);
-    return false;
+  async function salvarEstadoVisibilidade(estado) {
+    try {
+      // Busca o registro atual
+      const { data, error: fetchError } = await supabase
+        .from('apostas')
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(1);
+      
+      if (fetchError) throw fetchError;
+      
+      // Se não existe registro, cria um novo
+      if (!data || data.length === 0) {
+        const { error: insertError } = await supabase
+          .from('apostas')
+          .insert({
+            nome_rodada: '',
+            jogos: [],
+            apostas: { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] },
+            resultados: [],
+            placares_ocultos: estado,
+            ranking: {},
+            vitorias_empates: {}
+          });
+        
+        if (insertError) throw insertError;
+      } else {
+        // Atualiza o registro existente
+        const { error: updateError } = await supabase
+          .from('apostas')
+          .update({ placares_ocultos: estado })
+          .eq('id', data[0].id);
+        
+        if (updateError) throw updateError;
+      }
+      
+      console.log("Estado de visibilidade salvo com sucesso");
+    } catch (error) {
+      console.error("Erro ao salvar estado de visibilidade:", error);
+    }
   }
-}
+
+  async function carregarEstadoVisibilidade() {
+    try {
+      const { data, error } = await supabase
+        .from('apostas')
+        .select('placares_ocultos')
+        .order('id', { ascending: false })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      return data && data.length > 0 ? data[0].placares_ocultos : false;
+    } catch (error) {
+      console.error("Erro ao carregar estado de visibilidade:", error);
+      return false;
+    }
+  }
 async function verificarEstadoPlacares() {
   const loggedInUser = localStorage.getItem("loggedInUser");
   const toggleButton = document.getElementById("toggle-visibility");
@@ -898,7 +917,6 @@ async function verificarEstadoPlacares() {
       function abrirRanking() {
   window.open("ranking.html", "_blank");
 }
-
 
       document.addEventListener("DOMContentLoaded", function () {
         criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
@@ -1046,64 +1064,68 @@ async function verificarEstadoPlacares() {
         }
       }
 
-      async function carregarApostas() {
-  try {
-    const { data, error } = await supabase
-      .from('apostas')
-      .select('*')
-      .order('id', { ascending: false })
-      .limit(1);
+      function carregarApostas() {
+  fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+    headers: {
+      "X-Master-Key": JSONBIN_API_KEY,
+    },
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      const { nomeRodada, jogos, apostas, resultados, placaresOcultos } = data.record;
 
-    if (error) throw error;
+      // Preenche o nome da rodada
+      document.getElementById("nome-rodada").value = nomeRodada || "";
 
-    const { nome_rodada, jogos, apostas, resultados, placares_ocultos } = data[0];
+      // Verifica se jogos é um array
+      if (!Array.isArray(jogos)) {
+        console.error("Erro: jogos não é um array");
+        return;
+      }
 
-    // Preenche o nome da rodada
-    document.getElementById("nome-rodada").value = nome_rodada || "";
+      preencherTabela(jogos, apostas, resultados);
+      calcularPontuacao(); // Calcula a pontuação após carregar os dados
 
-    // Verifica se jogos é um array
-    if (!Array.isArray(jogos)) {
-      console.error("Erro: jogos não é um array");
-      return;
-    }
-
-    preencherTabela(jogos, apostas, resultados);
-    calcularPontuacao(); // Calcula a pontuação após carregar os dados
-
-    // Aplica o estado de visibilidade
-    if (placares_ocultos) {
-      ocultarPlacares();
-    } else {
-      mostrarPlacares();
-    }
-  } catch (error) {
-    console.error("Erro ao carregar apostas:", error);
-  }
+      // Aplica o estado de visibilidade
+      if (placaresOcultos) {
+        ocultarPlacares();
+      } else {
+        mostrarPlacares();
+      }
+    })
+    .catch((error) => console.error("Erro ao carregar apostas:", error));
 }
 
 async function salvarApostas() {
   try {
-    const nomeRodada = document.getElementById("nome-rodada").value;
-    const jogos = obterJogosDaTabela();
-    const apostas = obterApostasDaTabela();
-    const resultados = obterResultadosDaTabela();
-    const placaresOcultos = await carregarEstadoVisibilidade();
+    // 1. Carrega os dados atuais do JSONBin
+    const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      headers: {
+        "X-Master-Key": JSONBIN_API_KEY,
+      },
+    });
+    const data = await response.json();
+    const dadosAtuais = data.record;
 
-    const { data, error } = await supabase
-      .from('apostas')
-      .insert([
-        {
-          nome_rodada: nomeRodada,
-          jogos: jogos,
-          apostas: apostas,
-          resultados: resultados,
-          placares_ocultos: placaresOcultos
-        }
-      ]);
+    // 2. Atualiza as chaves necessárias
+    dadosAtuais.nomeRodada = document.getElementById("nome-rodada").value;
+    dadosAtuais.jogos = obterJogosDaTabela();
+    dadosAtuais.apostas = obterApostasDaTabela();
+    dadosAtuais.resultados = obterResultadosDaTabela();
+    dadosAtuais.placaresOcultos = await carregarEstadoVisibilidade();
 
-    if (error) throw error;
+    // 3. Salva o objeto completo de volta no JSONBin
+    const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": JSONBIN_API_KEY,
+      },
+      body: JSON.stringify(dadosAtuais),
+    });
 
-    console.log("Dados salvos com sucesso:", data);
+    const saveData = await saveResponse.json();
+    console.log("Dados salvos com sucesso:", saveData);
   } catch (error) {
     console.error("Erro ao salvar dados:", error);
   }
@@ -1302,8 +1324,5 @@ setInterval(async () => {
       }
     </script>
     </div>
-  <div data-netlify-deploy-id="67d336b1f5c69e00086bf3e2" data-netlify-site-id="2a43b367-a6bb-43ee-8526-261174a78139" data-vcs="github" style="position:fixed">
-  
-  <script async src="/.netlify/scripts/cdp"></script>
-</div></body>
+  </body>
 </html>
