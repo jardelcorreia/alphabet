@@ -617,6 +617,11 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+      // Initialize Supabase client
+  const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // Replace with your Supabase URL
+  const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Replace with your Supabase anon key
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      
       window.addEventListener("load", async function () {
   const loggedInUser = localStorage.getItem("loggedInUser");
   if (loggedInUser) {
