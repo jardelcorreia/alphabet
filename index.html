@@ -568,11 +568,12 @@
           <thead>
             <tr>
               <th>
-                <input
-                  type="text"
-                  id="nome-rodada"
-                  placeholder="Nome da Rodada"
-                />
+                <th>
+                  <select id="nome-rodada" onchange="carregarApostas()">
+                    <option value="">Selecione a Rodada</option>
+                    ${Array.from({ length: 38 }, (_, i) => `<option value="Rodada ${i + 1}">Rodada ${i + 1}</option>`).join('')}
+                  </select>
+                </th>
               </th>
               <th>Jardel</th>
               <th>Werbet</th>
@@ -1071,34 +1072,29 @@ async function carregarEstadoVisibilidade() {
       }
 
       async function carregarApostas() {
+  const rodadaSelecionada = document.getElementById("nome-rodada").value;
+
   try {
     const { data, error } = await supabaseClient
       .from('apostas')
       .select('*')
-      .order('id', { ascending: false })
-      .limit(1);
-    
+      .eq('nome_rodada', rodadaSelecionada)
+      .single();
+
     if (error) throw error;
-    
-    if (!data || data.length === 0) {
-      console.log("Nenhum dado encontrado");
+
+    if (!data) {
+      console.log("Nenhum dado encontrado para a rodada selecionada");
+      limparTabela();
       return;
     }
-    
-    const { nome_rodada, jogos, apostas, resultados, placares_ocultos } = data[0];
-    
-    // Preenche o nome da rodada
-    document.getElementById("nome-rodada").value = nome_rodada || "";
-    
-    // Verifica se jogos é um array
-    if (!Array.isArray(jogos)) {
-      console.error("Erro: jogos não é um array");
-      return;
-    }
-    
+
+    const { jogos, apostas, resultados, placares_ocultos } = data;
+
+    // Preenche a tabela com os dados da rodada selecionada
     preencherTabela(jogos, apostas, resultados);
     calcularPontuacao(); // Calcula a pontuação após carregar os dados
-    
+
     // Aplica o estado de visibilidade
     if (placares_ocultos) {
       ocultarPlacares();
@@ -1110,52 +1106,60 @@ async function carregarEstadoVisibilidade() {
     console.error("Erro ao carregar apostas:", error);
   }
 }
+  function limparTabela() {
+  const inputsJogos = document.querySelectorAll(".input-jogo");
+  const inputsApostas = document.querySelectorAll(".aposta");
+  const inputsResultados = document.querySelectorAll(".resultado");
 
+  inputsJogos.forEach(input => input.value = "");
+  inputsApostas.forEach(input => input.value = "");
+  inputsResultados.forEach(input => input.value = "");
+}
+      
 async function salvarApostas() {
+  const rodadaSelecionada = document.getElementById("nome-rodada").value;
+
   try {
-    // Busca o registro atual
-    const { data, error: fetchError } = await supabaseClient
-      .from('apostas')
-      .select('*')
-      .order('id', { ascending: false })
-      .limit(1);
-    
-    if (fetchError) throw fetchError;
-    
     const novosDados = {
-      nome_rodada: document.getElementById("nome-rodada").value,
+      nome_rodada: rodadaSelecionada,
       jogos: obterJogosDaTabela(),
       apostas: obterApostasDaTabela(),
       resultados: obterResultadosDaTabela(),
       placares_ocultos: await carregarEstadoVisibilidade()
     };
-    
-    // Se não existe registro, cria um novo
-    if (!data || data.length === 0) {
-      // Adiciona os campos que podem não estar presentes nos novos dados
-      novosDados.ranking = {};
-      novosDados.vitorias_empates = {};
-      
-      const { error: insertError } = await supabaseClient
-        .from('apostas')
-        .insert(novosDados);
-      
-      if (insertError) throw insertError;
-    } else {
+
+    // Verifica se já existe um registro para a rodada selecionada
+    const { data: existingData, error: fetchError } = await supabaseClient
+      .from('apostas')
+      .select('*')
+      .eq('nome_rodada', rodadaSelecionada)
+      .single();
+
+    if (fetchError && fetchError.code !== 'PGRST116') throw fetchError; // Ignora erro de "nenhum resultado"
+
+    if (existingData) {
       // Atualiza o registro existente
       const { error: updateError } = await supabaseClient
         .from('apostas')
         .update(novosDados)
-        .eq('id', data[0].id);
-      
+        .eq('id', existingData.id);
+
       if (updateError) throw updateError;
+    } else {
+      // Cria um novo registro
+      const { error: insertError } = await supabaseClient
+        .from('apostas')
+        .insert(novosDados);
+
+      if (insertError) throw insertError;
     }
-    
+
     console.log("Dados salvos com sucesso");
   } catch (error) {
     console.error("Erro ao salvar dados:", error);
   }
 }
+      
       function preencherTabela(jogos, apostas, resultados) {
         console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
         const inputsJogos = document.querySelectorAll(".input-jogo");
