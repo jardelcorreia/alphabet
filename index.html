@@ -730,7 +730,7 @@ function mostrarPlacares() {
   async function salvarEstadoVisibilidade(estado) {
     try {
       // Busca o registro atual
-      const { data, error: fetchError } = await supabase
+      const { data, error: fetchError } = await supabaseClient
         .from('apostas')
         .select('*')
         .order('id', { ascending: false })
@@ -740,7 +740,7 @@ function mostrarPlacares() {
       
       // Se não existe registro, cria um novo
       if (!data || data.length === 0) {
-        const { error: insertError } = await supabase
+        const { error: insertError } = await supabaseClient
           .from('apostas')
           .insert({
             nome_rodada: '',
@@ -755,7 +755,7 @@ function mostrarPlacares() {
         if (insertError) throw insertError;
       } else {
         // Atualiza o registro existente
-        const { error: updateError } = await supabase
+        const { error: updateError } = await supabaseClient
           .from('apostas')
           .update({ placares_ocultos: estado })
           .eq('id', data[0].id);
@@ -771,7 +771,7 @@ function mostrarPlacares() {
       
 async function carregarEstadoVisibilidade() {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from('apostas')
         .select('placares_ocultos')
         .order('id', { ascending: false })
@@ -1072,7 +1072,7 @@ async function carregarEstadoVisibilidade() {
 
       async function carregarApostas() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseClient
       .from('apostas')
       .select('*')
       .order('id', { ascending: false })
@@ -1114,7 +1114,7 @@ async function carregarEstadoVisibilidade() {
 async function salvarApostas() {
   try {
     // Busca o registro atual
-    const { data, error: fetchError } = await supabase
+    const { data, error: fetchError } = await supabaseClient
       .from('apostas')
       .select('*')
       .order('id', { ascending: false })
@@ -1136,14 +1136,14 @@ async function salvarApostas() {
       novosDados.ranking = {};
       novosDados.vitorias_empates = {};
       
-      const { error: insertError } = await supabase
+      const { error: insertError } = await supabaseClient
         .from('apostas')
         .insert(novosDados);
       
       if (insertError) throw insertError;
     } else {
       // Atualiza o registro existente
-      const { error: updateError } = await supabase
+      const { error: updateError } = await supabaseClient
         .from('apostas')
         .update(novosDados)
         .eq('id', data[0].id);
