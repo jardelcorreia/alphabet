@@ -135,11 +135,16 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const JSONBIN_API_KEY = "$2a$10$QczBqDVg21UoQVS0nvd4AehncJhX1Sb2iR5W62DOITEnjd39G.9qG"; // Substitua pela sua API Key
-    const JSONBIN_BIN_ID = "67b52544e41b4d34e49359c5"; // Substitua pelo ID do seu bin
-
-    // Função debounce para evitar múltiplas chamadas ao servidor
+   // Configuração do Supabase
+    const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co"; // Substitua pelo seu URL do Supabase
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4"; // Substitua pela sua chave anon do Supabase
+    
+    // Inicialização do cliente Supabase
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+   // Função debounce para evitar múltiplas chamadas ao servidor
     function debounce(func, wait) {
       let timeout;
       return function (...args) {
@@ -171,16 +176,30 @@
       input.addEventListener("input", debounce(salvarRanking, 500));
     }
 
-    // Carrega os dados salvos do JSONBin
+    // Carrega os dados salvos do Supabase
     async function carregarRanking() {
       try {
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          headers: {
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-        });
-        const data = await response.json();
-        const dadosAtuais = data.record;
+        // Busca os dados da tabela apostas
+        const { data, error } = await supabaseClient
+          .from('apostas')
+          .select('*')
+          .order('id', { ascending: false })
+          .limit(1);
+        
+        if (error) throw error;
+        
+        if (!data || data.length === 0) {
+          console.log("Nenhum dado de ranking encontrado");
+          return;
+        }
+
+        const dadosAtuais = data[0];
+        
+        // Verifica se o ranking existe no registro
+        if (!dadosAtuais.ranking || !Array.isArray(dadosAtuais.ranking)) {
+          console.log("Ranking não encontrado ou inválido");
+          return;
+        }
 
         // Preenche os inputs
         dadosAtuais.ranking.forEach((vencedores, index) => {
@@ -189,14 +208,19 @@
         });
 
         // Exibe as vitórias e empates
-        const resultados = calcularVitoriasEmpates(dadosAtuais.ranking);
-        exibirVitorias(resultados);
+        if (dadosAtuais.vitorias_empates) {
+          exibirVitorias(dadosAtuais.vitorias_empates);
+        } else {
+          // Se não tiver vitórias_empates, calcula baseado no ranking
+          const resultados = calcularVitoriasEmpates(dadosAtuais.ranking);
+          exibirVitorias(resultados);
+        }
       } catch (error) {
         console.error("Erro ao carregar ranking:", error);
       }
     }
 
-    // Salva os dados no JSONBin
+    // Salva os dados no Supabase
     async function salvarRanking() {
       try {
         const ranking = [];
@@ -205,35 +229,50 @@
           ranking.push(input.value);
         }
 
-        // 1. Carrega os dados atuais do JSONBin
-        const response = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          headers: {
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-        });
-        const data = await response.json();
-        const dadosAtuais = data.record;
+        // Calcula as vitórias e empates
+        const vitoriasEmpates = calcularVitoriasEmpates(ranking);
 
-        // 2. Atualiza as chaves necessárias
-        dadosAtuais.ranking = ranking;
-        dadosAtuais.vitoriasEmpates = calcularVitoriasEmpates(ranking);
+        // Verifica se já existe um registro
+        const { data: existingData, error: queryError } = await supabaseClient
+          .from('apostas')
+          .select('id')
+          .order('id', { ascending: false })
+          .limit(1);
 
-        // 3. Salva o objeto completo de volta no JSONBin
-        const saveResponse = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-Master-Key": JSONBIN_API_KEY,
-          },
-          body: JSON.stringify(dadosAtuais),
-        });
+        if (queryError) throw queryError;
 
-        const saveData = await saveResponse.json();
-        console.log("Dados salvos com sucesso:", saveData);
+        let response;
+        
+        if (existingData && existingData.length > 0) {
+          // Atualiza o registro existente
+          response = await supabaseClient
+            .from('apostas')
+            .update({
+              ranking: ranking,
+              vitorias_empates: vitoriasEmpates
+            })
+            .eq('id', existingData[0].id);
+        } else {
+          // Cria um novo registro
+          response = await supabaseClient
+            .from('apostas')
+            .insert({
+              nome_rodada: "Ranking",
+              ranking: ranking,
+              vitorias_empates: vitoriasEmpates,
+              jogos: [],
+              apostas: {},
+              resultados: {},
+              placares_ocultos: false
+            });
+        }
 
-        // 4. Calcula e exibe as vitórias e empates
-        const resultados = calcularVitoriasEmpates(ranking);
-        exibirVitorias(resultados);
+        if (response.error) throw response.error;
+
+        console.log("Dados salvos com sucesso");
+
+        // Exibe as vitórias e empates
+        exibirVitorias(vitoriasEmpates);
       } catch (error) {
         console.error("Erro ao salvar ranking:", error);
       }
@@ -251,7 +290,7 @@
       ranking.forEach((vencedores) => {
         const listaVencedores = vencedores.split(",").map((nome) => nome.trim());
 
-        if (listaVencedores.length === 1) {
+        if (listaVencedores.length === 1 && listaVencedores[0] !== "") {
           // Vitória única
           const vencedor = listaVencedores[0];
           if (vencedor && vitoriasEmpates[vencedor]) {
@@ -295,7 +334,9 @@
     }
 
     // Carrega os dados ao abrir a página
-    carregarRanking();
+    window.addEventListener('DOMContentLoaded', () => {
+      carregarRanking();
+    });
   </script>
 </body>
 </html>
