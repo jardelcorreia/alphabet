@@ -885,7 +885,7 @@ async function carregarEstadoVisibilidade() {
       }
 
       // Função para bloquear as colunas dos outros jogadores
-      function bloquearColunasOutrosJogadores() {
+     /*function bloquearColunasOutrosJogadores() {
         const loggedInUser = localStorage.getItem("loggedInUser");
         if (!loggedInUser) return;
 
@@ -916,7 +916,7 @@ async function carregarEstadoVisibilidade() {
             input.style.backgroundColor = "";
           }
         });
-      }
+      }*/
 
       function abrirRanking() {
   window.open("ranking.html", "_blank");
@@ -1103,7 +1103,6 @@ async function carregarEstadoVisibilidade() {
       ocultarPlacares();
     } else {
       mostrarPlacares();
-      bloquearColunasOutrosJogadores();
     }
   } catch (error) {
     console.error("Erro ao carregar apostas:", error);
