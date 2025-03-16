@@ -731,7 +731,7 @@ function mostrarPlacares() {
     try {
       // Busca o registro atual
       const { data, error: fetchError } = await supabaseClient
-        .from('apostas')
+        .from('alphabet_table')
         .select('*')
         .order('id', { ascending: false })
         .limit(1);
@@ -741,7 +741,7 @@ function mostrarPlacares() {
       // Se não existe registro, cria um novo
       if (!data || data.length === 0) {
         const { error: insertError } = await supabaseClient
-          .from('apostas')
+          .from('alphabet_table')
           .insert({
             nome_rodada: '',
             jogos: [],
@@ -756,7 +756,7 @@ function mostrarPlacares() {
       } else {
         // Atualiza o registro existente
         const { error: updateError } = await supabaseClient
-          .from('apostas')
+          .from('alphabet_table')
           .update({ placares_ocultos: estado })
           .eq('id', data[0].id);
         
@@ -772,7 +772,7 @@ function mostrarPlacares() {
 async function carregarEstadoVisibilidade() {
     try {
       const { data, error } = await supabaseClient
-        .from('apostas')
+        .from('alphabet_table')
         .select('placares_ocultos')
         .order('id', { ascending: false })
         .limit(1);
@@ -1073,7 +1073,7 @@ async function carregarEstadoVisibilidade() {
       async function carregarApostas() {
   try {
     const { data, error } = await supabaseClient
-      .from('apostas')
+      .from('alphabet_table')
       .select('*')
       .order('id', { ascending: false })
       .limit(1);
@@ -1115,7 +1115,7 @@ async function salvarApostas() {
   try {
     // Busca o registro atual
     const { data, error: fetchError } = await supabaseClient
-      .from('apostas')
+      .from('alphabet_table')
       .select('*')
       .order('id', { ascending: false })
       .limit(1);
@@ -1137,14 +1137,14 @@ async function salvarApostas() {
       novosDados.vitorias_empates = {};
       
       const { error: insertError } = await supabaseClient
-        .from('apostas')
+        .from('alphabet_table')
         .insert(novosDados);
       
       if (insertError) throw insertError;
     } else {
       // Atualiza o registro existente
       const { error: updateError } = await supabaseClient
-        .from('apostas')
+        .from('alphabet_table')
         .update(novosDados)
         .eq('id', data[0].id);
       
