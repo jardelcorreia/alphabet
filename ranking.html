@@ -181,7 +181,7 @@
       try {
         // Busca os dados da tabela apostas
         const { data, error } = await supabaseClient
-          .from('apostas')
+          .from('alphabet_table')
           .select('*')
           .order('id', { ascending: false })
           .limit(1);
@@ -234,7 +234,7 @@
 
         // Verifica se já existe um registro
         const { data: existingData, error: queryError } = await supabaseClient
-          .from('apostas')
+          .from('alphabet_table')
           .select('id')
           .order('id', { ascending: false })
           .limit(1);
@@ -246,7 +246,7 @@
         if (existingData && existingData.length > 0) {
           // Atualiza o registro existente
           response = await supabaseClient
-            .from('apostas')
+            .from('alphabet_table')
             .update({
               ranking: ranking,
               vitorias_empates: vitoriasEmpates
@@ -255,7 +255,7 @@
         } else {
           // Cria um novo registro
           response = await supabaseClient
-            .from('apostas')
+            .from('alphabet_table')
             .insert({
               nome_rodada: "Ranking",
               ranking: ranking,
