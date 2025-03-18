@@ -1585,18 +1585,6 @@ document.getElementById("proxima").addEventListener("click", () => {
   }
 });
 
-    atualizarNavegacao();
-  } catch (error) {
-    console.error("Erro ao buscar dados:", error);
-    document.getElementById("calendario-jogos").innerHTML = `
-      <div class="error">
-        <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
-        <p>Por favor, tente novamente mais tarde ou verifique sua conexão com a internet.</p>
-      </div>
-    `;
-  }
-}
-
 function exibirRodada(rodada, partidas) {
   const calendario = document.getElementById("calendario-jogos");
   calendario.innerHTML = ""; // Limpa o conteúdo anterior
