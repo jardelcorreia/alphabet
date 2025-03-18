@@ -1352,8 +1352,9 @@ async function salvarApostas() {
       }
 
       let todasPartidas = [];
-let rodadaAtual = 1;
-let totalRodadas = 0;
+      let rodadaAtual = 1;
+      let totalRodadas = 0;
+      let rodadaExibida = null; // Armazena a rodada que está sendo exibida na tabela principal
 
 // Mapeamento de abreviações dos times, nomes completos e URLs dos escudos
 const timesInfo = {
@@ -1555,20 +1556,22 @@ async function buscarCalendario() {
 
     // Atualiza a navegação
     document.getElementById("anterior").addEventListener("click", () => {
-      if (rodadaAtual > 1) {
-        rodadaAtual--;
-        exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-        atualizarNavegacao();
-      }
-    });
+  if (rodadaAtual > 1) {
+    rodadaAtual--;
+    exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+    rodadaExibida = rodadaAtual; // Atualiza a rodada exibida
+    atualizarNavegacao();
+  }
+});
 
-    document.getElementById("proxima").addEventListener("click", () => {
-      if (rodadaAtual < totalRodadas) {
-        rodadaAtual++;
-        exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-        atualizarNavegacao();
-      }
-    });
+document.getElementById("proxima").addEventListener("click", () => {
+  if (rodadaAtual < totalRodadas) {
+    rodadaAtual++;
+    exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+    rodadaExibida = rodadaAtual; // Atualiza a rodada exibida
+    atualizarNavegacao();
+  }
+});
 
     atualizarNavegacao();
   } catch (error) {
@@ -1667,8 +1670,16 @@ let dadosTabelaPrincipal = {
   resultados: []
 };
 
-// Função para preencher a tabela principal com os dados da rodada atual
-async function preencherTabelaPrincipalComRodadaAtual(rodada) {
+async function preencherTabelaPrincipalComRodadaAtual(rodada, usarDadosSimulados = false) {
+  // Verifica se a rodada que está sendo carregada é a mesma que já está sendo exibida
+  if (rodadaExibida !== null && rodadaExibida !== rodada) {
+    const confirmacao = confirm(`A tabela principal já está preenchida com a Rodada ${rodadaExibida}. Deseja substituir pela Rodada ${rodada}?`);
+    if (!confirmacao) {
+      console.log("Preenchimento cancelado pelo usuário.");
+      return; // Cancela o preenchimento se o usuário não confirmar
+    }
+  }
+
   const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
 
   try {
@@ -1693,21 +1704,31 @@ async function preencherTabelaPrincipalComRodadaAtual(rodada) {
       casa: partida.homeTeam.name,
       fora: partida.awayTeam.name
     }));
-    dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(partida => ({
-      casa: partida.score.fullTime.home,
-      fora: partida.score.fullTime.away
-    }));
+
+    // Usa dados simulados se não houver resultados reais ou se for um teste
+    if (usarDadosSimulados || jogosRodadaAtual.some(partida => partida.score.fullTime.home === null)) {
+      dadosTabelaPrincipal.resultados = simularResultados(jogosRodadaAtual);
+    } else {
+      dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(partida => ({
+        casa: partida.score.fullTime.home,
+        fora: partida.score.fullTime.away
+      }));
+    }
 
     // Preenche a tabela principal
     preencherTabelaPrincipalHTML();
+
+    // Atualiza a variável global com a rodada exibida
+    rodadaExibida = rodada;
+
     // Força o salvamento dos dados após preencher a tabela
     await salvarApostas();
+
   } catch (error) {
     console.error("Erro ao buscar dados da tabela principal:", error);
     alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
   }
 }
-
 // Função para preencher o HTML da tabela principal
 function preencherTabelaPrincipalHTML() {
   const tabelaApostas = document.getElementById("tabela-apostas");
@@ -1770,7 +1791,9 @@ function preencherTabelaPrincipalHTML() {
   // Adiciona eventos de salvamento aos campos preenchidos automaticamente
   adicionarEventosSalvamento();
   // Aplica o estado de visibilidade após preencher a tabela
-  await verificarEstadoPlacares();
+  verificarEstadoPlacares();
+  adicionarNavegacao();
+  adicionarNavegacaoJogos();
 }
 
 // Atualização periódica (1 hora)
