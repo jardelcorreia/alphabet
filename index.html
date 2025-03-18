@@ -1688,13 +1688,17 @@ let dadosTabelaPrincipal = {
 };
 
 async function preencherTabelaPrincipalComRodadaAtual(rodada) {
-  // Verifica se a rodada que está sendo carregada é a mesma que já está sendo exibida
-  if (rodadaExibida !== null && rodadaExibida !== rodada) {
-    const confirmacao = confirm(`A tabela principal já está preenchida com a Rodada ${rodadaExibida}. Deseja substituir pela Rodada ${rodada}?`);
-    if (!confirmacao) {
-      console.log("Preenchimento cancelado pelo usuário.");
-      return; // Cancela o preenchimento se o usuário não confirmar
-    }
+  // Verifica se a rodada que está sendo preenchida já é a mesma que está sendo exibida
+  if (rodadaExibida === rodada) {
+    console.log(`A tabela já está preenchida com a Rodada ${rodada}.`);
+    return; // Não faz nada se a rodada já estiver sendo exibida
+  }
+
+  // Pergunta antes de preencher a tabela
+  const confirmacao = confirm(`Deseja preencher a tabela com a Rodada ${rodada}?`);
+  if (!confirmacao) {
+    console.log("Preenchimento cancelado pelo usuário.");
+    return; // Cancela o preenchimento se o usuário não confirmar
   }
 
   const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
