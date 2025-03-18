@@ -1355,6 +1355,7 @@ async function salvarApostas() {
       let rodadaAtual = 1;
       let totalRodadas = 0;
       let rodadaExibida = null; // Armazena a rodada que está sendo exibida na tabela principal
+      let partidasPorRodada = {};
 
 // Mapeamento de abreviações dos times, nomes completos e URLs dos escudos
 const timesInfo = {
@@ -1517,7 +1518,7 @@ async function buscarCalendario() {
     todasPartidas = data.matches;
 
     // Agrupa as partidas por rodada
-    const partidasPorRodada = {};
+    partidasPorRodada = {}; // Reinicializa o objeto
     todasPartidas.forEach(partida => {
       const rodada = partida.matchday;
       if (!partidasPorRodada[rodada]) {
@@ -1525,6 +1526,8 @@ async function buscarCalendario() {
       }
       partidasPorRodada[rodada].push(partida);
     });
+
+    console.log("Partidas por rodada:", partidasPorRodada); // Verifica o agrupamento
 
     // Ordena as rodadas por data de início
     const rodadasOrdenadas = Object.keys(partidasPorRodada)
@@ -1534,6 +1537,8 @@ async function buscarCalendario() {
         dataFim: new Date(partidasPorRodada[rodada][partidasPorRodada[rodada].length - 1].utcDate) // Data do último jogo da rodada
       }))
       .sort((a, b) => a.dataInicio - b.dataInicio);
+
+    console.log("Rodadas ordenadas:", rodadasOrdenadas); // Verifica a ordenação
 
     // Determina a rodada atual com base na data atual
     const dataAtual = new Date();
@@ -1550,6 +1555,9 @@ async function buscarCalendario() {
 
     // Define o total de rodadas
     totalRodadas = rodadasOrdenadas.length;
+
+    console.log("Rodada atual:", rodadaAtual); // Verifica a rodada atual
+    console.log("Total de rodadas:", totalRodadas); // Verifica o total de rodadas
 
     // Exibe a rodada atual
     exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
@@ -1578,13 +1586,17 @@ async function buscarCalendario() {
 });
 
 document.getElementById("proxima").addEventListener("click", () => {
+  console.log("Rodada atual antes:", rodadaAtual); // Verifica o valor atual
   if (rodadaAtual < totalRodadas) {
     rodadaAtual++;
+    console.log("Rodada atual depois:", rodadaAtual); // Verifica o valor após incrementar
     exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
     atualizarNavegacao();
+  } else {
+    console.log("Não há mais rodadas para exibir.");
   }
 });
-
+      
 function exibirRodada(rodada, partidas) {
   const calendario = document.getElementById("calendario-jogos");
   calendario.innerHTML = ""; // Limpa o conteúdo anterior
