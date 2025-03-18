@@ -1695,6 +1695,8 @@ async function preencherTabelaPrincipalComRodadaAtual(rodada) {
 
     // Preenche a tabela principal
     preencherTabelaPrincipalHTML();
+    // Força o salvamento dos dados após preencher a tabela
+    await salvarApostas();
   } catch (error) {
     console.error("Erro ao buscar dados da tabela principal:", error);
     alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
@@ -1760,6 +1762,8 @@ function preencherTabelaPrincipalHTML() {
     `;
     tabelaApostas.appendChild(linha);
   });
+  // Adiciona eventos de salvamento aos campos preenchidos automaticamente
+  adicionarEventosSalvamento();
 }
 
 // Atualização periódica (1 hora)
