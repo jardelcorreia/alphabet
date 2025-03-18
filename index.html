@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AlphaBet 2025 - Login</title>
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <link rel="stylesheet" href="tabeladejogos.css">
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
@@ -589,20 +590,24 @@
 
       <div class="pontuacao-container" id="pontuacao"></div>
 
-      <div class="iframe-container">
-        <iframe
-          src="https://ge.globo.com/futebol/brasileirao-serie-a/"
-          style="
-            border: 20px;
-            height: 100%;
-            left: 0;
-            position: bottom;
-            top: 0;
-            width: 100%;
-          "
-          allowfullscreen
-        ></iframe>
-      </div>
+      <div class="container">
+    <header>
+      <h1>Brasileirão Série A</h1>
+      <div class="subtitulo">Acompanhe todos os jogos do campeonato</div>
+    </header>
+    
+    <div class="navegacao">
+      <button id="anterior" disabled>
+        &larr; Rodada Anterior
+      </button>
+      <span id="rodada-atual"></span>
+      <button id="proxima">
+        Próxima Rodada &rarr;
+      </button>
+    </div>
+    
+    <div id="calendario-jogos">
+      <div class="loading">Carregando jogos</div>
     </div>
     <footer>
       <div class="container">
@@ -1341,6 +1346,295 @@ async function salvarApostas() {
           .forEach((input) => (input.value = ""));
         document.getElementById("pontuacao").innerHTML = "";
       }
+
+      let todasPartidas = [];
+    let rodadaAtual = 1;
+    let totalRodadas = 0;
+
+    // Mapeamento de abreviações dos times, nomes completos e URLs dos escudos
+    const timesInfo = {
+      "SE Palmeiras": { 
+        abrev: "PAL", 
+        nome: "Palmeiras",
+        escudo: "https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png"
+      },
+      "Botafogo FR": { 
+        abrev: "BOT", 
+        nome: "Botafogo",
+        escudo: "https://logodetimes.com/times/botafogo/logo-botafogo-256.png"
+      },
+      "CR Flamengo": { 
+        abrev: "FLA", 
+        nome: "Flamengo",
+        escudo: "https://logodetimes.com/times/flamengo/logo-flamengo-256.png"
+      },
+      "Fluminense FC": { 
+        abrev: "FLU", 
+        nome: "Fluminense",
+        escudo: "https://logodetimes.com/times/fluminense/logo-fluminense-256.png"
+      },
+      "Grêmio FBPA": { 
+        abrev: "GRE", 
+        nome: "Grêmio",
+        escudo: "https://logodetimes.com/times/gremio/logo-gremio-256.png"
+      },
+      "São Paulo FC": { 
+        abrev: "SAO", 
+        nome: "São Paulo",
+        escudo: "https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png"
+      },
+      "CA Mineiro": { 
+        abrev: "CAM", 
+        nome: "Atlético-MG",
+        escudo: "https://logodetimes.com/times/atletico-mineiro/logo-atletico-mineiro-256.png"
+      },
+      "SC Recife": { 
+        abrev: "SPT", 
+        nome: "Sport",
+        escudo: "https://logodetimes.com/times/sport-recife/logo-sport-recife-256.png"
+      },
+      "SC Internacional": { 
+        abrev: "INT", 
+        nome: "Internacional",
+        escudo: "https://logodetimes.com/times/internacional/logo-internacional-256.png"
+      },
+      "Cruzeiro EC": { 
+        abrev: "CRU", 
+        nome: "Cruzeiro",
+        escudo: "https://logodetimes.com/times/cruzeiro/logo-cruzeiro-256.png"
+      },
+      "SC Corinthians Paulista": { 
+        abrev: "COR", 
+        nome: "Corinthians",
+        escudo: "https://logodetimes.com/times/corinthians/logo-corinthians-256.png"
+      },
+      "Santos FC": { 
+        abrev: "SAN", 
+        nome: "Santos",
+        escudo: "https://logodetimes.com/times/santos/logo-santos-256.png"
+      },
+      "EC Bahia": { 
+        abrev: "BAH", 
+        nome: "Bahia",
+        escudo: "https://logodetimes.com/times/bahia/logo-bahia-256.png"
+      },
+      "CR Vasco da Gama": { 
+        abrev: "VAS", 
+        nome: "Vasco",
+        escudo: "https://logodetimes.com/times/vasco-da-gama/logo-vasco-da-gama-256.png"
+      },
+      "Mirassol FC": { 
+        abrev: "MIR", 
+        nome: "Mirassol",
+        escudo: "https://logodetimes.com/times/mirassol/logo-mirassol-256.png"
+      },
+      "EC Juventude": { 
+        abrev: "JUV", 
+        nome: "Juventude",
+        escudo: "https://logodetimes.com/times/juventude/logo-juventude-256.png"
+      },
+      "Ceará SC": { 
+        abrev: "CEA", 
+        nome: "Ceará",
+        escudo: "https://logodetimes.com/times/ceara/logo-ceara-256.png"
+      },
+      "Fortaleza EC": { 
+        abrev: "FOR", 
+        nome: "Fortaleza",
+        escudo: "https://logodetimes.com/times/fortaleza/logo-fortaleza-256.png"
+      },
+      "RB Bragantino": { 
+        abrev: "RBB", 
+        nome: "RB Bragantino",
+        escudo: "https://logodetimes.com/times/red-bull-bragantino/logo-red-bull-bragantino-256.png"
+      },
+      "EC Vitória": { 
+        abrev: "VIT", 
+        nome: "Vitória",
+        escudo: "https://logodetimes.com/times/vitoria/logo-vitoria-256.png"
+      }
+    };
+
+    // Função para lidar com erros de imagem
+    function handleImageError(img) {
+      img.onerror = null; // Evita loop infinito
+      img.src = "https://logodetimes.com/imagens/generico-256.png"; // Escudo genérico
+    }
+
+    // Função para formatar data
+    function formatarData(dataUTC) {
+      const data = new Date(dataUTC);
+      const options = { weekday: 'long', day: 'numeric', month: 'long' };
+      return data.toLocaleDateString('pt-BR', options);
+    }
+
+    // Função para formatar hora
+    function formatarHora(dataUTC) {
+      const data = new Date(dataUTC);
+      return data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Função para traduzir status
+    function traduzirStatus(status) {
+      const statusMap = {
+        'SCHEDULED': 'Agendado',
+        'TIMED': 'Horário Definido',
+        'IN_PLAY': 'Em Andamento',
+        'PAUSED': 'Intervalo',
+        'FINISHED': 'Encerrado',
+        'POSTPONED': 'Adiado',
+        'SUSPENDED': 'Suspenso',
+        'CANCELED': 'Cancelado'
+      };
+      return statusMap[status] || status;
+    }
+
+    // Função para definir classe CSS com base no status
+    function statusClass(status) {
+      if (status === 'FINISHED') return 'status-FINISHED';
+      if (status === 'IN_PLAY' || status === 'PAUSED') return 'status-LIVE';
+      return 'status-SCHEDULED';
+    }
+
+    async function buscarCalendario() {
+      const url = "https://api.football-data.org/v4/competitions/BSA/matches";
+      const options = {
+        method: "GET",
+        headers: {
+          "X-Auth-Token": "5f121390e2cc480d8d0f8dba3b37a435"
+        }
+      };
+
+      try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`Erro de rede: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        todasPartidas = data.matches;
+
+        // Agrupa as partidas por rodada
+        const partidasPorRodada = {};
+        todasPartidas.forEach(partida => {
+          const rodada = partida.matchday;
+          if (!partidasPorRodada[rodada]) {
+            partidasPorRodada[rodada] = [];
+          }
+          partidasPorRodada[rodada].push(partida);
+        });
+
+        // Define o total de rodadas
+        totalRodadas = Object.keys(partidasPorRodada).length;
+
+        // Exibe a primeira rodada
+        exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+
+        // Atualiza a navegação
+        document.getElementById("anterior").addEventListener("click", () => {
+          if (rodadaAtual > 1) {
+            rodadaAtual--;
+            exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+            atualizarNavegacao();
+          }
+        });
+
+        document.getElementById("proxima").addEventListener("click", () => {
+          if (rodadaAtual < totalRodadas) {
+            rodadaAtual++;
+            exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+            atualizarNavegacao();
+          }
+        });
+
+        atualizarNavegacao();
+      } catch (error) {
+        console.error("Erro ao buscar dados:", error);
+        document.getElementById("calendario-jogos").innerHTML = `
+          <div class="error">
+            <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
+            <p>Por favor, tente novamente mais tarde ou verifique sua conexão com a internet.</p>
+          </div>
+        `;
+      }
+    }
+
+    function exibirRodada(rodada, partidas) {
+      const calendario = document.getElementById("calendario-jogos");
+      calendario.innerHTML = ""; // Limpa o conteúdo anterior
+
+      if (!partidas || partidas.length === 0) {
+        calendario.innerHTML = `
+          <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
+            <p>Nenhum jogo encontrado para esta rodada.</p>
+          </div>
+        `;
+        return;
+      }
+
+      partidas.forEach(partida => {
+        const timeCasaInfo = timesInfo[partida.homeTeam.name] || { 
+          abrev: partida.homeTeam.name.substring(0, 3).toUpperCase(), 
+          nome: partida.homeTeam.name,
+          escudo: "https://logodetimes.com/imagens/generico-256.png"
+        };
+        
+        const timeForaInfo = timesInfo[partida.awayTeam.name] || { 
+          abrev: partida.awayTeam.name.substring(0, 3).toUpperCase(), 
+          nome: partida.awayTeam.name,
+          escudo: "https://logodetimes.com/imagens/generico-256.png"
+        };
+        
+        const temPlacar = partida.score.fullTime.home !== null;
+        const statusTexto = traduzirStatus(partida.status);
+        const statusClasse = statusClass(partida.status);
+
+        const jogoHTML = `
+          <div class="jogo">
+            <div class="jogo-header">
+              <div class="jogo-data">${formatarData(partida.utcDate)}</div>
+            </div>
+            
+            <div class="jogo-times">
+              <div class="time">
+                <img src="${timeCasaInfo.escudo}" alt="${timeCasaInfo.nome}" class="time-escudo" onerror="handleImageError(this)">
+                <div class="time-abrev">${timeCasaInfo.abrev}</div>
+                <div class="time-nome">${timeCasaInfo.nome}</div>
+              </div>
+              <div class="versus">X</div>
+              <div class="time">
+                <img src="${timeForaInfo.escudo}" alt="${timeForaInfo.nome}" class="time-escudo" onerror="handleImageError(this)">
+                <div class="time-abrev">${timeForaInfo.abrev}</div>
+                <div class="time-nome">${timeForaInfo.nome}</div>
+              </div>
+            </div>
+            
+            ${temPlacar ? `
+              <div class="placar">
+                <span>${partida.score.fullTime.home}</span>
+                <span class="placar-separator">:</span>
+                <span>${partida.score.fullTime.away}</span>
+              </div>
+            ` : ''}
+            
+            <div class="jogo-footer">
+              <div class="status ${statusClasse}">${statusTexto}</div>
+              <div class="horario">${formatarHora(partida.utcDate)}</div>
+            </div>
+          </div>
+        `;
+        calendario.innerHTML += jogoHTML;
+      });
+    }
+
+    function atualizarNavegacao() {
+      document.getElementById("rodada-atual").textContent = `Rodada ${rodadaAtual} de ${totalRodadas}`;
+      document.getElementById("anterior").disabled = rodadaAtual === 1;
+      document.getElementById("proxima").disabled = rodadaAtual === totalRodadas;
+    }
+
+    // Chama a função para buscar o calendário ao carregar a página
+    window.addEventListener('DOMContentLoaded', buscarCalendario);
     </script>
     </div>
   </body>
