@@ -1497,7 +1497,7 @@ async function salvarApostas() {
     }
 
     async function buscarCalendario() {
-  const url = "https://api.football-data.org/v4/competitions/BSA/matches";
+  const url = "/.netlify/functions/fetchMatches";
   const options = {
     method: "GET",
     headers: {
