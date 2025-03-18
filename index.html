@@ -557,8 +557,8 @@
           <span id="toggle-text">Ocultar Placar</span>
         </button>
         <button id="ranking-button" onclick="abrirRanking()">Ranking</button>
-        <button id="toggle-visibility" class="hidden">
-          <span id="preencher-tabela-principal">Preencher Tabela</span>
+        <button id="preencher-tabela-principal" class="hidden">
+          <span>Preencher Tabela</span>
         </button>
       </div>
 
@@ -635,7 +635,8 @@
   if (loggedInUser) {
     document.getElementById("login-container").classList.add("hidden");
     document.getElementById("main-content").classList.remove("hidden");
-    await verificarEstadoPlacares(); // Verificar o estado dos placares ao carregar a página
+    await verificarEstadoPlacares();
+    await verificarPermissoesUsuario(); // Verificar permissões do usuário// Verificar o estado dos placares ao carregar a página
     carregarApostas(); // Carrega as apostas salvas
   } else {
     document.getElementById("login-container").classList.remove("hidden");
@@ -819,6 +820,22 @@ async function carregarEstadoVisibilidade() {
     console.error("Erro ao verificar estado dos placares:", error);
   }
 }
+      async function verificarPermissoesUsuario() {
+        try {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+      
+          // Verifica se o usuário é o administrador (Jardel)
+          const toggleButton = document.getElementById("toggle-visibility");
+          const preencherTabelaButton = document.getElementById("preencher-tabela-principal");
+      
+          // Mostra ou oculta os botões com base no usuário logado
+          toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
+          preencherTabelaButton.classList.toggle("hidden", loggedInUser !== "Jardel");
+      
+        } catch (error) {
+          console.error("Erro ao verificar permissões do usuário:", error);
+        }
+      }
       // Função para fazer logout
       function logout() {
         localStorage.removeItem("loggedInUser");
@@ -882,7 +899,8 @@ async function carregarEstadoVisibilidade() {
             localStorage.setItem("loggedInUser", username);
             document.getElementById("login-container").classList.add("hidden");
             document.getElementById("main-content").classList.remove("hidden");
-            verificarEstadoPlacares(); // Verificar o estado dos placares ao fazer login
+            await verificarEstadoPlacares();
+            await verificarPermissoesUsuario(); // Verificar permissões do usuário// Verificar o estado dos placares ao fazer login
             carregarApostas(); // Carrega as apostas salvas
           } else {
             alert("Nome de usuário ou senha incorretos!");
