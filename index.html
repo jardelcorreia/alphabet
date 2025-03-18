@@ -1497,21 +1497,29 @@ async function salvarApostas() {
     }
 
     async function buscarCalendario() {
-      const url = "https://api.football-data.org/v4/competitions/BSA/matches";
-      const options = {
-        method: "GET",
-        headers: {
-          "X-Auth-Token": "5f121390e2cc480d8d0f8dba3b37a435"
-        }
-      };
+  const url = "https://api.football-data.org/v4/competitions/BSA/matches";
+  const options = {
+    method: "GET",
+    headers: {
+      "X-Auth-Token": "5f121390e2cc480d8d0f8dba3b37a435", // Your API key
+    },
+    mode: "cors", // Ensure CORS mode is enabled
+  };
 
-      try {
-        const response = await fetch(url, options);
-        if (!response.ok) {
-          throw new Error(`Erro de rede: ${response.status}`);
-        }
-        
-        const data = await response.json();
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`Erro de rede: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log("Dados recebidos:", data);
+    return data;
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
+    throw error;
+  }
+}
         todasPartidas = data.matches;
 
         // Agrupa as partidas por rodada
