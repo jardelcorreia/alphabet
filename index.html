@@ -1713,10 +1713,14 @@ function preencherTabelaPrincipalHTML() {
   dadosTabelaPrincipal.jogos.forEach((jogo, index) => {
     const resultado = dadosTabelaPrincipal.resultados[index];
 
+    // Obtém as abreviações dos times
+    const timeCasaAbrev = timesInfo[jogo.casa]?.abrev || jogo.casa.substring(0, 3).toUpperCase();
+    const timeForaAbrev = timesInfo[jogo.fora]?.abrev || jogo.fora.substring(0, 3).toUpperCase();
+
     const linha = document.createElement("tr");
     linha.innerHTML = `
       <td>
-        <input type="text" class="input-jogo" value="${jogo.casa} x ${jogo.fora}" readonly>
+        <input type="text" class="input-jogo" value="${timeCasaAbrev} x ${timeForaAbrev}">
       </td>
       <td>
         <div class="input-container">
