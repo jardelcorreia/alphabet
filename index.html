@@ -1818,7 +1818,11 @@ let intervaloAtualizacao;
 
 function iniciarAtualizacaoAutomatica() {
   intervaloAtualizacao = setInterval(() => {
-    preencherTabelaPrincipalComRodadaAtual(rodadaAtual); // Passa a rodada atual como parâmetro
+    if (rodadaExibida) {
+      preencherTabelaPrincipalComRodadaAtual(rodadaExibida, false); // Não pede confirmação
+    } else {
+      console.log("Nenhuma rodada exibida. Atualização automática ignorada.");
+    }
   }, 3600000); // 3.600.000 ms = 1 hora
 }
 
