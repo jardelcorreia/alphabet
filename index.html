@@ -1525,10 +1525,32 @@ async function buscarCalendario() {
       partidasPorRodada[rodada].push(partida);
     });
 
-    // Define o total de rodadas
-    totalRodadas = Object.keys(partidasPorRodada).length;
+    // Ordena as rodadas por data de início
+    const rodadasOrdenadas = Object.keys(partidasPorRodada)
+      .map(rodada => ({
+        rodada: parseInt(rodada),
+        dataInicio: new Date(partidasPorRodada[rodada][0].utcDate), // Data do primeiro jogo da rodada
+        dataFim: new Date(partidasPorRodada[rodada][partidasPorRodada[rodada].length - 1].utcDate) // Data do último jogo da rodada
+      }))
+      .sort((a, b) => a.dataInicio - b.dataInicio);
 
-    // Exibe a primeira rodada
+    // Determina a rodada atual com base na data atual
+    const dataAtual = new Date();
+    let rodadaAtual = 1;
+
+    for (const rodada of rodadasOrdenadas) {
+      if (dataAtual >= rodada.dataInicio && dataAtual <= rodada.dataFim) {
+        rodadaAtual = rodada.rodada;
+        break;
+      } else if (dataAtual > rodada.dataFim) {
+        rodadaAtual = rodada.rodada; // Atualiza para a última rodada concluída
+      }
+    }
+
+    // Define o total de rodadas
+    totalRodadas = rodadasOrdenadas.length;
+
+    // Exibe a rodada atual
     exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
 
     // Atualiza a navegação
@@ -1747,6 +1769,8 @@ function preencherTabelaPrincipalHTML() {
   });
   // Adiciona eventos de salvamento aos campos preenchidos automaticamente
   adicionarEventosSalvamento();
+  // Aplica o estado de visibilidade após preencher a tabela
+  await verificarEstadoPlacares();
 }
 
 // Atualização periódica (1 hora)
