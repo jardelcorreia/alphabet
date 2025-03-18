@@ -557,6 +557,7 @@
           <span id="toggle-text">Ocultar Placar</span>
         </button>
         <button id="ranking-button" onclick="abrirRanking()">Ranking</button>
+        <button id="preencher-tabela-principal" class="hidden">Preencher Tabela</button>
       </div>
 
       <button class="logout-button" onclick="logout()">
@@ -1632,6 +1633,135 @@ function atualizarNavegacao() {
 
 // Chama a função para buscar o calendário ao carregar a página
 window.addEventListener('DOMContentLoaded', buscarCalendario);
+
+      let todasPartidas = [];
+let rodadaAtual = 1;
+let totalRodadas = 0;
+
+// Dados da tabela principal
+let dadosTabelaPrincipal = {
+  nomeRodada: "",
+  jogos: [],
+  resultados: []
+};
+
+// Função para preencher a tabela principal com os dados da rodada atual
+async function preencherTabelaPrincipalComRodadaAtual(rodada) {
+  const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Erro de rede: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Filtra os jogos da rodada atual
+    const jogosRodadaAtual = data.matches.filter(partida => partida.matchday === rodada);
+
+    if (jogosRodadaAtual.length === 0) {
+      console.log(`Nenhum jogo encontrado para a rodada ${rodada}.`);
+      return;
+    }
+
+    // Atualiza os dados da tabela principal
+    dadosTabelaPrincipal.nomeRodada = `Rodada ${rodada}`;
+    dadosTabelaPrincipal.jogos = jogosRodadaAtual.map(partida => ({
+      casa: partida.homeTeam.name,
+      fora: partida.awayTeam.name
+    }));
+    dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(partida => ({
+      casa: partida.score.fullTime.home,
+      fora: partida.score.fullTime.away
+    }));
+
+    // Preenche a tabela principal
+    preencherTabelaPrincipalHTML();
+  } catch (error) {
+    console.error("Erro ao buscar dados da tabela principal:", error);
+    alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
+  }
+}
+
+// Função para preencher o HTML da tabela principal
+function preencherTabelaPrincipalHTML() {
+  const tabelaApostas = document.getElementById("tabela-apostas");
+  tabelaApostas.innerHTML = ""; // Limpa a tabela
+
+  // Preenche o nome da rodada
+  document.getElementById("nome-rodada").value = dadosTabelaPrincipal.nomeRodada;
+
+  // Preenche os jogos e resultados
+  dadosTabelaPrincipal.jogos.forEach((jogo, index) => {
+    const resultado = dadosTabelaPrincipal.resultados[index];
+
+    const linha = document.createElement("tr");
+    linha.innerHTML = `
+      <td>
+        <input type="text" class="input-jogo" value="${jogo.casa} x ${jogo.fora}" readonly>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador0" min="0">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador0" min="0">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador1" min="0">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador1" min="0">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador2" min="0">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador2" min="0">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador3" min="0">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador3" min="0">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="resultado input-placar" value="${resultado.casa}" readonly>
+          <span class="placar-separador">x</span>
+          <input type="number" class="resultado input-placar" value="${resultado.fora}" readonly>
+        </div>
+      </td>
+    `;
+    tabelaApostas.appendChild(linha);
+  });
+}
+
+// Atualização periódica (1 hora)
+let intervaloAtualizacao;
+
+function iniciarAtualizacaoAutomatica() {
+  intervaloAtualizacao = setInterval(() => {
+    preencherTabelaPrincipalComRodadaAtual(rodadaAtual); // Passa a rodada atual como parâmetro
+  }, 3600000); // 3.600.000 ms = 1 hora
+}
+
+function pararAtualizacaoAutomatica() {
+  clearInterval(intervaloAtualizacao);
+}
+
+// Adicionar evento ao botão para iniciar/parar a atualização automática
+document.getElementById("preencher-tabela-principal").addEventListener("click", () => {
+  preencherTabelaPrincipalComRodadaAtual(rodadaAtual); // Preenche a tabela imediatamente
+  iniciarAtualizacaoAutomatica(); // Inicia a atualização automática
+});
+
+// Parar a atualização automática ao sair da página (opcional)
+window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
     </script>
     </div>
   </body>
