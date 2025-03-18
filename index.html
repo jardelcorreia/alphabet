@@ -1502,7 +1502,7 @@ function statusClass(status) {
 }
 
 async function buscarCalendario() {
-  const url = "/.netlify/functions/fetchMatches"; // Path to your Netlify function
+  const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
 
   try {
     const response = await fetch(url);
@@ -1537,7 +1537,7 @@ async function buscarCalendario() {
 
     // Determina a rodada atual com base na data atual
     const dataAtual = new Date();
-    let rodadaAtual = 1;
+    rodadaAtual = 1; // Inicializa com a primeira rodada
 
     for (const rodada of rodadasOrdenadas) {
       if (dataAtual >= rodada.dataInicio && dataAtual <= rodada.dataFim) {
@@ -1555,11 +1555,24 @@ async function buscarCalendario() {
     exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
 
     // Atualiza a navegação
+    atualizarNavegacao();
+
+  } catch (error) {
+    console.error("Erro ao buscar dados:", error);
+    document.getElementById("calendario-jogos").innerHTML = `
+      <div class="error">
+        <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
+        <p>Por favor, tente novamente mais tarde ou verifique sua conexão com a internet.</p>
+      </div>
+    `;
+  }
+}
+
+    // Atualiza a navegação
     document.getElementById("anterior").addEventListener("click", () => {
   if (rodadaAtual > 1) {
     rodadaAtual--;
     exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-    rodadaExibida = rodadaAtual; // Atualiza a rodada exibida
     atualizarNavegacao();
   }
 });
@@ -1568,7 +1581,6 @@ document.getElementById("proxima").addEventListener("click", () => {
   if (rodadaAtual < totalRodadas) {
     rodadaAtual++;
     exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-    rodadaExibida = rodadaAtual; // Atualiza a rodada exibida
     atualizarNavegacao();
   }
 });
@@ -1654,8 +1666,13 @@ function exibirRodada(rodada, partidas) {
 }
 
 function atualizarNavegacao() {
+  // Atualiza o texto que exibe a rodada atual
   document.getElementById("rodada-atual").textContent = `Rodada ${rodadaAtual} de ${totalRodadas}`;
+
+  // Desabilita o botão "Anterior" se estiver na primeira rodada
   document.getElementById("anterior").disabled = rodadaAtual === 1;
+
+  // Desabilita o botão "Próxima" se estiver na última rodada
   document.getElementById("proxima").disabled = rodadaAtual === totalRodadas;
 }
 
