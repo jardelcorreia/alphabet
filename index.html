@@ -1687,7 +1687,7 @@ let dadosTabelaPrincipal = {
   resultados: []
 };
 
-async function preencherTabelaPrincipalComRodadaAtual(rodada, usarDadosSimulados = false) {
+async function preencherTabelaPrincipalComRodadaAtual(rodada) {
   // Verifica se a rodada que está sendo carregada é a mesma que já está sendo exibida
   if (rodadaExibida !== null && rodadaExibida !== rodada) {
     const confirmacao = confirm(`A tabela principal já está preenchida com a Rodada ${rodadaExibida}. Deseja substituir pela Rodada ${rodada}?`);
@@ -1722,15 +1722,11 @@ async function preencherTabelaPrincipalComRodadaAtual(rodada, usarDadosSimulados
       fora: partida.awayTeam.name
     }));
 
-    // Usa dados simulados se não houver resultados reais ou se for um teste
-    if (usarDadosSimulados || jogosRodadaAtual.some(partida => partida.score.fullTime.home === null)) {
-      dadosTabelaPrincipal.resultados = simularResultados(jogosRodadaAtual);
-    } else {
-      dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(partida => ({
-        casa: partida.score.fullTime.home,
-        fora: partida.score.fullTime.away
-      }));
-    }
+    // Preenche os resultados reais (se disponíveis)
+    dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(partida => ({
+      casa: partida.score.fullTime.home || "", // Usa o resultado real ou vazio se não houver
+      fora: partida.score.fullTime.away || ""  // Usa o resultado real ou vazio se não houver
+    }));
 
     // Preenche a tabela principal
     preencherTabelaPrincipalHTML();
