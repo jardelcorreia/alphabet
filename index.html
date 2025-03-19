@@ -197,8 +197,9 @@ body {
   opacity: 0;
   transform: translateY(-20px);
   display: inline-block;
+  margin: 0 2px; /* Adiciona espaço entre as letras */
   animation: moveIn 0.8s ease-out forwards;
-  animation-delay: calc(var(--i) * 0.1s);
+  animation-delay: calc(var(--i, 0) * 0.1s); /* Usa a variável CSS com valor padrão */
 }
 
 @keyframes moveIn {
@@ -211,7 +212,7 @@ body {
     transform: translateY(0);
   }
 }
-
+      
 /* Buttons and Controls */
 .toggle-visibility-container {
   display: flex;
@@ -699,17 +700,16 @@ footer p {
 
       const titulo = "Brasileirão AlphaBet 2025";
       const containerTitulo = document.querySelector(".container-titulo");
-
       // Adiciona as letras do título com animação
       titulo.split("").forEach((letra, index) => {
         const span = document.createElement("span");
         span.textContent = letra;
         span.classList.add("letra");
-        span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
+        span.style.setProperty('--i', index); // Define a variável CSS personalizada
         containerTitulo.appendChild(span);
       });
-
-      async function toggleVisibility() {
+      
+  async function toggleVisibility() {
   const isHidden = await carregarEstadoVisibilidade();
   const novoEstado = !isHidden;
 
