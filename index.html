@@ -228,6 +228,7 @@ body {
 #toggle-visibility, 
 #ranking-button,
 #preencher-tabela-principal {
+  font-family: inherit;
   padding: var(--space-sm) var(--space-md);
   border: none;
   border-radius: var(--radius-md);
@@ -249,6 +250,7 @@ body {
 
 #ranking-button {
   background-color: var(--color-secondary-dark);
+  font-family: inherit;
 }
 
 #ranking-button:hover {
@@ -258,6 +260,7 @@ body {
 
 #preencher-tabela-principal {
   background-color: var(--color-accent);
+  font-family: inherit;
 }
 
 #preencher-tabela-principal:hover {
@@ -295,7 +298,7 @@ body {
 /* Table Styles */
 .table-container {
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto var(--space-lg);
   overflow-x: auto;
   background: rgba(255, 255, 255, 0.95);
@@ -307,7 +310,7 @@ body {
 
 table {
   width: 100%;
-  min-width: 800px;
+  min-width: 900px;
   border-collapse: collapse;
 }
 
@@ -322,8 +325,8 @@ th {
   padding: var(--space-md);
   background: var(--color-primary);
   color: white;
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: 1.25rem;
+  font-weight: 450;
 }
 
 th:first-child,
@@ -333,7 +336,7 @@ td:first-child {
   z-index: 1;
   background: white;
   outline: none;
-  width: 140px;
+  width: 150px;
   padding: var(--space-xs);
 }
 
@@ -352,10 +355,10 @@ tr:nth-child(even) {
   border: none;
   border-radius: var(--radius-sm);
   font-family: inherit;
-  font-size: 1.125rem;
-  font-weight: 500;
+  font-size: 1.25rem;
+  font-weight: 450;
   text-align: center;
-  width: 140px;
+  width: 150px;
   text-transform: uppercase;
   padding: var(--space-sm);
   outline: none;
@@ -371,7 +374,7 @@ tr:nth-child(even) {
   width: 40px;
   text-align: center;
   padding: var(--space-xs);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-sm);
   background: white;
@@ -382,11 +385,11 @@ tr:nth-child(even) {
   background-color: var(--color-primary);
   color: white;
   border: none;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.25rem;
+  font-weight: 400;
   text-transform: uppercase;
   text-align: center;
-  width: 100%;
+  width: 150px;
   outline: none;
   margin: 0;
   border-radius: var(--radius-sm);
@@ -504,7 +507,7 @@ footer p {
   }
   
   .container-titulo {
-    font-size: 1.75rem;
+    font-size: 2,75rem;
     padding: var(--space-md);
   }
   
@@ -514,8 +517,8 @@ footer p {
   }
   
   .pontuacao-card {
-    font-size: 1rem;
-    width: 90%;
+    font-size: 1.5rem;
+    width: 80%;
   }
 }
 
@@ -531,21 +534,23 @@ footer p {
   }
   
   .container-titulo {
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     padding: var(--space-sm);
   }
   
   th {
-    font-size: 0.875rem;
+    font-size: 1.25rem;
+    padding: 0px;
+    width: 140px;
   }
   
   #nome-rodada {
-    font-size: 0.875rem;
-    width: 100px;
+    font-size: 1.2rem;
+    width: 140px;
   }
   
   .input-placar, .input-jogo {
-    font-size: 0.875rem;
+    font-size: 1.2rem;
   }
 }
     </style>

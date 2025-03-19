@@ -89,7 +89,7 @@
     
     #calendario-jogos {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 0.5fr));
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
       gap: 20px;
       margin-top: 30px;
     }
@@ -113,8 +113,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 5px;
       border-bottom: 1px solid #eee;
     }
     
@@ -127,31 +127,31 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 15px 0;
+      margin: 5px 0;
     }
     
     .time {
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 40%;
+      width: 30%;
     }
     
     .time-escudo {
-      width: 40px;
-      height: 40px;
+      width: 35px;
+      height: 35px;
       object-fit: contain;
       margin-bottom: 8px;
     }
     
     .time-abrev {
-      font-size: 1.3rem;
+      font-size: 1rem;
       font-weight: bold;
       margin-top: 5px;
     }
     
     .time-nome {
-      font-size: 0.8rem;
+      font-size: 0.5rem;
       color: #777;
       text-align: center;
       margin-top: 5px;
@@ -167,8 +167,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 15px;
-      margin: 10px 0;
+      gap: 10px;
+      margin: 8px 0;
       font-size: 1.8rem;
       font-weight: bold;
     }
@@ -179,7 +179,7 @@
     
     .jogo-footer {
       margin-top: auto;
-      padding-top: 15px;
+      padding-top: 10px;
       border-top: 1px solid #eee;
       display: flex;
       justify-content: space-between;
@@ -221,7 +221,7 @@
     }
     
     footer {
-      margin-top: 40px;
+      margin-top: 30px;
       text-align: center;
       color: #777;
       font-size: 0.9rem;
@@ -257,11 +257,12 @@
     
     @media (max-width: 768px) {
       .container {
-        padding: 10px;
+        padding: 5px;
+        width:90%;
       }
       
       header {
-        padding: 15px;
+        padding: 10px;
       }
       
       h1 {
@@ -279,7 +280,8 @@
       }
       
       #calendario-jogos {
-        grid-template-columns: 1fr;
+        margin: auto;
+        width: 300px;
       }
       
       .jogo-times {
@@ -287,7 +289,7 @@
       }
       
       .time-escudo {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
       }
     }
