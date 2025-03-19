@@ -702,16 +702,16 @@ footer p {
       }
 
       // Função corrigida para o título
-      const titulo = "Brasileirão AlphaBet 2025";
-      const containerTitulo = document.querySelector(".container-titulo");
-      // Adiciona as letras do título com animação
-      titulo.split("").forEach((letra, index) => {
-        const span = document.createElement("span");
-        span.textContent = letra;
-        span.classList.add("letra");
-        span.style.animationDelay = ${index * 0.1}s; // Delay progressivo para cada letra
-        containerTitulo.appendChild(span);
-      });
+  const titulo = "Brasileirão AlphaBet 2025";
+  const containerTitulo = document.querySelector(".container-titulo");
+  // Adiciona as letras do título com animação
+  titulo.split("").forEach((letra, index) => {
+    const span = document.createElement("span");
+    span.textContent = letra;
+    span.classList.add("letra");
+    span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
+    containerTitulo.appendChild(span);
+  });
       
   async function toggleVisibility() {
   const isHidden = await carregarEstadoVisibilidade();
