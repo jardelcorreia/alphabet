@@ -115,64 +115,43 @@
       }
 
       .container-titulo {
-        display: block;
-        justify-content: center;
-        text-align: center;
-        font-family: "Kanit", "Poppins", Arial, sans-serif;
-        font-size: 2.5em;
-        font-weight: bold;
-        text-transform: uppercase;
-        padding: 20px;
-        margin-bottom: 2px;
-        background: linear-gradient(
-          90deg,
-          rgba(0, 123, 255, 0.9),
-          rgba(255, 99, 71, 0.9),
-          rgba(50, 205, 50, 0.9)
-        );
-        background-size: 300% 300%;
-        color: white;
-        border-radius: 0px;
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        animation: fadeIn 1.5s ease-in-out forwards,
-          colorShift 6s infinite alternate;
-      }
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 100%;
+}
 
-      @keyframes fadeIn {
-        to {
-          opacity: 1;
-        }
-      }
+.palavra {
+  display: inline-flex;
+  white-space: nowrap;
+  margin-right: 5px; /* Espaço entre as palavras */
+  margin-bottom: 5px; /* Espaço entre linhas */
+}
 
-      @keyframes colorShift {
-        0% {
-          background-position: 0% 50%;
-        }
-        100% {
-          background-position: 100% 50%;
-        }
-      }
+.espaco {
+  width: 5px;
+  display: inline-block;
+}
 
-      .letra {
-        opacity: 0;
-        transform: translateX(-100px);
-        animation: moveIn 1.5s ease-out forwards;
-      }
+.letra {
+  opacity: 0;
+  transform: translateY(-20px);
+  display: inline-block;
+  margin: 0 2px; /* Espaço entre as letras */
+  animation: moveIn 0.8s ease-out forwards;
+  animation-delay: calc(var(--i, 0) * 0.1s); /* Usa a variável CSS com valor padrão */
+}
 
-      .letra:nth-child(even) {
-        transform: translateX(100px);
-      }
-
-      @keyframes moveIn {
-        0% {
-          opacity: 0;
-        }
-        100% {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
+@keyframes moveIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
       .logout-button {
         padding: 8px 16px; /* Aumentei o padding para melhorar o toque em dispositivos móveis */
@@ -665,17 +644,34 @@
         });
       }
 
-      const titulo = "Brasileirão AlphaBet 2025";
-      const containerTitulo = document.querySelector(".container-titulo");
+      // Função corrigida para o título
+const titulo = "Brasileirão AlphaBet 2025";
+const containerTitulo = document.querySelector(".container-titulo");
 
-      // Adiciona as letras do título com animação
-      titulo.split("").forEach((letra, index) => {
-        const span = document.createElement("span");
-        span.textContent = letra;
-        span.classList.add("letra");
-        span.style.animationDelay = `${index * 0.1}s`; // Delay progressivo para cada letra
-        containerTitulo.appendChild(span);
-      });
+// Adiciona as palavras do título com animação
+titulo.split(" ").forEach((palavra, palavraIndex) => {
+  const divPalavra = document.createElement("div");
+  divPalavra.classList.add("palavra");
+  
+  // Para cada letra da palavra
+  palavra.split("").forEach((letra, letraIndex) => {
+    const span = document.createElement("span");
+    span.textContent = letra;
+    span.classList.add("letra");
+    span.style.setProperty('--i', letraIndex + palavraIndex * 10); // Define a variável CSS personalizada
+    divPalavra.appendChild(span);
+  });
+  
+  containerTitulo.appendChild(divPalavra);
+  
+  // Adiciona espaço entre as palavras (exceto após a última)
+  if (palavraIndex < titulo.split(" ").length - 1) {
+    const espaco = document.createElement("div");
+    espaco.classList.add("espaco");
+    espaco.textContent = " ";
+    containerTitulo.appendChild(espaco);
+  }
+});
 
       async function toggleVisibility() {
   const isHidden = await carregarEstadoVisibilidade();
