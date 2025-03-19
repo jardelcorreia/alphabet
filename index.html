@@ -157,47 +157,29 @@ body {
 
 /* Main Content Header */
 .container-titulo {
-  display: block;
-  text-align: center;
-  font-size: 2.25rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: var(--space-lg) var(--space-md);
-  margin-bottom: var(--space-sm);
-  background: linear-gradient(
-    90deg,
-    var(--color-primary),
-    var(--color-secondary),
-    var(--color-accent)
-  );
-  background-size: 300% 300%;
-  color: white;
-  box-shadow: var(--shadow-md);
-  opacity: 0;
-  animation: fadeIn 1.2s ease-in-out forwards,
-    colorShift 8s infinite alternate;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 100%;
 }
 
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
+.palavra {
+  display: inline-flex;
+  white-space: nowrap;
+  margin-right: 5px; /* Espaço entre as palavras */
+  margin-bottom: 5px; /* Espaço entre linhas */
 }
 
-@keyframes colorShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
+.espaco {
+  width: 5px;
+  display: inline-block;
 }
 
 .letra {
   opacity: 0;
   transform: translateY(-20px);
   display: inline-block;
-  margin: 0 2px; /* Adiciona espaço entre as letras */
+  margin: 0 2px; /* Espaço entre as letras */
   animation: moveIn 0.8s ease-out forwards;
   animation-delay: calc(var(--i, 0) * 0.1s); /* Usa a variável CSS com valor padrão */
 }
@@ -698,16 +680,34 @@ footer p {
         });
       }
 
-      const titulo = "Brasileirão AlphaBet 2025";
-      const containerTitulo = document.querySelector(".container-titulo");
-      // Adiciona as letras do título com animação
-      titulo.split("").forEach((letra, index) => {
-        const span = document.createElement("span");
-        span.textContent = letra;
-        span.classList.add("letra");
-        span.style.setProperty('--i', index); // Define a variável CSS personalizada
-        containerTitulo.appendChild(span);
-      });
+      // Função corrigida para o título
+const titulo = "Brasileirão AlphaBet 2025";
+const containerTitulo = document.querySelector(".container-titulo");
+
+// Adiciona as palavras do título com animação
+titulo.split(" ").forEach((palavra, palavraIndex) => {
+  const divPalavra = document.createElement("div");
+  divPalavra.classList.add("palavra");
+  
+  // Para cada letra da palavra
+  palavra.split("").forEach((letra, letraIndex) => {
+    const span = document.createElement("span");
+    span.textContent = letra;
+    span.classList.add("letra");
+    span.style.setProperty('--i', letraIndex + palavraIndex * 10); // Define a variável CSS personalizada
+    divPalavra.appendChild(span);
+  });
+  
+  containerTitulo.appendChild(divPalavra);
+  
+  // Adiciona espaço entre as palavras (exceto após a última)
+  if (palavraIndex < titulo.split(" ").length - 1) {
+    const espaco = document.createElement("div");
+    espaco.classList.add("espaco");
+    espaco.textContent = " ";
+    containerTitulo.appendChild(espaco);
+  }
+});
       
   async function toggleVisibility() {
   const isHidden = await carregarEstadoVisibilidade();
