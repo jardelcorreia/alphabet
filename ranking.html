@@ -49,6 +49,11 @@
         align-items: center;
       }
 
+      body.dark-mode {
+        background: linear-gradient(135deg, #1e293b, #334155, #475569);
+        color: var(--light);
+      }
+
       /* Header */
       .header {
         text-align: center;
@@ -66,10 +71,18 @@
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
+      body.dark-mode .header h1 {
+        color: var(--primary-light);
+      }
+
       .header p {
         font-size: 1.1rem;
         color: var(--dark);
         opacity: 0.8;
+      }
+
+      body.dark-mode .header p {
+        color: var(--gray-light);
       }
 
       /* Main Container */
@@ -93,6 +106,12 @@
         transition: transform 0.3s, box-shadow 0.3s;
       }
 
+      body.dark-mode .card {
+        background: rgba(30, 41, 59, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      /* Card Header */
       .card-header {
         background: var(--primary);
         color: white;
@@ -124,6 +143,7 @@
         );
       }
 
+      /* Card Body */
       .card-body {
         padding: 2rem;
         max-height: 70vh;
@@ -160,6 +180,10 @@
         background: var(--primary-bg);
       }
 
+      body.dark-mode .input-container:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
       .rodada-label {
         font-size: 1rem;
         font-weight: 700;
@@ -186,6 +210,12 @@
         font-family: inherit;
         background: white;
         transition: all 0.3s;
+      }
+
+      body.dark-mode .input-field input {
+        background: #334155;
+        color: var(--light);
+        border: 2px solid rgba(255, 255, 255, 0.1);
       }
 
       .input-field input:focus {
@@ -229,6 +259,11 @@
         border-top: 5px solid var(--primary);
       }
 
+      body.dark-mode .player-card {
+        background: #334155;
+        color: var(--light);
+      }
+
       .player-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
@@ -240,6 +275,10 @@
         color: var(--primary-dark);
         margin-bottom: 1rem;
         text-align: center;
+      }
+
+      body.dark-mode-mode .player-name {
+        color: var(--primary-light);
       }
 
       .stats-container {
@@ -260,11 +299,19 @@
         color: var(--dark);
       }
 
+      body.dark-mode .stat-value {
+        color: var(--light);
+      }
+
       .stat-label {
         font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         color: var(--gray);
+      }
+
+      body.dark-mode .stat-label {
+        color: var(--gray-light);
       }
 
       .player-position {
@@ -286,16 +333,6 @@
         background: #ffd700; /* Ouro */
         color: var(--dark);
       }
-
-      /*.position-2 {
-      background: #c0c0c0; 
-      color: var(--dark);
-    }
-    
-    .position-3 {
-      background: #cd7f32; 
-      color: white;
-    }*/
 
       /* Animações */
       .pulse {
@@ -319,11 +356,9 @@
         .main-container {
           flex-direction: column;
         }
-
         .card {
           width: 100%;
         }
-
         .score-cards {
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         }
@@ -333,38 +368,30 @@
         .header h1 {
           font-size: 1.8rem;
         }
-
         .card-header h2 {
           font-size: 1.3rem;
         }
-
         .card-body {
           padding: 1.5rem 1rem;
         }
-
         .rodada-label {
           min-width: 30px;
           padding: 6px;
           font-size: 0.9rem;
         }
-
         .input-field input {
           padding: 10px 12px;
           font-size: 0.9rem;
         }
-
         .player-card {
           padding: 1rem;
         }
-
         .player-name {
           font-size: 1.2rem;
         }
-
         .stat-value {
           font-size: 1.6rem;
         }
-
         .stat-label {
           font-size: 0.8rem;
         }
@@ -465,41 +492,69 @@
 
       // Cria os 38 inputs para as rodadas
       const inputsRanking = document.getElementById("inputs-ranking");
-      for (let i = 1; i <= 38; i++) {
-        const container = document.createElement("div");
-        container.className = "input-container";
-        container.dataset.rodada = i;
+      const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
 
-        const label = document.createElement("div");
-        label.textContent = `${i}`;
-        label.className = "rodada-label";
+for (let i = 1; i <= 38; i++) {
+  const container = document.createElement("div");
+  container.className = "input-container";
+  container.dataset.rodada = i;
 
-        const inputField = document.createElement("div");
-        inputField.className = "input-field";
+  const label = document.createElement("div");
+  label.textContent = `${i}`;
+  label.className = "rodada-label";
 
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = `Vencedor da Rodada ${i}`;
-        input.id = `rodada-${i}`;
+  const inputField = document.createElement("div");
+  inputField.className = "input-field";
 
-        inputField.appendChild(input);
-        container.appendChild(label);
-        container.appendChild(inputField);
-        inputsRanking.appendChild(container);
+  const input = document.createElement("input");
+  input.type = "text";
+  input.placeholder = `Vencedor da Rodada ${i}`;
+  input.id = `rodada-${i}`;
 
-        // Adiciona animação ao scroll
-        container.style.opacity = "0";
-        container.style.transform = "translateX(-20px)";
+  inputField.appendChild(input);
+  container.appendChild(label);
+  container.appendChild(inputField);
+  inputsRanking.appendChild(container);
 
-        setTimeout(() => {
-          container.style.transition = "all 0.5s ease";
-          container.style.opacity = "1";
-          container.style.transform = "translateX(0)";
-        }, i * 50);
+  // Animação ao carregar
+  container.style.opacity = "0";
+  container.style.transform = "translateX(-20px)";
+  setTimeout(() => {
+    container.style.transition = "all 0.5s ease";
+    container.style.opacity = "1";
+    container.style.transform = "translateX(0)";
+  }, i * 50);
 
-        // Adiciona o evento de input com debounce
-        input.addEventListener("input", debounce(salvarRanking, 500));
-      }
+  // Validação + salvar com debounce
+  input.addEventListener("input", debounce(() => {
+    if (validarInput(input.value, i)) {
+      salvarRanking();
+    }
+  }, 1000));
+}
+
+function validarInput(valor, rodada) {
+  if (valor.includes(",") && !valor.includes(", ")) {
+    alert(`Rodada ${rodada}: Utilize vírgula + espaço entre os nomes no empate. Ex: Jardel, Werbet`);
+    return false;
+  }
+
+  const nomes = valor.split(",").map((n) => n.trim()).filter(n => n !== "");
+
+  for (let nome of nomes) {
+    if (!jogadores.includes(nome)) {
+      alert(`Rodada ${rodada}: Nome "${nome}" inválido! Use apenas: ${jogadores.join(", ")}`);
+      return false;
+    }
+    if (nome[0] !== nome[0]?.toUpperCase()) {
+      alert(`Rodada ${rodada}: Nome "${nome}" deve começar com letra maiúscula!`);
+      return false;
+    }
+  }
+  return true;
+}
+
+      
 
       // Carrega os dados salvos do Supabase
       async function carregarRanking() {
@@ -739,6 +794,13 @@
       // Carrega os dados ao abrir a página
       window.addEventListener("DOMContentLoaded", () => {
         carregarRanking();
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        if (isDarkMode) {
+          document.body.classList.add("dark-mode");
+        }
       });
     </script>
   </body>

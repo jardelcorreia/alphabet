@@ -1952,7 +1952,7 @@
             });
           }
 
-          // Ordena os jogadores por pontuação (do maior para o menor)
+          // Ordena os jogadores por pontuação (do maior para o menor) e, em caso de empate, por placares exatos
           const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
             if (b[1] !== a[1]) {
               return b[1] - a[1]; // Ordena por pontuação decrescente
@@ -1967,13 +1967,17 @@
           // Verifica a pontuação máxima
           const pontuacaoMaxima = jogadoresOrdenados[0][1];
 
-          // Filtra os jogadores com a pontuação máxima
-          const vencedores =
-            pontuacaoMaxima > 0
-              ? jogadoresOrdenados.filter(
-                  ([_, pontuacao]) => pontuacao === pontuacaoMaxima
-                )
-              : [];
+          // Verifica se todos os jogadores estão com 0 pontos
+          const todosZerados = jogadoresOrdenados.every(
+            ([_, pontuacao]) => pontuacao === 0
+          );
+
+          // Se todos estiverem zerados, não há vencedores
+          const vencedores = todosZerados
+            ? []
+            : jogadoresOrdenados.filter(
+                ([_, pontuacao]) => pontuacao === pontuacaoMaxima
+              );
 
           // Atualiza a exibição da pontuação
           const pontuacaoHTML = jogadoresOrdenados
@@ -1984,8 +1988,9 @@
               return `<div class="pontuacao-card ${
                 isVencedor ? "vencedor" : ""
               }"><h3>${jogador}</h3>
-                    <span>
-                    <p>${pontuacao} pontos</p></div>`;
+            <span>
+            <p>${pontuacao} pontos</p>
+            <p>Placares exatos: ${placaresExatos[jogador]}</p></div>`;
             })
             .join("");
 
