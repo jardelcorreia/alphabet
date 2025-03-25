@@ -37,6 +37,48 @@
         box-sizing: border-box;
       }
 
+      /* Adicione isto na seção de estilos gerais */
+      input,
+      input::placeholder,
+      textarea,
+      textarea::placeholder {
+        font-family: "Kanit", sans-serif;
+        font-weight: 400; /* Peso regular para melhor legibilidade */
+      }
+
+      /* Estilo específico para inputs de rodada */
+      .valor-rodada-input,
+      .winner-input {
+        font-family: "Kanit", sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.3px; /* Melhora a legibilidade em mobile */
+      }
+
+      /* Placeholders estilizados */
+      .winner-input::placeholder {
+        font-family: "Kanit", sans-serif;
+        font-weight: 300; /* Peso mais leve para o placeholder */
+        color: var(--gray); /* Cor consistente com o tema */
+        opacity: 0.8; /* Leve transparência */
+      }
+
+      body.dark-mode .winner-input::placeholder {
+        color: var(--gray-light);
+        opacity: 0.7;
+      }
+
+      /* Ajuste específico para mobile */
+      @media (max-width: 576px) {
+        .valor-rodada-input,
+        .winner-input {
+          font-size: 0.8rem; /* Tamanho ligeiramente maior em mobile */
+        }
+
+        .winner-input::placeholder {
+          font-size: 0.75rem; /* Placeholder um pouco menor */
+        }
+      }
+
       body {
         font-family: "Kanit", sans-serif;
         background: linear-gradient(135deg, #dbeafe, #bfdbfe, #c7d2fe);
@@ -168,10 +210,10 @@
       .input-container {
         display: flex;
         align-items: center;
-        gap: 12px;
-        margin-bottom: 15px;
-        padding: 8px 12px;
-        border-radius: 12px;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 6px 8px;
+        border-radius: 10px;
         transition: all 0.3s ease;
       }
 
@@ -184,27 +226,28 @@
       }
 
       .rodada-label {
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-weight: 700;
         color: var(--primary);
-        min-width: 35px;
+        min-width: 30px;
         text-align: center;
-        padding: 8px;
+        padding: 6px;
         background: var(--primary-bg);
-        border-radius: 8px;
+        border-radius: 6px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .valor-container {
         display: flex;
         align-items: center;
-        margin: 0 10px;
+        margin: 0 5px;
       }
 
       .currency-prefix {
-        margin-right: 5px;
+        margin-right: 3px;
         font-weight: 600;
         color: var(--primary-dark);
+        font-size: 0.8rem;
       }
 
       body.dark-mode .currency-prefix {
@@ -212,13 +255,13 @@
       }
 
       .valor-rodada-input {
-        width: 47px;
-        padding: 4px;
+        width: 42px;
+        padding: 3px;
         border: 2px solid var(--primary-light);
-        border-radius: 8px;
+        border-radius: 6px;
         background: rgba(255, 255, 255, 0.95);
         font-family: "Kanit", sans-serif;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         color: var(--primary-dark);
         transition: all 0.3s ease;
       }
@@ -231,10 +274,10 @@
 
       .winner-input {
         flex: 1;
-        padding: 10px;
+        padding: 8px;
         border: 2px solid rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        font-size: 0.95rem;
+        border-radius: 6px;
+        font-size: 0.85rem;
         background: white;
         transition: all 0.3s;
       }
@@ -251,7 +294,7 @@
         outline: none;
       }
 
-      /* Score Cards - MODIFICADO */
+      /* Score Cards */
       .score-cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -427,67 +470,151 @@
       }
 
       @media (max-width: 576px) {
-        .header h1 {
-          font-size: 1.8rem;
-        }
-        .card-header h2 {
-          font-size: 1.3rem;
-        }
-        .card-body {
-          padding: 1.5rem 1rem;
-        }
-        .rodada-label {
-          min-width: 30px;
-          padding: 6px;
-          font-size: 0.9rem;
-        }
-        .winner-input {
-          padding: 8px 10px;
-          font-size: 0.9rem;
-        }
-        .valor-rodada-input {
-          width: 40px;
+        /* Ajustes gerais para mobile */
+        body {
+          padding: 1rem 0.5rem;
         }
 
-        /* Ajustes adicionais para mobile */
+        .header h1 {
+          font-size: 1.8rem;
+          margin-bottom: 0.3rem;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .main-container {
+          gap: 1rem;
+        }
+
+        .card {
+          border-radius: 16px;
+        }
+
+        .card-header {
+          padding: 1rem;
+        }
+
+        .card-header h2 {
+          font-size: 1.2rem;
+        }
+
+        .card-body {
+          padding: 1rem;
+          max-height: 60vh;
+        }
+
+        /* Ajustes específicos para os inputs de rodada */
+        .input-container {
+          gap: 5px;
+          margin-bottom: 8px;
+          padding: 5px;
+        }
+
+        .rodada-label {
+          min-width: 26px;
+          padding: 4px;
+          font-size: 0.8rem;
+        }
+
+        .valor-container {
+          margin: 0 3px;
+        }
+
+        .currency-prefix {
+          font-size: 0.7rem;
+          margin-right: 2px;
+        }
+
+        .valor-rodada-input {
+          width: 38px;
+          padding: 2px;
+          font-size: 0.75rem;
+        }
+
+        .winner-input {
+          padding: 6px;
+          font-size: 0.75rem;
+        }
+
+        /* Ajustes específicos para os cards de jogadores */
         .score-cards {
-          grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          grid-template-columns: 1fr 1fr; /* 2 colunas em mobile */
           gap: 0.8rem;
         }
 
         .player-card {
           padding: 0.8rem;
           border-radius: 12px;
+          min-height: 160px; /* Altura mínima para uniformidade */
         }
 
         .player-name {
           font-size: 1.1rem;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.6rem;
+        }
+
+        .stats-container {
+          gap: 6px;
+        }
+
+        .stat {
+          padding: 5px;
+          border-radius: 5px;
         }
 
         .stat-value {
-          font-size: 1.3rem;
+          font-size: 1.2rem;
         }
 
         .stat-label {
-          font-size: 0.7rem;
+          font-size: 0.65rem;
+          letter-spacing: 0.3px;
         }
 
         .player-position {
-          width: 28px;
-          height: 28px;
+          width: 26px;
+          height: 26px;
           font-size: 0.8rem;
         }
-      }
 
-      @media (max-width: 400px) {
-        .score-cards {
-          grid-template-columns: 1fr;
+        /* Ajuste para telas muito pequenas */
+        @media (max-width: 400px) {
+          .score-cards {
+            grid-template-columns: 1fr; /* 1 coluna em telas muito pequenas */
+          }
+
+          .player-card {
+            max-width: 260px;
+            margin: 0 auto;
+          }
+
+          .input-container {
+            flex-wrap: wrap;
+          }
+
+          .winner-input {
+            flex: 0 0 100%;
+            order: 3;
+            margin-top: 4px;
+          }
         }
 
-        .player-card {
-          max-width: 220px;
-          margin: 0 auto;
+        /* Ajuste para modo paisagem em mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+          .score-cards {
+            grid-template-columns: repeat(3, 1fr);
+          }
+
+          .card-body {
+            max-height: 60vh;
+          }
+
+          .input-container {
+            gap: 4px;
+            margin-bottom: 6px;
+          }
         }
       }
     </style>
