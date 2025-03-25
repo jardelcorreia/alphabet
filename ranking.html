@@ -37,46 +37,31 @@
         box-sizing: border-box;
       }
 
-      /* Adicione isto na seção de estilos gerais */
       input,
       input::placeholder,
       textarea,
       textarea::placeholder {
         font-family: "Kanit", sans-serif;
-        font-weight: 400; /* Peso regular para melhor legibilidade */
+        font-weight: 400;
       }
 
-      /* Estilo específico para inputs de rodada */
       .valor-rodada-input,
       .winner-input {
         font-family: "Kanit", sans-serif;
         font-weight: 400;
-        letter-spacing: 0.3px; /* Melhora a legibilidade em mobile */
+        letter-spacing: 0.3px;
       }
 
-      /* Placeholders estilizados */
       .winner-input::placeholder {
         font-family: "Kanit", sans-serif;
-        font-weight: 300; /* Peso mais leve para o placeholder */
-        color: var(--gray); /* Cor consistente com o tema */
-        opacity: 0.8; /* Leve transparência */
+        font-weight: 300;
+        color: var(--gray);
+        opacity: 0.8;
       }
 
       body.dark-mode .winner-input::placeholder {
         color: var(--gray-light);
         opacity: 0.7;
-      }
-
-      /* Ajuste específico para mobile */
-      @media (max-width: 576px) {
-        .valor-rodada-input,
-        .winner-input {
-          font-size: 0.8rem; /* Tamanho ligeiramente maior em mobile */
-        }
-
-        .winner-input::placeholder {
-          font-size: 0.75rem; /* Placeholder um pouco menor */
-        }
       }
 
       body {
@@ -96,7 +81,6 @@
         color: var(--light);
       }
 
-      /* Header */
       .header {
         text-align: center;
         margin-bottom: 2rem;
@@ -127,7 +111,6 @@
         color: var(--gray-light);
       }
 
-      /* Main Container */
       .main-container {
         display: flex;
         gap: 2rem;
@@ -153,7 +136,6 @@
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      /* Card Header */
       .card-header {
         background: var(--primary);
         color: white;
@@ -185,7 +167,6 @@
         );
       }
 
-      /* Card Body */
       .card-body {
         padding: 2rem;
         max-height: 70vh;
@@ -206,7 +187,6 @@
         border-radius: 4px;
       }
 
-      /* Inputs de Ranking */
       .input-container {
         display: flex;
         align-items: center;
@@ -294,7 +274,6 @@
         outline: none;
       }
 
-      /* Score Cards */
       .score-cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -397,7 +376,6 @@
         color: var(--dark);
       }
 
-      /* Animações */
       .pulse {
         animation: pulse 2s infinite;
       }
@@ -414,7 +392,6 @@
         }
       }
 
-      /* Feedback visual */
       .saved-indicator {
         position: fixed;
         bottom: 20px;
@@ -463,14 +440,81 @@
         }
       }
 
-      @media (max-width: 768px) {
-        .score-cards {
-          grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        }
-      }
-
       @media (max-width: 576px) {
-        /* Ajustes gerais para mobile */
+        /* Compact winner input row */
+        .input-container {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 8px;
+          padding: 5px;
+          margin-bottom: 8px;
+        }
+
+        .rodada-label {
+          min-width: 40px;
+          padding: 4px;
+          text-align: center;
+          font-size: 0.8rem;
+          flex-shrink: 0;
+        }
+
+        .valor-container {
+          display: flex;
+          align-items: center;
+          margin: 0 5px 0 0;
+        }
+
+        .currency-prefix {
+          font-size: 0.7rem;
+          margin-right: 2px;
+        }
+
+        .valor-rodada-input {
+          width: 50px;
+          padding: 3px;
+          font-size: 0.8rem;
+        }
+
+        .winner-input {
+          flex: 1;
+          padding: 6px;
+          font-size: 0.75rem;
+        }
+
+        /* Score cards layout */
+        .score-cards {
+          display: grid;
+          grid-template-columns: 1fr; /* Single column */
+          gap: 1rem;
+        }
+
+        .player-card {
+          width: 100%;
+          max-width: 320px; /* Ensures cards aren't too wide on mobile */
+          margin: 0 auto; /* Center the cards */
+          min-height: 180px; /* Ensures consistent height */
+        }
+
+        .player-name {
+          font-size: 1.2rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .stats-container {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+
+        .stat-value {
+          font-size: 1.4rem;
+        }
+
+        .stat-label {
+          font-size: 0.7rem;
+        }
+
+        /* General mobile adjustments */
         body {
           padding: 1rem 0.5rem;
         }
@@ -504,117 +548,61 @@
           padding: 1rem;
           max-height: 60vh;
         }
+      }
 
-        /* Ajustes específicos para os inputs de rodada */
+      /* Additional adjustments for very small screens */
+      @media (max-width: 375px) {
         .input-container {
+          flex-wrap: nowrap;
           gap: 5px;
-          margin-bottom: 8px;
-          padding: 5px;
         }
 
         .rodada-label {
-          min-width: 26px;
-          padding: 4px;
-          font-size: 0.8rem;
-        }
-
-        .valor-container {
-          margin: 0 3px;
-        }
-
-        .currency-prefix {
+          min-width: 30px;
+          padding: 3px;
           font-size: 0.7rem;
-          margin-right: 2px;
         }
 
         .valor-rodada-input {
-          width: 38px;
-          padding: 2px;
-          font-size: 0.75rem;
+          width: 45px;
+          font-size: 0.7rem;
         }
 
         .winner-input {
-          padding: 6px;
-          font-size: 0.75rem;
-        }
-
-        /* Ajustes específicos para os cards de jogadores */
-        .score-cards {
-          grid-template-columns: 1fr 1fr; /* 2 colunas em mobile */
-          gap: 0.8rem;
+          font-size: 0.7rem;
         }
 
         .player-card {
-          padding: 0.8rem;
-          border-radius: 12px;
-          min-height: 160px; /* Altura mínima para uniformidade */
+          max-width: 280px;
+          min-height: 160px;
         }
 
         .player-name {
           font-size: 1.1rem;
-          margin-bottom: 0.6rem;
-        }
-
-        .stats-container {
-          gap: 6px;
-        }
-
-        .stat {
-          padding: 5px;
-          border-radius: 5px;
         }
 
         .stat-value {
           font-size: 1.2rem;
         }
+      }
 
-        .stat-label {
-          font-size: 0.65rem;
-          letter-spacing: 0.3px;
+      /* Landscape mode adjustments */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .score-cards {
+          grid-template-columns: repeat(3, 1fr);
         }
 
-        .player-position {
-          width: 26px;
-          height: 26px;
-          font-size: 0.8rem;
+        .card-body {
+          max-height: 60vh;
         }
 
-        /* Ajuste para telas muito pequenas */
-        @media (max-width: 400px) {
-          .score-cards {
-            grid-template-columns: 1fr; /* 1 coluna em telas muito pequenas */
-          }
-
-          .player-card {
-            max-width: 260px;
-            margin: 0 auto;
-          }
-
-          .input-container {
-            flex-wrap: wrap;
-          }
-
-          .winner-input {
-            flex: 0 0 100%;
-            order: 3;
-            margin-top: 4px;
-          }
-        }
-
-        /* Ajuste para modo paisagem em mobile */
-        @media (max-height: 500px) and (orientation: landscape) {
-          .score-cards {
-            grid-template-columns: repeat(3, 1fr);
-          }
-
-          .card-body {
-            max-height: 60vh;
-          }
-
-          .input-container {
-            gap: 4px;
-            margin-bottom: 6px;
-          }
+        .input-container {
+          display: grid;
+          grid-template-columns: 30px 70px 1fr;
+          gap: 5px;
+          align-items: center;
+          margin-bottom: 8px;
+          padding: 5px;
         }
       }
     </style>
