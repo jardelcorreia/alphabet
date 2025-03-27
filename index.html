@@ -1728,7 +1728,9 @@
           adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
           adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
           carregarApostas();
-          createAdvancedTitle(); // Carrega as apostas salvas
+          createAdvancedTitle(); // Carrega as apostas salvas   
+          // Inicia a atualização automática
+          iniciarAtualizacaoAutomatica();
 
           // Adiciona evento de input para o nome da rodada
           document
@@ -2677,20 +2679,21 @@
         // Atualização periódica (1 hora)
         let intervaloAtualizacao;
 
-        function iniciarAtualizacaoAutomatica() {
-          intervaloAtualizacao = setInterval(() => {
-            if (rodadaExibida) {
-              preencherTabelaPrincipalComRodadaAtual(rodadaExibida, false); // Não pede confirmação
-            } else {
-              console.log(
-                "Nenhuma rodada exibida. Atualização automática ignorada."
-              );
-            }
-          }, 3600000); // 3.600.000 ms = 1 hora
-        }
-
-        function pararAtualizacaoAutomatica() {
-          clearInterval(intervaloAtualizacao);
+        function iniciarAtualizacaoAutomatica() { 
+            intervaloAtualizacao = setInterval(() => { 
+                // Verifica se tem rodada exibida
+                if (!rodadaExibida) { 
+                    console.log("Nenhuma rodada exibida. Atualização automática ignorada."); 
+                    return;
+                }
+        
+                // Verifica se a rodada exibida é igual à rodada atual
+                if (rodadaExibida === rodadaAtual) { 
+                    preencherTabelaPrincipalComRodadaAtual(rodadaExibida, false); // Não pede confirmação 
+                } else { 
+                    console.log("Atualização automática ignorada. Rodada exibida diferente da rodada atual."); 
+                } 
+            }, 30000); // 30.000 ms = 30s 
         }
 
         // Adicionar evento ao botão para iniciar/parar a atualização automática
