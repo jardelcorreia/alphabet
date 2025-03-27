@@ -2676,25 +2676,36 @@
           adicionarNavegacaoJogos();
         }
 
-        // Atualização periódica (1 hora)
-        let intervaloAtualizacao;
+       let intervaloAtualizacao; // Variável para armazenar o intervalo
 
-        function iniciarAtualizacaoAutomatica() { 
-            intervaloAtualizacao = setInterval(() => { 
-                // Verifica se tem rodada exibida
-                if (!rodadaExibida) { 
-                    console.log("Nenhuma rodada exibida. Atualização automática ignorada."); 
+            // Função para atualizar a tabela
+            function atualizarTabela() {
+                if (!rodadaExibida) {
+                    console.log("Nenhuma rodada exibida. Atualização ignorada.");
                     return;
                 }
-        
-                // Verifica se a rodada exibida é igual à rodada atual
-                if (rodadaExibida === rodadaAtual) { 
-                    preencherTabelaPrincipalComRodadaAtual(rodadaExibida, false); // Não pede confirmação 
-                } else { 
-                    console.log("Atualização automática ignorada. Rodada exibida diferente da rodada atual."); 
-                } 
-            }, 30000); // 30.000 ms = 30s 
-        }
+                
+                if (rodadaExibida === rodadaAtual) {
+                    preencherTabelaPrincipalComRodadaAtual(rodadaExibida, false); // Atualiza sem confirmação
+                } else {
+                    console.log("Rodada exibida diferente da atual. Atualização ignorada.");
+                }
+            }
+            
+            // Inicia a atualização automática (executa imediatamente e a cada 30s)
+            function iniciarAtualizacaoAutomatica() {
+                atualizarTabela(); // Atualiza imediatamente ao carregar
+                intervaloAtualizacao = setInterval(atualizarTabela, 30000); // Repete a cada 30s
+            }
+            
+            // Para a atualização quando a página é fechada
+            function pararAtualizacaoAutomatica() {
+                if (intervaloAtualizacao) {
+                    clearInterval(intervaloAtualizacao);
+                    intervaloAtualizacao = null;
+                    console.log("Atualização automática parada.");
+                }
+            }
 
         // Adicionar evento ao botão para iniciar/parar a atualização automática
         document
@@ -2704,8 +2715,9 @@
             iniciarAtualizacaoAutomatica(); // Inicia a atualização automática
           });
 
-        // Parar a atualização automática ao sair da página (opcional)
+        // Parar a atualização automática ao sair da página
         window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
+        window.addEventListener("unload", pararAtualizacaoAutomatica); // Fallback extra
       </script>
     </div>
   </body>
