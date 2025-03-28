@@ -1,1694 +1,1694 @@
-  <!DOCTYPE html>
-  <html lang="pt-BR">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>AlphaBet 2025 - Login</title>
-      <link rel="icon" type="image/x-icon" href="./favicon.ico" />
-      <!--<link rel="stylesheet" href="tabeladejogos.css">-->
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-      />
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-      <style>
-        @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AlphaBet 2025 - Login</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <!--<link rel="stylesheet" href="tabeladejogos.css">-->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
 
-        :root {
-          /* Color system */
-          --color-primary: #3a86ff;
-          --color-primary-light: #61a0ff;
-          --color-primary-dark: #2563eb;
-          --color-secondary: #4ade80;
-          --color-secondary-light: #86efac;
-          --color-secondary-dark: #16a34a;
-          --color-accent: #f59e0b;
-          --color-danger: #ef4444;
-          --color-dark: #1e293b;
-          --color-light: #f8fafc;
-          --color-gray-100: #f1f5f9;
-          --color-gray-200: #e2e8f0;
-          --color-gray-300: #cbd5e1;
-          --color-gray-400: #94a3b8;
-          --color-gray-500: #64748b;
+      :root {
+        /* Color system */
+        --color-primary: #3a86ff;
+        --color-primary-light: #61a0ff;
+        --color-primary-dark: #2563eb;
+        --color-secondary: #4ade80;
+        --color-secondary-light: #86efac;
+        --color-secondary-dark: #16a34a;
+        --color-accent: #f59e0b;
+        --color-danger: #ef4444;
+        --color-dark: #1e293b;
+        --color-light: #f8fafc;
+        --color-gray-100: #f1f5f9;
+        --color-gray-200: #e2e8f0;
+        --color-gray-300: #cbd5e1;
+        --color-gray-400: #94a3b8;
+        --color-gray-500: #64748b;
 
-          /* Spacing system */
-          --space-xs: 0.25rem; /* 4px */
-          --space-sm: 0.5rem; /* 8px */
-          --space-md: 1rem; /* 16px */
-          --space-lg: 1.5rem; /* 24px */
-          --space-xl: 2rem; /* 32px */
+        /* Spacing system */
+        --space-xs: 0.25rem; /* 4px */
+        --space-sm: 0.5rem; /* 8px */
+        --space-md: 1rem; /* 16px */
+        --space-lg: 1.5rem; /* 24px */
+        --space-xl: 2rem; /* 32px */
 
-          /* Border radius */
-          --radius-sm: 0.25rem; /* 4px */
-          --radius-md: 0.5rem; /* 8px */
-          --radius-lg: 1rem; /* 16px */
+        /* Border radius */
+        --radius-sm: 0.25rem; /* 4px */
+        --radius-md: 0.5rem; /* 8px */
+        --radius-lg: 1rem; /* 16px */
 
-          /* Shadow system */
-          --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-          --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-            0 2px 4px -1px rgba(0, 0, 0, 0.06);
-          --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-            0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        /* Shadow system */
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
-          /* Transitions */
-          --transition-fast: 150ms ease;
-          --transition-normal: 250ms ease;
-          --transition-slow: 350ms ease;
+        /* Transitions */
+        --transition-fast: 150ms ease;
+        --transition-normal: 250ms ease;
+        --transition-slow: 350ms ease;
 
-          --primary-color: #009c3b; /* Verde da bandeira brasileira */
-          --secondary-color: #ffdf00; /* Amarelo da bandeira brasileira */
-          --text-color: #333;
-          --light-bg: #f5f5f5;
-          --dark-bg: #3a86ff; /* Azul */
-          --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-          --border-radius: 8px;
+        --primary-color: #009c3b; /* Verde da bandeira brasileira */
+        --secondary-color: #ffdf00; /* Amarelo da bandeira brasileira */
+        --text-color: #333;
+        --light-bg: #f5f5f5;
+        --dark-bg: #3a86ff; /* Azul */
+        --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        --border-radius: 8px;
+      }
+
+      /* Reset CSS */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Kanit", Tahoma, "Roboto";
+        background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+        color: var(--color-dark);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        line-height: 1.5;
+      }
+
+      /* Login Page */
+      .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(
+          135deg,
+          rgba(58, 134, 255, 0.9),
+          rgba(74, 222, 128, 0.8)
+        );
+        backdrop-filter: blur(8px);
+      }
+
+      .box-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: var(--space-xl);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        text-align: center;
+        width: 320px;
+        position: relative;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .alpha-bet-title {
+        font-size: 2.25rem;
+        font-weight: 600;
+        margin-bottom: var(--space-lg);
+        background: linear-gradient(
+          to right,
+          var(--color-primary),
+          var(--color-secondary)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        letter-spacing: -0.5px;
+      }
+
+      .login-container h2 {
+        margin-bottom: var(--space-lg);
+        font-size: 1.5rem;
+        color: var(--color-dark);
+        font-weight: 500;
+      }
+
+      .login-container input {
+        font-family: inherit;
+        width: 100%;
+        padding: var(--space-md);
+        margin-bottom: var(--space-md);
+        border: 1px solid var(--color-gray-300);
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        background: var(--color-light);
+        transition: all var(--transition-normal);
+      }
+
+      .login-container input:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.25);
+        outline: none;
+      }
+
+      .login-container button {
+        width: 100%;
+        padding: var(--space-md);
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: var(--space-sm);
+        transition: all var(--transition-normal);
+      }
+
+      .login-container button:hover {
+        background: var(--color-primary-dark);
+        transform: translateY(-2px);
+      }
+
+      /* Main Content Header */
+      .container-titulo {
+        position: relative;
+        word-wrap: break-word; /* Allow long words to break and wrap */
+        word-break: break-word; /* Break words at appropriate points */
+        hyphens: auto; /* Enable automatic hyphenation */
+        white-space: normal; /* Allow text to wrap normally */
+        flex-wrap: wrap; /* Allow content to wrap */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        font-family: "Kanit", "Poppins", Arial, sans-serif;
+        font-size: 2.5em;
+        font-weight: bold;
+        text-transform: uppercase;
+        padding: 20px;
+        margin-bottom: 2px;
+        background: linear-gradient(
+          135deg,
+          rgba(0, 156, 59, 0.9),
+          /* Verde da bandeira brasileira */ rgba(255, 223, 0, 0.9),
+          /* Amarelo da bandeira brasileira */ rgba(0, 156, 59, 0.9)
+            /* Verde da bandeira brasileira */
+        );
+        background-size: 300% 300%;
+        color: white;
+        border-radius: 0px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+        perspective: 1000px;
+      }
+
+      .letra {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(50px) rotateX(90deg) scale(0.6);
+        animation: letterReveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
+          forwards;
+        will-change: transform, opacity;
+      }
+
+      @keyframes letterReveal {
+        0% {
+          opacity: 0;
+          transform: translateY(50px) rotateX(90deg) scale(0.6);
         }
-
-        /* Reset CSS */
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
+        70% {
+          opacity: 0.7;
+          transform: translateY(-5px) rotateX(-20deg) scale(1.1);
         }
-
-        body {
-          font-family: "Kanit", Tahoma, "Roboto";
-          background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-          color: var(--color-dark);
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-          margin: 0;
-          line-height: 1.5;
+        100% {
+          opacity: 1;
+          transform: translateY(0) rotateX(0) scale(1);
         }
+      }
 
-        /* Login Page */
-        .login-container {
-          display: flex;
+      @keyframes backgroundShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container-titulo::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.3),
+          rgba(255, 255, 255, 0.1)
+        );
+        transform: rotate(-45deg);
+        animation: shine 3s linear infinite;
+        z-index: 1;
+      }
+
+      @keyframes shine {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      /* Buttons and Controls */
+      .toggle-visibility-container {
+        display: flex;
+        width: 100%;
+        max-width: 800px;
+        margin: var(--space-md) auto;
+        gap: var(--space-sm);
+        justify-content: left;
+        max-width: 890px;
+        margin: 8px auto;
+        padding-left: 5px;
+      }
+
+      #toggle-visibility,
+      #ranking-button,
+      #preencher-tabela-principal {
+        font-family: inherit;
+        padding: var(--space-sm) var(--space-md);
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 400;
+        transition: all var(--transition-normal);
+        color: white;
+      }
+
+      #toggle-visibility {
+        background-color: var(--color-primary);
+      }
+
+      #toggle-visibility:hover {
+        background-color: var(--color-primary-dark);
+        transform: translateY(-2px);
+      }
+
+      #ranking-button {
+        background-color: var(--color-secondary-dark);
+      }
+
+      #ranking-button:hover {
+        background-color: var(--color-secondary);
+        transform: translateY(-2px);
+      }
+
+      #preencher-tabela-principal {
+        background-color: var(--color-accent);
+      }
+
+      #preencher-tabela-principal:hover {
+        background-color: #e29209;
+        transform: translateY(-2px);
+      }
+
+      .logout-button {
+        padding: var(--space-sm) var(--space-md);
+        font-size: 0.875rem;
+        right: var(--space-md);
+        top: var(--space-md);
+        position: absolute;
+        background: var(--color-danger);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+      }
+
+      .logout-button:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+      }
+
+      .logout-button i {
+        font-size: 1rem;
+      }
+
+      /* Table Styles */
+      .table-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto var(--space-lg);
+        overflow-x: auto;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(5px);
+        border: 1px solid var(--color-gray-200);
+      }
+
+      table {
+        width: 100%;
+        min-width: 900px;
+        border-collapse: collapse;
+      }
+
+      td {
+        padding: var(--space-xs);
+        border: 1px solid var(--color-gray-200);
+        text-align: center;
+        height: 40px;
+      }
+
+      th {
+        padding: var(--space-md);
+        background: var(--color-primary);
+        color: white;
+        font-size: 1.25rem;
+        font-weight: 450;
+      }
+
+      th:first-child,
+      td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: white;
+        outline: none;
+        width: 150px;
+        padding: var(--space-xs);
+      }
+
+      th:first-child {
+        background-color: var(--color-primary);
+      }
+
+      tr:nth-child(even) {
+        background-color: var(--color-gray-100);
+      }
+
+      #nome-rodada {
+        position: sticky;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-family: inherit;
+        font-size: 1.25rem;
+        font-weight: 450;
+        text-align: center;
+        width: 150px;
+        text-transform: uppercase;
+        padding: var(--space-sm);
+        outline: none;
+      }
+
+      #nome-rodada::placeholder {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .input-placar,
+      .input-jogo {
+        font-family: inherit;
+        width: 40px;
+        text-align: center;
+        padding: var(--space-xs);
+        font-size: 1.25rem;
+        border: 1px solid var(--color-gray-300);
+        border-radius: var(--radius-sm);
+        background: white;
+        transition: all var(--transition-normal);
+      }
+
+      .input-jogo {
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        font-size: 1.25rem;
+        font-weight: 400;
+        text-transform: uppercase;
+        text-align: center;
+        width: 150px;
+        outline: none;
+        margin: 0;
+        border-radius: var(--radius-sm);
+        padding: var(--space-xs);
+        transition: all var(--transition-normal);
+      }
+
+      .input-jogo:focus,
+      .input-placar:focus {
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.25);
+        transform: translateY(-1px);
+      }
+
+      .placar-separador {
+        font-size: 1.125rem;
+        color: var(--color-gray-500);
+      }
+
+      /* Score Cards */
+      .pontuacao-container {
+        display: flex;
+        flex-direction: column;
+        max-width: 1000px;
+        gap: var(--space-md);
+        margin: var(--space-lg) auto;
+      }
+
+      .pontuacao-card {
+        background: rgba(255, 255, 255, 0.95);
+        padding: var(--space-md);
+        border-radius: var(--radius-lg);
+        font-size: 1.25rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        transition: all var(--transition-normal);
+        display: block;
+        align-items: center;
+        justify-content: center;
+        min-height: 60px;
+        width: 80%;
+        margin: auto;
+        backdrop-filter: blur(5px);
+        border: 1px solid var(--color-gray-200);
+      }
+
+      .pontuacao-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      @media (min-width: 768px) {
+        .pontuacao-container {
+          flex-direction: row;
+          flex-wrap: wrap;
           justify-content: center;
-          align-items: center;
-          height: 100vh;
-          background: linear-gradient(
-            135deg,
-            rgba(58, 134, 255, 0.9),
-            rgba(74, 222, 128, 0.8)
-          );
-          backdrop-filter: blur(8px);
         }
 
-        .box-container {
-          background: rgba(255, 255, 255, 0.95);
-          padding: var(--space-xl);
-          border-radius: var(--radius-lg);
-          box-shadow: var(--shadow-lg);
-          text-align: center;
-          width: 320px;
-          position: relative;
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.18);
+        .pontuacao-card {
+          flex: 1 1 180px;
+          max-width: 200px;
+          min-height: 80px;
+          font-size: 1.125rem;
+        }
+      }
+
+      .pontuacao-card.vencedor {
+        background: linear-gradient(to right, #fef3c7, var(--color-accent));
+        color: var(--color-dark);
+        font-weight: 600;
+        border: 2px solid var(--color-accent);
+      }
+      /* Footer */
+      footer {
+        margin-top: var(--space-xl);
+        text-align: center;
+        padding: var(--space-md);
+        background-color: rgba(241, 245, 249, 0.95);
+        width: 100%; /* Ocupa toda a largura da página */
+        border-top: none; /* Remove a borda superior */
+      }
+
+      footer p {
+        margin: var(--space-xs) 0;
+        color: var(--color-gray-500);
+        font-size: 0.875rem;
+      }
+
+      .fab.fa-instagram {
+        font-size: 1.5rem;
+        color: #e1306c;
+        transition: all var(--transition-normal);
+      }
+
+      .fab.fa-instagram:hover {
+        color: #c13584;
+        transform: scale(1.1);
+      }
+
+      /* Utility Classes */
+      .hidden {
+        display: none;
+      }
+
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
+        .table-container {
+          overflow-x: auto;
         }
 
-        .alpha-bet-title {
-          font-size: 2.25rem;
-          font-weight: 600;
-          margin-bottom: var(--space-lg);
-          background: linear-gradient(
-            to right,
-            var(--color-primary),
-            var(--color-secondary)
-          );
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-          letter-spacing: -0.5px;
+        .logout-button {
+          padding: var(--space-xs) var(--space-sm);
+          font-size: 0.75rem;
+          right: var(--space-sm);
+          top: var(--space-sm);
         }
 
-        .login-container h2 {
-          margin-bottom: var(--space-lg);
-          font-size: 1.5rem;
-          color: var(--color-dark);
-          font-weight: 500;
+        .logout-button i {
+          font-size: 0.875rem;
         }
 
-        .login-container input {
-          font-family: inherit;
-          width: 100%;
-          padding: var(--space-md);
-          margin-bottom: var(--space-md);
-          border: 1px solid var(--color-gray-300);
-          border-radius: var(--radius-md);
-          font-size: 1rem;
-          background: var(--color-light);
-          transition: all var(--transition-normal);
-        }
-
-        .login-container input:focus {
-          border-color: var(--color-primary);
-          box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.25);
-          outline: none;
-        }
-
-        .login-container button {
-          width: 100%;
-          padding: var(--space-md);
-          background: var(--color-primary);
-          color: white;
-          border: none;
-          border-radius: var(--radius-md);
-          font-size: 1rem;
-          font-weight: 500;
-          cursor: pointer;
-          margin-top: var(--space-sm);
-          transition: all var(--transition-normal);
-        }
-
-        .login-container button:hover {
-          background: var(--color-primary-dark);
-          transform: translateY(-2px);
-        }
-
-        /* Main Content Header */
         .container-titulo {
-          position: relative;
+          font-size: 2.75rem;
+          padding: var(--space-md);
+          background-size: 300% 300%;
           word-wrap: break-word; /* Allow long words to break and wrap */
           word-break: break-word; /* Break words at appropriate points */
           hyphens: auto; /* Enable automatic hyphenation */
           white-space: normal; /* Allow text to wrap normally */
           flex-wrap: wrap; /* Allow content to wrap */
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          font-family: "Kanit", "Poppins", Arial, sans-serif;
-          font-size: 2.5em;
-          font-weight: bold;
-          text-transform: uppercase;
-          padding: 20px;
-          margin-bottom: 2px;
-          background: linear-gradient(
-            135deg,
-            rgba(0, 156, 59, 0.9),
-            /* Verde da bandeira brasileira */ rgba(255, 223, 0, 0.9),
-            /* Amarelo da bandeira brasileira */ rgba(0, 156, 59, 0.9)
-              /* Verde da bandeira brasileira */
-          );
-          background-size: 300% 300%;
-          color: white;
-          border-radius: 0px;
-          box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-          overflow: hidden;
-          perspective: 1000px;
-        }
-
-        .letra {
-          display: inline-block;
-          opacity: 0;
-          transform: translateY(50px) rotateX(90deg) scale(0.6);
-          animation: letterReveal 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)
-            forwards;
-          will-change: transform, opacity;
-        }
-
-        @keyframes letterReveal {
-          0% {
-            opacity: 0;
-            transform: translateY(50px) rotateX(90deg) scale(0.6);
-          }
-          70% {
-            opacity: 0.7;
-            transform: translateY(-5px) rotateX(-20deg) scale(1.1);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0) rotateX(0) scale(1);
-          }
-        }
-
-        @keyframes backgroundShift {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
-        }
-
-        .container-titulo::before {
-          content: "";
-          position: absolute;
-          top: -50%;
-          left: -50%;
-          width: 200%;
-          height: 200%;
-          background: linear-gradient(
-            45deg,
-            rgba(255, 255, 255, 0.1),
-            rgba(255, 255, 255, 0.3),
-            rgba(255, 255, 255, 0.1)
-          );
-          transform: rotate(-45deg);
-          animation: shine 3s linear infinite;
-          z-index: 1;
-        }
-
-        @keyframes shine {
-          0% {
-            left: -100%;
-          }
-          100% {
-            left: 100%;
-          }
-        }
-
-        /* Buttons and Controls */
-        .toggle-visibility-container {
-          display: flex;
-          width: 100%;
-          max-width: 800px;
-          margin: var(--space-md) auto;
-          gap: var(--space-sm);
-          justify-content: left;
-          max-width: 890px;
-          margin: 8px auto;
-          padding-left: 5px;
-        }
-
-        #toggle-visibility,
-        #ranking-button,
-        #preencher-tabela-principal {
-          font-family: inherit;
-          padding: var(--space-sm) var(--space-md);
-          border: none;
-          border-radius: var(--radius-md);
-          cursor: pointer;
-          font-size: 0.875rem;
-          font-weight: 500;
-          transition: all var(--transition-normal);
-          color: white;
-        }
-
-        #toggle-visibility {
-          background-color: var(--color-primary);
-        }
-
-        #toggle-visibility:hover {
-          background-color: var(--color-primary-dark);
-          transform: translateY(-2px);
-        }
-
-        #ranking-button {
-          background-color: var(--color-secondary-dark);
-        }
-
-        #ranking-button:hover {
-          background-color: var(--color-secondary);
-          transform: translateY(-2px);
-        }
-
-        #preencher-tabela-principal {
-          background-color: var(--color-accent);
-        }
-
-        #preencher-tabela-principal:hover {
-          background-color: #e29209;
-          transform: translateY(-2px);
-        }
-
-        .logout-button {
-          padding: var(--space-sm) var(--space-md);
-          font-size: 0.875rem;
-          right: var(--space-md);
-          top: var(--space-md);
-          position: absolute;
-          background: var(--color-danger);
-          color: white;
-          border: none;
-          border-radius: var(--radius-md);
-          cursor: pointer;
-          transition: all var(--transition-normal);
-          z-index: 1000;
-          display: flex;
-          align-items: center;
-          gap: var(--space-xs);
-        }
-
-        .logout-button:hover {
-          background: #dc2626;
-          transform: translateY(-2px);
-        }
-
-        .logout-button i {
-          font-size: 1rem;
-        }
-
-        /* Table Styles */
-        .table-container {
-          width: 100%;
-          max-width: 900px;
-          margin: 0 auto var(--space-lg);
-          overflow-x: auto;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.95);
-          border-radius: var(--radius-lg);
-          box-shadow: var(--shadow-md);
-          backdrop-filter: blur(5px);
-          border: 1px solid var(--color-gray-200);
-        }
-
-        table {
-          width: 100%;
-          min-width: 900px;
-          border-collapse: collapse;
-        }
-
-        td {
-          padding: var(--space-xs);
-          border: 1px solid var(--color-gray-200);
-          text-align: center;
-          height: 40px;
         }
 
         th {
-          padding: var(--space-md);
-          background: var(--color-primary);
-          color: white;
-          font-size: 1.25rem;
-          font-weight: 450;
+          font-size: 1rem;
+          padding: var(--space-sm);
         }
 
-        th:first-child,
-        td:first-child {
-          position: sticky;
-          left: 0;
-          z-index: 1;
-          background: white;
-          outline: none;
-          width: 150px;
+        .pontuacao-card {
+          font-size: 1.5rem;
+          width: 80%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .table-container {
+          overflow-x: auto;
+        }
+
+        .logout-button {
           padding: var(--space-xs);
+          right: var(--space-xs);
+          top: var(--space-xs);
         }
 
-        th:first-child {
-          background-color: var(--color-primary);
+        .logout-text {
+          display: none;
         }
 
-        tr:nth-child(even) {
-          background-color: var(--color-gray-100);
+        .container-titulo {
+          display: block;
+          font-size: 2rem;
+          padding: var(--space-sm);
+          word-wrap: break-word;
+          hyphens: auto;
+        }
+
+        th {
+          font-size: 1.25rem;
+          padding: 0px;
+          width: 140px;
         }
 
         #nome-rodada {
-          position: sticky;
-          background: var(--color-primary);
-          color: white;
-          border: none;
-          border-radius: var(--radius-sm);
-          font-family: inherit;
-          font-size: 1.25rem;
-          font-weight: 450;
-          text-align: center;
-          width: 150px;
-          text-transform: uppercase;
-          padding: var(--space-sm);
-          outline: none;
-        }
-
-        #nome-rodada::placeholder {
-          color: rgba(255, 255, 255, 0.7);
+          font-size: 1.2rem;
+          width: 140px;
         }
 
         .input-placar,
         .input-jogo {
-          font-family: inherit;
-          width: 40px;
-          text-align: center;
-          padding: var(--space-xs);
-          font-size: 1.25rem;
-          border: 1px solid var(--color-gray-300);
-          border-radius: var(--radius-sm);
-          background: white;
-          transition: all var(--transition-normal);
+          font-size: 1.2rem;
         }
+      }
 
-        .input-jogo {
-          background-color: var(--color-primary);
-          color: white;
-          border: none;
-          font-size: 1.25rem;
-          font-weight: 400;
-          text-transform: uppercase;
-          text-align: center;
-          width: 150px;
-          outline: none;
-          margin: 0;
-          border-radius: var(--radius-sm);
-          padding: var(--space-xs);
-          transition: all var(--transition-normal);
-        }
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+      }
 
-        .input-jogo:focus,
-        .input-placar:focus {
-          border-color: var(--color-primary);
-          box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.25);
-          transform: translateY(-1px);
-        }
+      /* Enhanced Header Styles */
+      header {
+        background-color: var(--color-primary);
+        color: white;
+        padding: var(--space-lg);
+        border-radius: var(--radius-lg);
+        margin-bottom: var(--space-lg);
+        text-align: center;
+        box-shadow: var(--shadow-md);
+        position: relative;
+        overflow: hidden;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+        transition: all var(--transition-normal);
+      }
 
-        .placar-separador {
-          font-size: 1.125rem;
-          color: var(--color-gray-500);
-        }
+      header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(
+          90deg,
+          var(--color-primary-light),
+          var(--color-secondary),
+          var(--color-primary-dark)
+        );
+      }
 
-        /* Score Cards */
-        .pontuacao-container {
-          display: flex;
-          flex-direction: column;
-          max-width: 1000px;
-          gap: var(--space-md);
-          margin: var(--space-lg) auto;
-        }
+      header h1 {
+        font-family: "Kanit", Arial, sans-serif;
+        font-size: 2.2rem;
+        font-weight: 600;
+        margin-bottom: var(--space-sm);
+        letter-spacing: -0.5px;
+        background: linear-gradient(
+          to right,
+          var(--color-light),
+          var(--color-gray-200)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
 
-        .pontuacao-card {
-          background: rgba(255, 255, 255, 0.95);
-          padding: var(--space-md);
-          border-radius: var(--radius-lg);
-          font-size: 1.25rem;
-          text-align: center;
-          box-shadow: var(--shadow-sm);
-          transition: all var(--transition-normal);
-          display: block;
-          align-items: center;
-          justify-content: center;
-          min-height: 60px;
-          width: 80%;
-          margin: auto;
-          backdrop-filter: blur(5px);
-          border: 1px solid var(--color-gray-200);
-        }
+      header .subtitulo {
+        font-family: "Kanit", Arial, sans-serif;
+        font-size: 1.125rem;
+        font-weight: 300;
+        color: var(--color-gray-200);
+        opacity: 0.9;
+        line-height: 1.4;
+      }
 
-        .pontuacao-card:hover {
-          transform: translateY(-3px);
-          box-shadow: var(--shadow-lg);
-        }
+      /* Dark Mode Adjustments */
+      body.dark-mode header {
+        background-color: var(--color-dark);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
 
-        @media (min-width: 768px) {
-          .pontuacao-container {
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: center;
-          }
+      body.dark-mode header::before {
+        background: linear-gradient(
+          90deg,
+          rgba(58, 134, 255, 0.7),
+          rgba(74, 222, 128, 0.7),
+          rgba(58, 134, 255, 0.7)
+        );
+      }
 
-          .pontuacao-card {
-            flex: 1 1 180px;
-            max-width: 200px;
-            min-height: 80px;
-            font-size: 1.125rem;
-          }
-        }
+      body.dark-mode header h1 {
+        background: linear-gradient(
+          to right,
+          var(--color-gray-300),
+          var(--color-gray-400)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
 
-        .pontuacao-card.vencedor {
-          background: linear-gradient(to right, #fef3c7, var(--color-accent));
-          color: var(--color-dark);
-          font-weight: 600;
-          border: 2px solid var(--color-accent);
-        }
-        /* Footer */
-        footer {
-          margin-top: var(--space-xl);
-          text-align: center;
-          padding: var(--space-md);
-          background-color: rgba(241, 245, 249, 0.95);
-          width: 100%; /* Ocupa toda a largura da página */
-          border-top: none; /* Remove a borda superior */
-        }
+      body.dark-mode header .subtitulo {
+        color: var(--color-gray-400);
+      }
 
-        footer p {
-          margin: var(--space-xs) 0;
-          color: var(--color-gray-500);
-          font-size: 0.875rem;
-        }
-
-        .fab.fa-instagram {
-          font-size: 1.5rem;
-          color: #e1306c;
-          transition: all var(--transition-normal);
-        }
-
-        .fab.fa-instagram:hover {
-          color: #c13584;
-          transform: scale(1.1);
-        }
-
-        /* Utility Classes */
-        .hidden {
-          display: none;
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-          .table-container {
-            overflow-x: auto;
-          }
-
-          .logout-button {
-            padding: var(--space-xs) var(--space-sm);
-            font-size: 0.75rem;
-            right: var(--space-sm);
-            top: var(--space-sm);
-          }
-
-          .logout-button i {
-            font-size: 0.875rem;
-          }
-
-          .container-titulo {
-            font-size: 2.75rem;
-            padding: var(--space-md);
-            background-size: 300% 300%;
-            word-wrap: break-word; /* Allow long words to break and wrap */
-            word-break: break-word; /* Break words at appropriate points */
-            hyphens: auto; /* Enable automatic hyphenation */
-            white-space: normal; /* Allow text to wrap normally */
-            flex-wrap: wrap; /* Allow content to wrap */
-          }
-
-          th {
-            font-size: 1rem;
-            padding: var(--space-sm);
-          }
-
-          .pontuacao-card {
-            font-size: 1.5rem;
-            width: 80%;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .table-container {
-            overflow-x: auto;
-          }
-
-          .logout-button {
-            padding: var(--space-xs);
-            right: var(--space-xs);
-            top: var(--space-xs);
-          }
-
-          .logout-text {
-            display: none;
-          }
-
-          .container-titulo {
-            display: block;
-            font-size: 2rem;
-            padding: var(--space-sm);
-            word-wrap: break-word;
-            hyphens: auto;
-          }
-
-          th {
-            font-size: 1.25rem;
-            padding: 0px;
-            width: 140px;
-          }
-
-          #nome-rodada {
-            font-size: 1.2rem;
-            width: 140px;
-          }
-
-          .input-placar,
-          .input-jogo {
-            font-size: 1.2rem;
-          }
-        }
-
-        .container {
-          max-width: 1000px;
-          margin: 0 auto;
-          padding: 20px;
-        }
-
-        /* Enhanced Header Styles */
+      /* Responsive Adjustments */
+      @media (max-width: 768px) {
         header {
-          background-color: var(--color-primary);
-          color: white;
-          padding: var(--space-lg);
-          border-radius: var(--radius-lg);
-          margin-bottom: var(--space-lg);
-          text-align: center;
-          box-shadow: var(--shadow-md);
-          position: relative;
-          overflow: hidden;
-          max-width: 1000px;
-          margin-left: auto;
-          margin-right: auto;
-          transition: all var(--transition-normal);
-        }
-
-        header::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 5px;
-          background: linear-gradient(
-            90deg,
-            var(--color-primary-light),
-            var(--color-secondary),
-            var(--color-primary-dark)
-          );
+          padding: var(--space-md);
         }
 
         header h1 {
-          font-family: "Kanit", Arial, sans-serif;
-          font-size: 2.2rem;
-          font-weight: 600;
-          margin-bottom: var(--space-sm);
-          letter-spacing: -0.5px;
-          background: linear-gradient(
-            to right,
-            var(--color-light),
-            var(--color-gray-200)
-          );
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          font-size: 2rem;
         }
 
         header .subtitulo {
-          font-family: "Kanit", Arial, sans-serif;
-          font-size: 1.125rem;
-          font-weight: 300;
-          color: var(--color-gray-200);
-          opacity: 0.9;
-          line-height: 1.4;
+          font-size: 1rem;
         }
-
-        /* Dark Mode Adjustments */
-        body.dark-mode header {
-          background-color: var(--color-dark);
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        body.dark-mode header::before {
-          background: linear-gradient(
-            90deg,
-            rgba(58, 134, 255, 0.7),
-            rgba(74, 222, 128, 0.7),
-            rgba(58, 134, 255, 0.7)
-          );
-        }
-
-        body.dark-mode header h1 {
-          background: linear-gradient(
-            to right,
-            var(--color-gray-300),
-            var(--color-gray-400)
-          );
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-        }
-
-        body.dark-mode header .subtitulo {
-          color: var(--color-gray-400);
-        }
-
-        /* Responsive Adjustments */
-        @media (max-width: 768px) {
-          header {
-            padding: var(--space-md);
-          }
-
-          header h1 {
-            font-size: 2rem;
-          }
-
-          header .subtitulo {
-            font-size: 1rem;
-          }
-          .navegacao {
-            flex-direction: column;
-            gap: var(--space-sm);
-          }
-
-          .navegacao button {
-            width: 100%;
-            justify-content: center;
-          }
-
-          #rodada-atual {
-            font-size: 1rem;
-            min-width: auto;
-          }
-
-          #calendario-jogos {
-            grid-template-columns: 1fr;
-          }
-
-          .time-escudo {
-            width: 40px;
-            height: 40px;
-          }
-
-          .time-abrev {
-            font-size: 1rem;
-          }
-        }
-
         .navegacao {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: var(--space-md);
-          margin: var(--space-lg) auto;
-          max-width: 1000px;
-          padding: 0 var(--space-md);
+          flex-direction: column;
+          gap: var(--space-sm);
         }
 
         .navegacao button {
-          background-color: var(--color-primary);
-          color: white;
-          border: none;
-          padding: var(--space-sm) var(--space-md);
-          border-radius: var(--radius-md);
-          cursor: pointer;
-          font-family: "Kanit", Arial, sans-serif;
-          font-weight: 500;
-          font-size: 1rem;
-          transition: all var(--transition-normal);
-          display: flex;
-          align-items: center;
-          gap: var(--space-xs);
-          box-shadow: var(--shadow-sm);
-        }
-
-        .navegacao button:hover:not(:disabled) {
-          background-color: var(--color-primary-dark);
-          transform: translateY(-2px);
-          box-shadow: var(--shadow-md);
-        }
-
-        .navegacao button:disabled {
-          background-color: var(--color-gray-300);
-          color: var(--color-gray-500);
-          cursor: not-allowed;
-          box-shadow: none;
+          width: 100%;
+          justify-content: center;
         }
 
         #rodada-atual {
-          background-color: var(--color-secondary);
-          color: var(--color-dark);
-          padding: var(--space-sm) var(--space-md);
-          border-radius: var(--radius-md);
-          font-family: "Kanit", Arial, sans-serif;
-          font-weight: 600;
-          font-size: 1.125rem;
-          box-shadow: var(--shadow-sm);
-          min-width: 150px;
-          text-align: center;
-          transition: all var(--transition-normal);
+          font-size: 1rem;
+          min-width: auto;
         }
 
         #calendario-jogos {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: var(--space-lg);
-          margin-top: var(--space-lg);
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-          padding: 0 var(--space-md);
-        }
-
-        #calendario-jogos {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: var(--space-lg);
-          margin-top: var(--space-lg);
-          max-width: 1200px;
-          margin-left: auto;
-          margin-right: auto;
-          padding: 0 var(--space-md);
-        }
-
-        .jogo {
-          background-color: white;
-          border-radius: var(--radius-lg);
-          padding: var(--space-md);
-          box-shadow: var(--shadow-md);
-          transition: all var(--transition-normal);
-          display: flex;
-          flex-direction: column;
-          border: 1px solid var(--color-gray-200);
-        }
-
-        .jogo:hover {
-          transform: translateY(-5px);
-          box-shadow: var(--shadow-lg);
-        }
-
-        .jogo-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: var(--space-sm);
-          padding-bottom: var(--space-xs);
-          border-bottom: 1px solid var(--color-gray-200);
-        }
-
-        .jogo-data {
-          font-size: 0.875rem;
-          color: var(--color-gray-500);
-          font-family: "Kanit", Arial, sans-serif;
-        }
-
-        .jogo-times {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin: var(--space-sm) 0;
-        }
-
-        .time {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          width: 40%;
+          grid-template-columns: 1fr;
         }
 
         .time-escudo {
-          width: 50px;
-          height: 50px;
-          object-fit: contain;
-          margin-bottom: var(--space-xs);
+          width: 40px;
+          height: 40px;
         }
 
         .time-abrev {
-          font-family: "Kanit", Arial, sans-serif;
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: var(--color-dark);
-        }
-
-        .time-nome {
-          font-size: 0.75rem;
-          color: var(--color-gray-500);
-          text-align: center;
-          margin-top: var(--space-xs);
-        }
-
-        .versus {
           font-size: 1rem;
-          color: var(--color-gray-400);
-          margin: 0 var(--space-sm);
         }
+      }
 
-        .placar {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: var(--space-sm);
-          margin: var(--space-sm) 0;
-          font-family: "Kanit", Arial, sans-serif;
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: var(--color-dark);
-        }
+      .navegacao {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-md);
+        margin: var(--space-lg) auto;
+        max-width: 1000px;
+        padding: 0 var(--space-md);
+      }
 
-        .placar-separator {
-          color: var(--color-gray-400);
-        }
+      .navegacao button {
+        background-color: var(--color-primary);
+        color: white;
+        border: none;
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-family: "Kanit", Arial, sans-serif;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: all var(--transition-normal);
+        display: flex;
+        align-items: center;
+        gap: var(--space-xs);
+        box-shadow: var(--shadow-sm);
+      }
 
-        .jogo-footer {
-          margin-top: auto;
-          padding-top: var(--space-sm);
-          border-top: 1px solid var(--color-gray-200);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
+      .navegacao button:hover:not(:disabled) {
+        background-color: var(--color-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+      }
 
-        .status {
-          padding: var(--space-xs) var(--space-sm);
-          border-radius: 20px;
-          font-size: 0.75rem;
-          font-weight: 500;
-          font-family: "Kanit", Arial, sans-serif;
-          text-transform: uppercase;
-        }
+      .navegacao button:disabled {
+        background-color: var(--color-gray-300);
+        color: var(--color-gray-500);
+        cursor: not-allowed;
+        box-shadow: none;
+      }
 
-        .status-SCHEDULED {
-          background-color: var(--color-gray-200);
-          color: var(--color-gray-600);
-        }
+      #rodada-atual {
+        background-color: var(--color-secondary);
+        color: var(--color-dark);
+        padding: var(--space-sm) var(--space-md);
+        border-radius: var(--radius-md);
+        font-family: "Kanit", Arial, sans-serif;
+        font-weight: 600;
+        font-size: 1.125rem;
+        box-shadow: var(--shadow-sm);
+        min-width: 150px;
+        text-align: center;
+        transition: all var(--transition-normal);
+      }
 
-        .status-LIVE {
-          background-color: var(--color-danger);
-          color: white;
-          animation: pulse 1.5s infinite;
-        }
+      #calendario-jogos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: var(--space-lg);
+        margin-top: var(--space-lg);
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 var(--space-md);
+      }
 
-        .status-FINISHED {
-          background-color: var(--color-secondary-dark);
-          color: white;
-        }
+      #calendario-jogos {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: var(--space-lg);
+        margin-top: var(--space-lg);
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 0 var(--space-md);
+      }
 
-        .horario {
-          font-size: 0.875rem;
-          color: var(--color-gray-500);
-          font-family: "Kanit", Arial, sans-serif;
-        }
+      .jogo {
+        background-color: white;
+        border-radius: var(--radius-lg);
+        padding: var(--space-md);
+        box-shadow: var(--shadow-md);
+        transition: all var(--transition-normal);
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--color-gray-200);
+      }
 
-        /* Dark Mode - Enhanced */
-        body.dark-mode {
-          background: linear-gradient(135deg, #1e293b, #0f172a);
-          color: var(--color-light);
-        }
+      .jogo:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+      }
 
-        /* Base containers */
-        body.dark-mode .box-container,
-        body.dark-mode .table-container,
-        body.dark-mode .pontuacao-card,
-        body.dark-mode footer {
-          background: rgba(30, 41, 59, 0.95);
-          color: var(--color-light);
-          border-color: var(--color-gray-700, #334155);
-        }
+      .jogo-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-sm);
+        padding-bottom: var(--space-xs);
+        border-bottom: 1px solid var(--color-gray-200);
+      }
 
-        /* Table elements */
-        body.dark-mode table th {
-          background: var(--color-dark);
-        }
+      .jogo-data {
+        font-size: 0.875rem;
+        color: var(--color-gray-500);
+        font-family: "Kanit", Arial, sans-serif;
+      }
 
-        body.dark-mode table th:first-child {
-          background-color: var(--color-dark);
-        }
+      .jogo-times {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: var(--space-sm) 0;
+      }
 
-        body.dark-mode table td {
-          background-color: rgba(30, 41, 59, 0.95);
-          color: var(--color-light);
-          border-color: var(--color-gray-700, #334155);
-        }
+      .time {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 40%;
+      }
 
-        body.dark-mode table td:first-child {
-          background-color: #1e293b;
-        }
+      .time-escudo {
+        width: 50px;
+        height: 50px;
+        object-fit: contain;
+        margin-bottom: var(--space-xs);
+      }
 
-        body.dark-mode tr:nth-child(even) {
-          background-color: #263548;
-        }
+      .time-abrev {
+        font-family: "Kanit", Arial, sans-serif;
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--color-dark);
+      }
 
-        body.dark-mode tr:nth-child(even) td {
-          background-color: #263548;
-        }
+      .time-nome {
+        font-size: 0.75rem;
+        color: var(--color-gray-500);
+        text-align: center;
+        margin-top: var(--space-xs);
+      }
 
-        /* Form elements */
-        body.dark-mode .input-jogo {
-          background-color: #1e293b; /* Dark background instead of blue */
-          color: var(--color-light);
-          border: 1px solid var(--color-gray-600, #475569);
-        }
+      .versus {
+        font-size: 1rem;
+        color: var(--color-gray-400);
+        margin: 0 var(--space-sm);
+      }
 
-        /* When focused */
-        body.dark-mode .input-jogo:focus {
-          background-color: #334155; /* Slightly lighter when focused */
-          border-color: var(--color-primary);
-          box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.25);
-        }
+      .placar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-sm);
+        margin: var(--space-sm) 0;
+        font-family: "Kanit", Arial, sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--color-dark);
+      }
 
-        /* For the nome-rodada element which also has blue background */
-        body.dark-mode #nome-rodada {
-          background-color: #1e293b; /* Match the dark theme */
-          color: var(--color-light);
-        }
+      .placar-separator {
+        color: var(--color-gray-400);
+      }
 
-        /* Ensure consistent styling for all inputs in game sections */
-        body.dark-mode #calendario-jogos input,
-        body.dark-mode .table-container input {
-          background-color: #334155;
-          color: var(--color-light);
-          border-color: var(--color-gray-600, #475569);
-        }
+      .jogo-footer {
+        margin-top: auto;
+        padding-top: var(--space-sm);
+        border-top: 1px solid var(--color-gray-200);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
-        /* Buttons */
-        body.dark-mode .logout-button {
-          background-color: #191919;
-        }
+      .status {
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        font-family: "Kanit", Arial, sans-serif;
+        text-transform: uppercase;
+      }
 
-        body.dark-mode #toggle-visibility,
-        body.dark-mode #ranking-button,
-        body.dark-mode #preencher-tabela-principal {
-          background-color: var(--color-dark);
-          color: var(--color-light);
-          border: 1px solid var(--color-gray-600, #475569);
-        }
+      .status-SCHEDULED {
+        background-color: var(--color-gray-200);
+        color: var(--color-gray-600);
+      }
 
-        body.dark-mode #toggle-visibility:hover,
-        body.dark-mode #ranking-button:hover,
-        body.dark-mode #preencher-tabela-principal:hover {
-          background-color: var(--color-primary-dark);
-        }
+      .status-LIVE {
+        background-color: var(--color-danger);
+        color: white;
+        animation: pulse 1.5s infinite;
+      }
 
-        /* Winner card */
-        body.dark-mode .pontuacao-card.vencedor {
-          background: linear-gradient(to right, #78350f, var(--color-accent));
-          color: var(--color-light);
-          border-color: var(--color-accent);
-        }
+      .status-FINISHED {
+        background-color: var(--color-secondary-dark);
+        color: white;
+      }
 
-        /* Calendario de Jogos - Dark Mode */
-        body.dark-mode #calendario-jogos .jogo {
-          background-color: #1e293b;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
+      .horario {
+        font-size: 0.875rem;
+        color: var(--color-gray-500);
+        font-family: "Kanit", Arial, sans-serif;
+      }
 
-        body.dark-mode #calendario-jogos .jogo:hover {
-          box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
-        }
+      /* Dark Mode - Enhanced */
+      body.dark-mode {
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        color: var(--color-light);
+      }
 
-        body.dark-mode #calendario-jogos .jogo-header,
-        body.dark-mode #calendario-jogos .jogo-footer {
-          border-color: #334155;
-        }
+      /* Base containers */
+      body.dark-mode .box-container,
+      body.dark-mode .table-container,
+      body.dark-mode .pontuacao-card,
+      body.dark-mode footer {
+        background: rgba(30, 41, 59, 0.95);
+        color: var(--color-light);
+        border-color: var(--color-gray-700, #334155);
+      }
 
-        body.dark-mode #calendario-jogos .jogo-data,
-        body.dark-mode #calendario-jogos .time-nome,
-        body.dark-mode #calendario-jogos .versus,
-        body.dark-mode #calendario-jogos .horario {
-          color: var(--color-gray-400);
-        }
+      /* Table elements */
+      body.dark-mode table th {
+        background: var(--color-dark);
+      }
 
-        body.dark-mode #calendario-jogos .placar-separator {
-          color: var(--color-gray-500);
-        }
+      body.dark-mode table th:first-child {
+        background-color: var(--color-dark);
+      }
 
-        body.dark-mode #calendario-jogos .status-SCHEDULED {
-          background-color: #334155;
-          color: var(--color-gray-300);
-        }
+      body.dark-mode table td {
+        background-color: rgba(30, 41, 59, 0.95);
+        color: var(--color-light);
+        border-color: var(--color-gray-700, #334155);
+      }
 
-        body.dark-mode #rodada-atual {
-          background-color: #334155;
-          color: var(--color-light);
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
+      body.dark-mode table td:first-child {
+        background-color: #1e293b;
+      }
 
-        /* Dark Mode Styles */
-        body.dark-mode .navegacao button {
-          background-color: var(--color-dark);
-          color: var(--color-light);
-        }
+      body.dark-mode tr:nth-child(even) {
+        background-color: #263548;
+      }
 
-        body.dark-mode .navegacao button:disabled {
-          background-color: var(--color-gray-700);
-          color: var(--color-gray-400);
-        }
+      body.dark-mode tr:nth-child(even) td {
+        background-color: #263548;
+      }
 
-        body.dark-mode #rodada-atual {
-          background-color: var(--color-dark);
-          color: var(--color-light);
-        }
+      /* Form elements */
+      body.dark-mode .input-jogo {
+        background-color: #1e293b; /* Dark background instead of blue */
+        color: var(--color-light);
+        border: 1px solid var(--color-gray-600, #475569);
+      }
 
-        body.dark-mode .jogo {
-          background-color: var(--color-dark);
-          border-color: var(--color-gray-400);
-        }
+      /* When focused */
+      body.dark-mode .input-jogo:focus {
+        background-color: #334155; /* Slightly lighter when focused */
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.25);
+      }
 
-        body.dark-mode .jogo-header,
-        body.dark-mode .jogo-footer {
-          border-color: var(--color-gray-700);
-        }
+      /* For the nome-rodada element which also has blue background */
+      body.dark-mode #nome-rodada {
+        background-color: #1e293b; /* Match the dark theme */
+        color: var(--color-light);
+      }
 
-        body.dark-mode .time-abrev {
-          color: var(--color-light);
-        }
+      /* Ensure consistent styling for all inputs in game sections */
+      body.dark-mode #calendario-jogos input,
+      body.dark-mode .table-container input {
+        background-color: #334155;
+        color: var(--color-light);
+        border-color: var(--color-gray-600, #475569);
+      }
 
-        body.dark-mode .time-nome,
-        body.dark-mode .jogo-data,
-        body.dark-mode .versus,
-        body.dark-mode .horario {
-          color: var(--color-gray-400);
-        }
+      /* Buttons */
+      body.dark-mode .logout-button {
+        background-color: #191919;
+      }
 
-        /* Loading and error messages */
-        body.dark-mode .loading {
-          color: var(--color-gray-300);
-        }
+      body.dark-mode #toggle-visibility,
+      body.dark-mode #ranking-button,
+      body.dark-mode #preencher-tabela-principal {
+        background-color: var(--color-dark);
+        color: var(--color-light);
+        border: 1px solid var(--color-gray-600, #475569);
+      }
 
-        body.dark-mode .error {
-          background-color: rgba(239, 68, 68, 0.2);
-          color: #fca5a5;
-          border-left-color: var(--color-danger);
-        }
+      body.dark-mode #toggle-visibility:hover,
+      body.dark-mode #ranking-button:hover,
+      body.dark-mode #preencher-tabela-principal:hover {
+        background-color: var(--color-primary-dark);
+      }
 
-        /* Header elements */
-        body.dark-mode header {
-          background-color: #1e293b;
-        }
+      /* Winner card */
+      body.dark-mode .pontuacao-card.vencedor {
+        background: linear-gradient(to right, #78350f, var(--color-accent));
+        color: var(--color-light);
+        border-color: var(--color-accent);
+      }
 
-        body.dark-mode .container-titulo {
-          background: linear-gradient(
-            90deg,
-            rgba(30, 41, 59, 0.9),
-            rgba(15, 23, 42, 0.9),
-            rgba(30, 41, 59, 0.9)
-          );
-        }
+      /* Calendario de Jogos - Dark Mode */
+      body.dark-mode #calendario-jogos .jogo {
+        background-color: #1e293b;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
 
+      body.dark-mode #calendario-jogos .jogo:hover {
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.4);
+      }
+
+      body.dark-mode #calendario-jogos .jogo-header,
+      body.dark-mode #calendario-jogos .jogo-footer {
+        border-color: #334155;
+      }
+
+      body.dark-mode #calendario-jogos .jogo-data,
+      body.dark-mode #calendario-jogos .time-nome,
+      body.dark-mode #calendario-jogos .versus,
+      body.dark-mode #calendario-jogos .horario {
+        color: var(--color-gray-400);
+      }
+
+      body.dark-mode #calendario-jogos .placar-separator {
+        color: var(--color-gray-500);
+      }
+
+      body.dark-mode #calendario-jogos .status-SCHEDULED {
+        background-color: #334155;
+        color: var(--color-gray-300);
+      }
+
+      body.dark-mode #rodada-atual {
+        background-color: #334155;
+        color: var(--color-light);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Dark Mode Styles */
+      body.dark-mode .navegacao button {
+        background-color: var(--color-dark);
+        color: var(--color-light);
+      }
+
+      body.dark-mode .navegacao button:disabled {
+        background-color: var(--color-gray-700);
+        color: var(--color-gray-400);
+      }
+
+      body.dark-mode #rodada-atual {
+        background-color: var(--color-dark);
+        color: var(--color-light);
+      }
+
+      body.dark-mode .jogo {
+        background-color: var(--color-dark);
+        border-color: var(--color-gray-400);
+      }
+
+      body.dark-mode .jogo-header,
+      body.dark-mode .jogo-footer {
+        border-color: var(--color-gray-700);
+      }
+
+      body.dark-mode .time-abrev {
+        color: var(--color-light);
+      }
+
+      body.dark-mode .time-nome,
+      body.dark-mode .jogo-data,
+      body.dark-mode .versus,
+      body.dark-mode .horario {
+        color: var(--color-gray-400);
+      }
+
+      /* Loading and error messages */
+      body.dark-mode .loading {
+        color: var(--color-gray-300);
+      }
+
+      body.dark-mode .error {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+        border-left-color: var(--color-danger);
+      }
+
+      /* Header elements */
+      body.dark-mode header {
+        background-color: #1e293b;
+      }
+
+      body.dark-mode .container-titulo {
+        background: linear-gradient(
+          90deg,
+          rgba(30, 41, 59, 0.9),
+          rgba(15, 23, 42, 0.9),
+          rgba(30, 41, 59, 0.9)
+        );
+      }
+
+      #toggle-dark-mode {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: var(--color-dark);
+        color: var(--color-light);
+        border: none;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.875rem;
+        border-radius: var(--radius-lg);
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        z-index: 9999;
+        transition: all var(--transition-normal);
+      }
+
+      #toggle-dark-mode:hover {
+        background-color: var(--color-primary-dark);
+        transform: translateY(-2px);
+      }
+
+      @media (max-width: 600px) {
         #toggle-dark-mode {
-          position: fixed;
-          bottom: 20px;
-          right: 20px;
-          background-color: var(--color-dark);
-          color: var(--color-light);
-          border: none;
-          padding: 0.75rem 1.25rem;
-          font-size: 0.875rem;
-          border-radius: var(--radius-lg);
-          cursor: pointer;
-          box-shadow: var(--shadow-md);
-          z-index: 9999;
-          transition: all var(--transition-normal);
+          padding: 0.5rem 1rem;
+          font-size: 0.8rem;
+          bottom: 15px;
+          right: 15px;
         }
+      }
+    </style>
+  </head>
 
-        #toggle-dark-mode:hover {
-          background-color: var(--color-primary-dark);
-          transform: translateY(-2px);
-        }
+  <body>
+    <div class="login-container" id="login-container">
+      <div class="box-container">
+        <div class="alpha-bet-title">AlphaBet</div>
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Nome de usuário" />
+        <input
+          type="password"
+          id="password"
+          placeholder="Senha"
+          onkeydown="handleKeyPress(event)"
+        />
+        <button onclick="login()">Entrar</button>
+      </div>
+    </div>
 
-        @media (max-width: 600px) {
-          #toggle-dark-mode {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            bottom: 15px;
-            right: 15px;
-          }
-        }
-      </style>
-    </head>
+    <div id="main-content" class="hidden">
+      <!-- Conteúdo principal (tabela de apostas) -->
+      <div class="container-titulo">
+        <!-- As letras do título serão inseridas aqui pelo script -->
+      </div>
 
-    <body>
-      <div class="login-container" id="login-container">
-        <div class="box-container">
-          <div class="alpha-bet-title">AlphaBet</div>
-          <h2>Login</h2>
-          <input type="text" id="username" placeholder="Nome de usuário" />
-          <input
-            type="password"
-            id="password"
-            placeholder="Senha"
-            onkeydown="handleKeyPress(event)"
-          />
-          <button onclick="login()">Entrar</button>
+      <!-- Botão de ocultar/revelar (visível apenas para Jardel) -->
+      <div class="toggle-visibility-container">
+        <button id="toggle-visibility" class="hidden">
+          <span id="toggle-text">Ocultar Placar</span>
+        </button>
+        <button id="ranking-button" onclick="abrirRanking()">Ranking</button>
+        <button id="preencher-tabela-principal" class="hidden">
+          <span>Preencher Tabela</span>
+        </button>
+      </div>
+      <button id="toggle-dark-mode">🌙 Dark Mode</button>
+
+      <button class="logout-button" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="logout-text">SAIR</span>
+      </button>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <input
+                  type="text"
+                  id="nome-rodada"
+                  placeholder="Nome da Rodada"
+                />
+              </th>
+              <th>Jardel</th>
+              <th>Werbet</th>
+              <th>Nailton</th>
+              <th>Phillipe</th>
+              <th>Resultado</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-apostas">
+            <!-- Linhas das partidas serão inseridas aqui pelo script -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pontuacao-container" id="pontuacao"></div>
+
+      <div class="container">
+        <header>
+          <h1>Brasileirão Série A</h1>
+          <div class="subtitulo">Acompanhe todos os jogos do campeonato</div>
+        </header>
+
+        <div class="navegacao">
+          <button id="anterior" disabled>&larr; Rodada Anterior</button>
+          <span id="rodada-atual"></span>
+          <button id="proxima">Próxima Rodada &rarr;</button>
+        </div>
+
+        <div id="calendario-jogos">
+          <div class="loading">Carregando jogos</div>
         </div>
       </div>
 
-      <div id="main-content" class="hidden">
-        <!-- Conteúdo principal (tabela de apostas) -->
-        <div class="container-titulo">
-          <!-- As letras do título serão inseridas aqui pelo script -->
+      <footer>
+        <div>
+          <p>&copy; 2025 Jardel Correia.</p>
+          <p>Todos os direitos reservados.</p>
+          <p>
+            <a href="https://instagram.com/jardelcorreia" target="_blank">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </p>
         </div>
+      </footer>
+      <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <script>
+        // Initialize Supabase client
+        const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co"; // Replace with your Supabase URL
+        const SUPABASE_ANON_KEY =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4"; // Replace with your Supabase anon key
+        const supabaseClient = supabase.createClient(
+          SUPABASE_URL,
+          SUPABASE_ANON_KEY
+        );
 
-        <!-- Botão de ocultar/revelar (visível apenas para Jardel) -->
-        <div class="toggle-visibility-container">
-          <button id="toggle-visibility" class="hidden">
-            <span id="toggle-text">Ocultar Placar</span>
-          </button>
-          <button id="ranking-button" onclick="abrirRanking()">Ranking</button>
-          <button id="preencher-tabela-principal" class="hidden">
-            <span>Preencher Tabela</span>
-          </button>
-        </div>
-        <button id="toggle-dark-mode">🌙 Dark Mode</button>
-
-        <button class="logout-button" onclick="logout()">
-          <i class="fas fa-sign-out-alt"></i>
-          <span class="logout-text">SAIR</span>
-        </button>
-
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>
-                  <input
-                    type="text"
-                    id="nome-rodada"
-                    placeholder="Nome da Rodada"
-                  />
-                </th>
-                <th>Jardel</th>
-                <th>Werbet</th>
-                <th>Nailton</th>
-                <th>Phillipe</th>
-                <th>Resultado</th>
-              </tr>
-            </thead>
-            <tbody id="tabela-apostas">
-              <!-- Linhas das partidas serão inseridas aqui pelo script -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="pontuacao-container" id="pontuacao"></div>
-
-        <div class="container">
-          <header>
-            <h1>Brasileirão Série A</h1>
-            <div class="subtitulo">Acompanhe todos os jogos do campeonato</div>
-          </header>
-
-          <div class="navegacao">
-            <button id="anterior" disabled>&larr; Rodada Anterior</button>
-            <span id="rodada-atual"></span>
-            <button id="proxima">Próxima Rodada &rarr;</button>
-          </div>
-
-          <div id="calendario-jogos">
-            <div class="loading">Carregando jogos</div>
-          </div>
-        </div>
-
-        <footer>
-          <div>
-            <p>&copy; 2025 Jardel Correia.</p>
-            <p>Todos os direitos reservados.</p>
-            <p>
-              <a href="https://instagram.com/jardelcorreia" target="_blank">
-                <i class="fab fa-instagram"></i>
-              </a>
-            </p>
-          </div>
-        </footer>
-        <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-        <script>
-          // Initialize Supabase client
-          const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co"; // Replace with your Supabase URL
-          const SUPABASE_ANON_KEY =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4"; // Replace with your Supabase anon key
-          const supabaseClient = supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-          );
-
-          window.addEventListener("load", async function () {
-            const loggedInUser = localStorage.getItem("loggedInUser");
-            if (loggedInUser) {
-              document.getElementById("login-container").classList.add("hidden");
-              document.getElementById("main-content").classList.remove("hidden");
-              await verificarEstadoPlacares();
-              await verificarPermissoesUsuario(); // Verificar permissões do usuário// Verificar o estado dos placares ao carregar a página
-              carregarApostas(); // Carrega as apostas salvas
-            } else {
-              document
-                .getElementById("login-container")
-                .classList.remove("hidden");
-              document.getElementById("main-content").classList.add("hidden");
-            }
-          });
-
-          function handleKeyPress(event) {
-            if (event.key === "Enter") {
-              login();
-            }
-          }
-
-          // Função debounce para evitar múltiplas chamadas ao servidor
-          function debounce(func, wait) {
-            let timeout;
-            return function (...args) {
-              clearTimeout(timeout);
-              timeout = setTimeout(() => func.apply(this, args), wait);
-            };
-          }
-
-          // Função para salvar as apostas com debounce
-          const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
-
-          // Adiciona eventos de input, change, blur e keydown para salvar automaticamente
-          function adicionarEventosSalvamento() {
-            const inputs = document.querySelectorAll(
-              ".aposta, .resultado, .input-jogo, #nome-rodada"
-            );
-            inputs.forEach((input) => {
-              input.addEventListener("input", salvarApostasDebounced);
-              input.addEventListener("change", salvarApostasDebounced);
-              input.addEventListener("blur", salvarApostasDebounced);
-              input.addEventListener("keydown", function (event) {
-                if (event.key === "Delete" || event.key === "Backspace") {
-                  salvarApostasDebounced();
-                }
-              });
-            });
-          }
-
-          // Função corrigida para o título
-          function createAdvancedTitle() {
-            const titulo = "Brasileirão AlphaBet 2025";
-            const containerTitulo = document.querySelector(".container-titulo");
-            containerTitulo.innerHTML = ""; // Clear existing content
-
-            // Split the title into words first
-            const palavras = titulo.split(" ");
-
-            palavras.forEach((palavra, wordIndex) => {
-              // Create a wrapper for each word
-              const wordWrapper = document.createElement("div");
-              wordWrapper.style.display = "inline-flex";
-              wordWrapper.style.margin = "0 0.25rem"; // Add some space between words
-
-              // Split the word into letters
-              palavra.split("").forEach((letra, letterIndex) => {
-                const span = document.createElement("span");
-                span.textContent = letra;
-                span.classList.add("letra");
-
-                // More dynamic animation delays
-                const delay = (wordIndex * palavra.length + letterIndex) * 0.1;
-                span.style.animationDelay = `${delay}s`;
-
-                // Optional: Add slight variation to each letter's animation
-                span.style.animationDuration = `${0.8 + Math.random() * 0.2}s`;
-
-                wordWrapper.appendChild(span);
-              });
-
-              containerTitulo.appendChild(wordWrapper);
-            });
-          }
-
-          async function toggleVisibility() {
-            const isHidden = await carregarEstadoVisibilidade();
-            const novoEstado = !isHidden;
-
-            await salvarEstadoVisibilidade(novoEstado);
-            verificarEstadoPlacares();
-          }
-
-          function ocultarPlacares() {
-            const loggedInUser = localStorage.getItem("loggedInUser");
-            const inputsApostas = document.querySelectorAll(".aposta");
-
-            inputsApostas.forEach((input) => {
-              const colunaJogador = input.classList.contains("jogador0")
-                ? "Jardel"
-                : input.classList.contains("jogador1")
-                ? "Werbet"
-                : input.classList.contains("jogador2")
-                ? "Nailton"
-                : input.classList.contains("jogador3")
-                ? "Phillipe"
-                : null;
-
-              // Oculta os placares dos outros jogadores
-              if (colunaJogador && colunaJogador !== loggedInUser) {
-                input.style.display = "none";
-              } else {
-                input.style.display = ""; // Mostra os placares do jogador logado
-                input.disabled = false; // Permite edição apenas para o jogador logado
-                input.style.backgroundColor = "";
-              }
-            });
-          }
-
-          function mostrarPlacares() {
-            const inputsApostas = document.querySelectorAll(".aposta");
-
-            inputsApostas.forEach((input) => {
-              input.style.display = ""; // Mostra o input
-              input.disabled = true; // Torna o input não editável
-              input.style.backgroundColor = "#f0f0f0";
-            });
-          }
-
-          // Função para salvar o estado de visibilidade no Supabase
-          async function salvarEstadoVisibilidade(estado) {
-            try {
-              // Busca o registro atual
-              const { data, error: fetchError } = await supabaseClient
-                .from("alphabet_table")
-                .select("*")
-                .order("id", { ascending: false })
-                .limit(1);
-
-              if (fetchError) throw fetchError;
-
-              // Se não existe registro, cria um novo
-              if (!data || data.length === 0) {
-                const { error: insertError } = await supabaseClient
-                  .from("alphabet_table")
-                  .insert({
-                    nome_rodada: "",
-                    jogos: [],
-                    apostas: {
-                      Jardel: [],
-                      Werbet: [],
-                      Nailton: [],
-                      Phillipe: [],
-                    },
-                    resultados: [],
-                    placares_ocultos: estado,
-                    ranking: {},
-                    vitorias_empates: {},
-                  });
-
-                if (insertError) throw insertError;
-              } else {
-                // Atualiza o registro existente
-                const { error: updateError } = await supabaseClient
-                  .from("alphabet_table")
-                  .update({ placares_ocultos: estado })
-                  .eq("id", data[0].id);
-
-                if (updateError) throw updateError;
-              }
-
-              console.log("Estado de visibilidade salvo com sucesso");
-            } catch (error) {
-              console.error("Erro ao salvar estado de visibilidade:", error);
-            }
-          }
-
-          async function carregarEstadoVisibilidade() {
-            try {
-              const { data, error } = await supabaseClient
-                .from("alphabet_table")
-                .select("placares_ocultos")
-                .order("id", { ascending: false })
-                .limit(1);
-
-              if (error) throw error;
-
-              return data && data.length > 0 ? data[0].placares_ocultos : false;
-            } catch (error) {
-              console.error("Erro ao carregar estado de visibilidade:", error);
-              return false;
-            }
-          }
-          async function verificarEstadoPlacares() {
-            try {
-              const isHidden = await carregarEstadoVisibilidade();
-              const toggleButton = document.getElementById("toggle-visibility");
-              const toggleText = document.getElementById("toggle-text");
-
-              // Verifica se o usuário é o administrador (Jardel)
-              const loggedInUser = localStorage.getItem("loggedInUser");
-              toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
-
-              // Atualiza o texto do botão
-              toggleText.textContent = isHidden
-                ? "Mostrar Placar"
-                : "Ocultar Placar";
-
-              // Configura o evento de clique
-              toggleButton.onclick = toggleVisibility;
-
-              // Aplica o estado atual
-              if (isHidden) {
-                ocultarPlacares();
-              } else {
-                mostrarPlacares();
-              }
-            } catch (error) {
-              console.error("Erro ao verificar estado dos placares:", error);
-            }
-          }
-          async function verificarPermissoesUsuario() {
-            try {
-              const loggedInUser = localStorage.getItem("loggedInUser");
-
-              // Verifica se o usuário é o administrador (Jardel)
-              const toggleButton = document.getElementById("toggle-visibility");
-              const preencherTabelaButton = document.getElementById(
-                "preencher-tabela-principal"
-              );
-
-              // Mostra ou oculta os botões com base no usuário logado
-              toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
-              preencherTabelaButton.classList.toggle(
-                "hidden",
-                loggedInUser !== "Jardel"
-              );
-            } catch (error) {
-              console.error("Erro ao verificar permissões do usuário:", error);
-            }
-          }
-          // Função para fazer logout
-          function logout() {
-            localStorage.removeItem("loggedInUser");
-            document.getElementById("login-container").classList.remove("hidden");
+        window.addEventListener("load", async function () {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+          if (loggedInUser) {
+            document.getElementById("login-container").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            await verificarEstadoPlacares();
+            await verificarPermissoesUsuario(); // Verificar permissões do usuário// Verificar o estado dos placares ao carregar a página
+            carregarApostas(); // Carrega as apostas salvas
+          } else {
+            document
+              .getElementById("login-container")
+              .classList.remove("hidden");
             document.getElementById("main-content").classList.add("hidden");
           }
+        });
 
-          // Função para buscar as senhas criptografadas do backend
-          async function buscarSenhasCriptografadas() {
-            try {
-              const response = await fetch("/.netlify/functions/senhas");
-              if (!response.ok) {
-                throw new Error("Erro ao buscar senhas");
-              }
-              const data = await response.json();
-              return data;
-            } catch (error) {
-              console.error("Erro na requisição:", error);
-              alert("Erro ao buscar senhas. Tente novamente.");
-              return {};
-            }
+        function handleKeyPress(event) {
+          if (event.key === "Enter") {
+            login();
           }
+        }
 
-          // Função para descriptografar usando o backend
-          async function descriptografar(textoCriptografado) {
-            try {
-              const response = await fetch(
-                "/.netlify/functions/descriptografar",
-                {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ textoCriptografado }),
-                }
-              );
+        // Função debounce para evitar múltiplas chamadas ao servidor
+        function debounce(func, wait) {
+          let timeout;
+          return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
+          };
+        }
 
-              if (!response.ok) {
-                throw new Error("Erro ao descriptografar");
+        // Função para salvar as apostas com debounce
+        const salvarApostasDebounced = debounce(salvarApostas, 500); // 500ms de delay
+
+        // Adiciona eventos de input, change, blur e keydown para salvar automaticamente
+        function adicionarEventosSalvamento() {
+          const inputs = document.querySelectorAll(
+            ".aposta, .resultado, .input-jogo, #nome-rodada"
+          );
+          inputs.forEach((input) => {
+            input.addEventListener("input", salvarApostasDebounced);
+            input.addEventListener("change", salvarApostasDebounced);
+            input.addEventListener("blur", salvarApostasDebounced);
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                salvarApostasDebounced();
               }
+            });
+          });
+        }
 
-              const data = await response.json();
-              return data.textoDescriptografado;
-            } catch (error) {
-              console.error("Erro na requisição:", error);
-              alert("Erro ao descriptografar. Tente novamente.");
-              return null;
+        // Função corrigida para o título
+        function createAdvancedTitle() {
+          const titulo = "Brasileirão AlphaBet 2025";
+          const containerTitulo = document.querySelector(".container-titulo");
+          containerTitulo.innerHTML = ""; // Clear existing content
+
+          // Split the title into words first
+          const palavras = titulo.split(" ");
+
+          palavras.forEach((palavra, wordIndex) => {
+            // Create a wrapper for each word
+            const wordWrapper = document.createElement("div");
+            wordWrapper.style.display = "inline-flex";
+            wordWrapper.style.margin = "0 0.25rem"; // Add some space between words
+
+            // Split the word into letters
+            palavra.split("").forEach((letra, letterIndex) => {
+              const span = document.createElement("span");
+              span.textContent = letra;
+              span.classList.add("letra");
+
+              // More dynamic animation delays
+              const delay = (wordIndex * palavra.length + letterIndex) * 0.1;
+              span.style.animationDelay = `${delay}s`;
+
+              // Optional: Add slight variation to each letter's animation
+              span.style.animationDuration = `${0.8 + Math.random() * 0.2}s`;
+
+              wordWrapper.appendChild(span);
+            });
+
+            containerTitulo.appendChild(wordWrapper);
+          });
+        }
+
+        async function toggleVisibility() {
+          const isHidden = await carregarEstadoVisibilidade();
+          const novoEstado = !isHidden;
+
+          await salvarEstadoVisibilidade(novoEstado);
+          verificarEstadoPlacares();
+        }
+
+        function ocultarPlacares() {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+          const inputsApostas = document.querySelectorAll(".aposta");
+
+          inputsApostas.forEach((input) => {
+            const colunaJogador = input.classList.contains("jogador0")
+              ? "Jardel"
+              : input.classList.contains("jogador1")
+              ? "Werbet"
+              : input.classList.contains("jogador2")
+              ? "Nailton"
+              : input.classList.contains("jogador3")
+              ? "Phillipe"
+              : null;
+
+            // Oculta os placares dos outros jogadores
+            if (colunaJogador && colunaJogador !== loggedInUser) {
+              input.style.display = "none";
+            } else {
+              input.style.display = ""; // Mostra os placares do jogador logado
+              input.disabled = false; // Permite edição apenas para o jogador logado
+              input.style.backgroundColor = "";
             }
+          });
+        }
+
+        function mostrarPlacares() {
+          const inputsApostas = document.querySelectorAll(".aposta");
+
+          inputsApostas.forEach((input) => {
+            input.style.display = ""; // Mostra o input
+            input.disabled = true; // Torna o input não editável
+            input.style.backgroundColor = "#f0f0f0";
+          });
+        }
+
+        // Função para salvar o estado de visibilidade no Supabase
+        async function salvarEstadoVisibilidade(estado) {
+          try {
+            // Busca o registro atual
+            const { data, error: fetchError } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (fetchError) throw fetchError;
+
+            // Se não existe registro, cria um novo
+            if (!data || data.length === 0) {
+              const { error: insertError } = await supabaseClient
+                .from("alphabet_table")
+                .insert({
+                  nome_rodada: "",
+                  jogos: [],
+                  apostas: {
+                    Jardel: [],
+                    Werbet: [],
+                    Nailton: [],
+                    Phillipe: [],
+                  },
+                  resultados: [],
+                  placares_ocultos: estado,
+                  ranking: {},
+                  vitorias_empates: {},
+                });
+
+              if (insertError) throw insertError;
+            } else {
+              // Atualiza o registro existente
+              const { error: updateError } = await supabaseClient
+                .from("alphabet_table")
+                .update({ placares_ocultos: estado })
+                .eq("id", data[0].id);
+
+              if (updateError) throw updateError;
+            }
+
+            console.log("Estado de visibilidade salvo com sucesso");
+          } catch (error) {
+            console.error("Erro ao salvar estado de visibilidade:", error);
           }
+        }
 
-          // Função de login
-          async function login() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
+        async function carregarEstadoVisibilidade() {
+          try {
+            const { data, error } = await supabaseClient
+              .from("alphabet_table")
+              .select("placares_ocultos")
+              .order("id", { ascending: false })
+              .limit(1);
 
-            // Busca as senhas criptografadas do backend
-            const senhasCriptografadas = await buscarSenhasCriptografadas();
+            if (error) throw error;
 
-            if (senhasCriptografadas[username]) {
-              // Descriptografa a senha usando o backend
-              const senhaDescriptografada = await descriptografar(
-                senhasCriptografadas[username]
-              );
+            return data && data.length > 0 ? data[0].placares_ocultos : false;
+          } catch (error) {
+            console.error("Erro ao carregar estado de visibilidade:", error);
+            return false;
+          }
+        }
+        async function verificarEstadoPlacares() {
+          try {
+            const isHidden = await carregarEstadoVisibilidade();
+            const toggleButton = document.getElementById("toggle-visibility");
+            const toggleText = document.getElementById("toggle-text");
 
-              if (senhaDescriptografada === password) {
-                localStorage.setItem("loggedInUser", username);
-                document
-                  .getElementById("login-container")
-                  .classList.add("hidden");
-                document
-                  .getElementById("main-content")
-                  .classList.remove("hidden");
+            // Verifica se o usuário é o administrador (Jardel)
+            const loggedInUser = localStorage.getItem("loggedInUser");
+            toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
 
-                // Inicializa o modo escuro após o login bem-sucedido
-                initializeDarkMode();
+            // Atualiza o texto do botão
+            toggleText.textContent = isHidden
+              ? "Mostrar Placar"
+              : "Ocultar Placar";
 
-                await verificarEstadoPlacares();
-                await verificarPermissoesUsuario(); // Verificar permissões do usuário
-                carregarApostas(); // Carrega as apostas salvas
-              } else {
-                alert("Nome de usuário ou senha incorretos!");
+            // Configura o evento de clique
+            toggleButton.onclick = toggleVisibility;
+
+            // Aplica o estado atual
+            if (isHidden) {
+              ocultarPlacares();
+            } else {
+              mostrarPlacares();
+            }
+          } catch (error) {
+            console.error("Erro ao verificar estado dos placares:", error);
+          }
+        }
+        async function verificarPermissoesUsuario() {
+          try {
+            const loggedInUser = localStorage.getItem("loggedInUser");
+
+            // Verifica se o usuário é o administrador (Jardel)
+            const toggleButton = document.getElementById("toggle-visibility");
+            const preencherTabelaButton = document.getElementById(
+              "preencher-tabela-principal"
+            );
+
+            // Mostra ou oculta os botões com base no usuário logado
+            toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
+            preencherTabelaButton.classList.toggle(
+              "hidden",
+              loggedInUser !== "Jardel"
+            );
+          } catch (error) {
+            console.error("Erro ao verificar permissões do usuário:", error);
+          }
+        }
+        // Função para fazer logout
+        function logout() {
+          localStorage.removeItem("loggedInUser");
+          document.getElementById("login-container").classList.remove("hidden");
+          document.getElementById("main-content").classList.add("hidden");
+        }
+
+        // Função para buscar as senhas criptografadas do backend
+        async function buscarSenhasCriptografadas() {
+          try {
+            const response = await fetch("/.netlify/functions/senhas");
+            if (!response.ok) {
+              throw new Error("Erro ao buscar senhas");
+            }
+            const data = await response.json();
+            return data;
+          } catch (error) {
+            console.error("Erro na requisição:", error);
+            alert("Erro ao buscar senhas. Tente novamente.");
+            return {};
+          }
+        }
+
+        // Função para descriptografar usando o backend
+        async function descriptografar(textoCriptografado) {
+          try {
+            const response = await fetch(
+              "/.netlify/functions/descriptografar",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ textoCriptografado }),
               }
+            );
+
+            if (!response.ok) {
+              throw new Error("Erro ao descriptografar");
+            }
+
+            const data = await response.json();
+            return data.textoDescriptografado;
+          } catch (error) {
+            console.error("Erro na requisição:", error);
+            alert("Erro ao descriptografar. Tente novamente.");
+            return null;
+          }
+        }
+
+        // Função de login
+        async function login() {
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          // Busca as senhas criptografadas do backend
+          const senhasCriptografadas = await buscarSenhasCriptografadas();
+
+          if (senhasCriptografadas[username]) {
+            // Descriptografa a senha usando o backend
+            const senhaDescriptografada = await descriptografar(
+              senhasCriptografadas[username]
+            );
+
+            if (senhaDescriptografada === password) {
+              localStorage.setItem("loggedInUser", username);
+              document
+                .getElementById("login-container")
+                .classList.add("hidden");
+              document
+                .getElementById("main-content")
+                .classList.remove("hidden");
+
+              // Inicializa o modo escuro após o login bem-sucedido
+              initializeDarkMode();
+
+              await verificarEstadoPlacares();
+              await verificarPermissoesUsuario(); // Verificar permissões do usuário
+              carregarApostas(); // Carrega as apostas salvas
             } else {
               alert("Nome de usuário ou senha incorretos!");
             }
+          } else {
+            alert("Nome de usuário ou senha incorretos!");
+          }
+        }
+
+        // Função para inicializar o modo escuro
+        function initializeDarkMode() {
+          // Verifica se o botão já existe
+          let darkModeToggle = document.getElementById("toggle-dark-mode");
+
+          // Se o botão não existir, cria um novo
+          if (!darkModeToggle) {
+            darkModeToggle = document.createElement("button");
+            darkModeToggle.id = "toggle-dark-mode";
+            document.body.appendChild(darkModeToggle);
           }
 
-          // Função para inicializar o modo escuro
-          function initializeDarkMode() {
-            // Verifica se o botão já existe
-            let darkModeToggle = document.getElementById("toggle-dark-mode");
+          // Verifica se o usuário já escolheu o modo escuro anteriormente
+          const isDarkMode = localStorage.getItem("darkMode") === "true";
 
-            // Se o botão não existir, cria um novo
-            if (!darkModeToggle) {
-              darkModeToggle = document.createElement("button");
-              darkModeToggle.id = "toggle-dark-mode";
-              document.body.appendChild(darkModeToggle);
-            }
+          // Aplica a preferência salva
+          if (isDarkMode) {
+            document.body.classList.add("dark-mode");
+            darkModeToggle.textContent = "☀️ Light";
+          } else {
+            document.body.classList.remove("dark-mode");
+            darkModeToggle.textContent = "🌙 Dark";
+          }
 
-            // Verifica se o usuário já escolheu o modo escuro anteriormente
-            const isDarkMode = localStorage.getItem("darkMode") === "true";
+          // Adiciona o evento de clique ao botão
+          darkModeToggle.addEventListener("click", function () {
+            // Alterna a classe dark-mode no body
+            document.body.classList.toggle("dark-mode");
 
-            // Aplica a preferência salva
-            if (isDarkMode) {
-              document.body.classList.add("dark-mode");
-              darkModeToggle.textContent = "☀️ Light";
+            // Verifica se o modo escuro está ativo agora
+            const isDarkModeNow = document.body.classList.contains("dark-mode");
+
+            // Salva a preferência no localStorage
+            localStorage.setItem("darkMode", isDarkModeNow);
+
+            // Atualiza o texto do botão
+            if (isDarkModeNow) {
+              this.textContent = "☀️ Light";
             } else {
-              document.body.classList.remove("dark-mode");
-              darkModeToggle.textContent = "🌙 Dark";
-            }
-
-            // Adiciona o evento de clique ao botão
-            darkModeToggle.addEventListener("click", function () {
-              // Alterna a classe dark-mode no body
-              document.body.classList.toggle("dark-mode");
-
-              // Verifica se o modo escuro está ativo agora
-              const isDarkModeNow = document.body.classList.contains("dark-mode");
-
-              // Salva a preferência no localStorage
-              localStorage.setItem("darkMode", isDarkModeNow);
-
-              // Atualiza o texto do botão
-              if (isDarkModeNow) {
-                this.textContent = "☀️ Light";
-              } else {
-                this.textContent = "🌙 Dark";
-              }
-            });
-          }
-
-          // Verificar se o usuário já está logado quando a página carrega
-          document.addEventListener("DOMContentLoaded", function () {
-            const loggedInUser = localStorage.getItem("loggedInUser");
-
-            if (loggedInUser) {
-              // Mostrar conteúdo principal
-              document.getElementById("login-container").classList.add("hidden");
-              document.getElementById("main-content").classList.remove("hidden");
-
-              // Inicializar o modo escuro
-              initializeDarkMode();
-
-              // Carregar dados necessários
-              verificarEstadoPlacares();
-              verificarPermissoesUsuario();
-              carregarApostas();
+              this.textContent = "🌙 Dark";
             }
           });
+        }
 
-          // Função para bloquear as colunas dos outros jogadores
-          /*function bloquearColunasOutrosJogadores() {
+        // Verificar se o usuário já está logado quando a página carrega
+        document.addEventListener("DOMContentLoaded", function () {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+
+          if (loggedInUser) {
+            // Mostrar conteúdo principal
+            document.getElementById("login-container").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+
+            // Inicializar o modo escuro
+            initializeDarkMode();
+
+            // Carregar dados necessários
+            verificarEstadoPlacares();
+            verificarPermissoesUsuario();
+            carregarApostas();
+          }
+        });
+
+        // Função para bloquear as colunas dos outros jogadores
+        /*function bloquearColunasOutrosJogadores() {
           const loggedInUser = localStorage.getItem("loggedInUser");
           if (!loggedInUser) return;
 
@@ -1721,102 +1721,70 @@
           });
         }*/
 
-          function abrirRanking() {
-            window.open("ranking.html", "_blank");
-          }
+        function abrirRanking() {
+          window.open("ranking.html", "_blank");
+        }
 
-          document.addEventListener("DOMContentLoaded", function () {
-            criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
-            adicionarNavegacao();
-            adicionarNavegacaoJogos();
-            adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
-            adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
-            carregarApostas();
-            createAdvancedTitle(); // Carrega as apostas salvas
-            // Inicia a atualização automática
-            iniciarAtualizacaoAutomatica();
+        document.addEventListener("DOMContentLoaded", function () {
+          criarLinhasTabela(); // Cria as linhas da tabela ao carregar a página
+          adicionarNavegacao();
+          adicionarNavegacaoJogos();
+          adicionarEventosSalvamento(); // Adiciona eventos para salvar automaticamente
+          adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
+          carregarApostas();
+          createAdvancedTitle(); // Carrega as apostas salvas
+          // Inicia a atualização automática
+          iniciarAtualizacaoAutomatica();
 
-            // Adiciona evento de input para o nome da rodada
-            document
-              .getElementById("nome-rodada")
-              .addEventListener("input", salvarApostasDebounced);
-          });
+          // Adiciona evento de input para o nome da rodada
+          document
+            .getElementById("nome-rodada")
+            .addEventListener("input", salvarApostasDebounced);
+        });
 
-          function adicionarNavegacaoJogos() {
-            const inputsJogos = document.querySelectorAll(".input-jogo");
-            inputsJogos.forEach((input, index) => {
-              input.addEventListener("keydown", function (event) {
-                if (event.key === "Enter" || event.key === "Tab") {
-                  event.preventDefault();
-                  const nextIndex = index + 1;
-                  if (nextIndex < inputsJogos.length) {
-                    inputsJogos[nextIndex].focus();
-                  }
+        function adicionarNavegacaoJogos() {
+          const inputsJogos = document.querySelectorAll(".input-jogo");
+          inputsJogos.forEach((input, index) => {
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === "Tab") {
+                event.preventDefault();
+                const nextIndex = index + 1;
+                if (nextIndex < inputsJogos.length) {
+                  inputsJogos[nextIndex].focus();
                 }
+              }
 
-                // Adiciona a lógica de apagar com Delete ou Backspace
-                if (event.key === "Delete" || event.key === "Backspace") {
-                  event.preventDefault();
+              // Adiciona a lógica de apagar com Delete ou Backspace
+              if (event.key === "Delete" || event.key === "Backspace") {
+                event.preventDefault();
 
-                  // Se houver texto no campo, remove o último caractere
-                  if (input.value.length > 0) {
-                    input.value = input.value.slice(0, -1); // Remove o último caractere
-                  } else {
-                    // Se o campo estiver vazio, move o foco para o campo anterior na mesma coluna
-                    const prevIndex = index - 1;
-                    if (prevIndex >= 0) {
-                      inputsJogos[prevIndex].focus();
-                    }
-                    // Se estiver no primeiro campo da coluna, o foco para aqui
+                // Se houver texto no campo, remove o último caractere
+                if (input.value.length > 0) {
+                  input.value = input.value.slice(0, -1); // Remove o último caractere
+                } else {
+                  // Se o campo estiver vazio, move o foco para o campo anterior na mesma coluna
+                  const prevIndex = index - 1;
+                  if (prevIndex >= 0) {
+                    inputsJogos[prevIndex].focus();
                   }
+                  // Se estiver no primeiro campo da coluna, o foco para aqui
                 }
-              });
+              }
             });
-          }
+          });
+        }
 
-          function adicionarNavegacao() {
-            // Navegação para as colunas dos jogadores
-            for (let i = 0; i < 4; i++) {
-              const coluna = document.querySelectorAll(`input.jogador${i}`);
-              coluna.forEach((input, index) => {
-                input.addEventListener("input", (event) => {
-                  if (event.target.value.length === 1) {
-                    // Verifica se um número foi digitado
-                    let nextIndex = index + 1;
-                    if (nextIndex < coluna.length) {
-                      coluna[nextIndex].focus(); // Move o foco para o próximo campo na mesma coluna
-                    }
-                  }
-                });
-
-                input.addEventListener("keydown", (event) => {
-                  if (event.key === "Delete" || event.key === "Backspace") {
-                    event.preventDefault();
-                    if (input.value === "") {
-                      // Move o foco para o campo anterior na mesma coluna
-                      const prevIndex = index - 1;
-                      if (prevIndex >= 0) {
-                        coluna[prevIndex].focus();
-                      }
-                      // Se estiver no primeiro campo da coluna, o foco para aqui
-                    } else {
-                      // Limpa o campo atual
-                      input.value = "";
-                    }
-                  }
-                });
-              });
-            }
-
-            // Navegação para os campos de resultado
-            const placarReal = document.querySelectorAll("input.resultado");
-            placarReal.forEach((input, index) => {
+        function adicionarNavegacao() {
+          // Navegação para as colunas dos jogadores
+          for (let i = 0; i < 4; i++) {
+            const coluna = document.querySelectorAll(`input.jogador${i}`);
+            coluna.forEach((input, index) => {
               input.addEventListener("input", (event) => {
                 if (event.target.value.length === 1) {
                   // Verifica se um número foi digitado
                   let nextIndex = index + 1;
-                  if (nextIndex < placarReal.length) {
-                    placarReal[nextIndex].focus(); // Move o foco para o próximo campo de resultado
+                  if (nextIndex < coluna.length) {
+                    coluna[nextIndex].focus(); // Move o foco para o próximo campo na mesma coluna
                   }
                 }
               });
@@ -1828,7 +1796,7 @@
                     // Move o foco para o campo anterior na mesma coluna
                     const prevIndex = index - 1;
                     if (prevIndex >= 0) {
-                      placarReal[prevIndex].focus();
+                      coluna[prevIndex].focus();
                     }
                     // Se estiver no primeiro campo da coluna, o foco para aqui
                   } else {
@@ -1840,12 +1808,44 @@
             });
           }
 
-          function criarLinhasTabela() {
-            const tabela = document.getElementById("tabela-apostas");
+          // Navegação para os campos de resultado
+          const placarReal = document.querySelectorAll("input.resultado");
+          placarReal.forEach((input, index) => {
+            input.addEventListener("input", (event) => {
+              if (event.target.value.length === 1) {
+                // Verifica se um número foi digitado
+                let nextIndex = index + 1;
+                if (nextIndex < placarReal.length) {
+                  placarReal[nextIndex].focus(); // Move o foco para o próximo campo de resultado
+                }
+              }
+            });
 
-            for (let i = 1; i <= 10; i++) {
-              const linha = document.createElement("tr");
-              linha.innerHTML = `
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                event.preventDefault();
+                if (input.value === "") {
+                  // Move o foco para o campo anterior na mesma coluna
+                  const prevIndex = index - 1;
+                  if (prevIndex >= 0) {
+                    placarReal[prevIndex].focus();
+                  }
+                  // Se estiver no primeiro campo da coluna, o foco para aqui
+                } else {
+                  // Limpa o campo atual
+                  input.value = "";
+                }
+              }
+            });
+          });
+        }
+
+        function criarLinhasTabela() {
+          const tabela = document.getElementById("tabela-apostas");
+
+          for (let i = 1; i <= 10; i++) {
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
               <td>
                   <input type="text" class="input-jogo" placeholder="casa x fora">
               </td>
@@ -1870,609 +1870,609 @@
                   </div>
               </td>
           `;
-              tabela.appendChild(linha);
-            }
+            tabela.appendChild(linha);
           }
+        }
 
-          async function carregarApostas() {
-            try {
-              const { data, error } = await supabaseClient
-                .from("alphabet_table")
-                .select("*")
-                .order("id", { ascending: false })
-                .limit(1);
+        async function carregarApostas() {
+          try {
+            const { data, error } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
 
-              if (error) throw error;
+            if (error) throw error;
 
-              if (!data || data.length === 0) {
-                console.log("Nenhum dado encontrado");
-                return;
-              }
-
-              const {
-                nome_rodada,
-                jogos,
-                apostas,
-                resultados,
-                placares_ocultos,
-              } = data[0];
-
-              // Preenche o nome da rodada
-              document.getElementById("nome-rodada").value = nome_rodada || "";
-
-              // Verifica se jogos é um array
-              if (!Array.isArray(jogos)) {
-                console.error("Erro: jogos não é um array");
-                return;
-              }
-
-              preencherTabela(jogos, apostas, resultados);
-              calcularPontuacao(); // Calcula a pontuação após carregar os dados
-
-              // Aplica o estado de visibilidade
-              if (placares_ocultos) {
-                ocultarPlacares();
-              } else {
-                mostrarPlacares();
-              }
-            } catch (error) {
-              console.error("Erro ao carregar apostas:", error);
-            }
-          }
-
-          async function salvarApostas() {
-            try {
-              // Busca o registro atual
-              const { data, error: fetchError } = await supabaseClient
-                .from("alphabet_table")
-                .select("*")
-                .order("id", { ascending: false })
-                .limit(1);
-
-              if (fetchError) throw fetchError;
-
-              const novosDados = {
-                nome_rodada: document.getElementById("nome-rodada").value,
-                jogos: obterJogosDaTabela(),
-                apostas: obterApostasDaTabela(),
-                resultados: obterResultadosDaTabela(),
-                placares_ocultos: await carregarEstadoVisibilidade(),
-              };
-
-              // Se não existe registro, cria um novo
-              if (!data || data.length === 0) {
-                // Adiciona os campos que podem não estar presentes nos novos dados
-                novosDados.ranking = {};
-                novosDados.vitorias_empates = {};
-
-                const { error: insertError } = await supabaseClient
-                  .from("alphabet_table")
-                  .insert(novosDados);
-
-                if (insertError) throw insertError;
-              } else {
-                // Atualiza o registro existente
-                const { error: updateError } = await supabaseClient
-                  .from("alphabet_table")
-                  .update(novosDados)
-                  .eq("id", data[0].id);
-
-                if (updateError) throw updateError;
-              }
-
-              console.log("Dados salvos com sucesso");
-            } catch (error) {
-              console.error("Erro ao salvar dados:", error);
-            }
-          }
-          function preencherTabela(jogos, apostas, resultados) {
-            console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
-            const inputsJogos = document.querySelectorAll(".input-jogo");
-            const inputsApostas = document.querySelectorAll(".aposta");
-            const inputsResultados = document.querySelectorAll(".resultado");
-
-            // Preenche os nomes dos times
-            inputsJogos.forEach((input, index) => {
-              input.value = jogos[index] || "";
-            });
-
-            // Preenche as apostas dos jogadores
-            const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-            jogadores.forEach((jogador, jogadorIndex) => {
-              for (let i = 0; i < 10; i++) {
-                const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
-                const indexFora = indexCasa + 1; // Índice do time2
-                inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
-                inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
-              }
-            });
-
-            // Preenche os resultados
-            for (let i = 0; i < 10; i++) {
-              inputsResultados[i * 2].value = resultados[i].time1 || "";
-              inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
-            }
-          }
-
-          function obterJogosDaTabela() {
-            const jogos = [];
-            const inputs = document.querySelectorAll(".input-jogo");
-            inputs.forEach((input) => jogos.push(input.value));
-            return jogos;
-          }
-
-          function obterApostasDaTabela() {
-            const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
-            const inputs = document.querySelectorAll(".aposta");
-
-            for (let i = 0; i < 10; i++) {
-              apostas.Jardel.push({
-                time1: inputs[i * 8].value,
-                time2: inputs[i * 8 + 1].value,
-              });
-              apostas.Werbet.push({
-                time1: inputs[i * 8 + 2].value,
-                time2: inputs[i * 8 + 3].value,
-              });
-              apostas.Nailton.push({
-                time1: inputs[i * 8 + 4].value,
-                time2: inputs[i * 8 + 5].value,
-              });
-              apostas.Phillipe.push({
-                time1: inputs[i * 8 + 6].value,
-                time2: inputs[i * 8 + 7].value,
-              });
+            if (!data || data.length === 0) {
+              console.log("Nenhum dado encontrado");
+              return;
             }
 
-            return apostas;
-          }
+            const {
+              nome_rodada,
+              jogos,
+              apostas,
+              resultados,
+              placares_ocultos,
+            } = data[0];
 
-          function obterResultadosDaTabela() {
-            const resultados = [];
-            const inputs = document.querySelectorAll(".resultado");
+            // Preenche o nome da rodada
+            document.getElementById("nome-rodada").value = nome_rodada || "";
 
-            for (let i = 0; i < 10; i++) {
-              resultados.push({
-                time1: inputs[i * 2].value,
-                time2: inputs[i * 2 + 1].value,
-              });
+            // Verifica se jogos é um array
+            if (!Array.isArray(jogos)) {
+              console.error("Erro: jogos não é um array");
+              return;
             }
 
-            return resultados;
-          }
+            preencherTabela(jogos, apostas, resultados);
+            calcularPontuacao(); // Calcula a pontuação após carregar os dados
 
-          // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
-          function calcularPontuacao() {
-            const apostas = obterApostasDaTabela();
-            const resultados = obterResultadosDaTabela();
-            const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-            const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
-            const placaresExatos = {
-              Jardel: 0,
-              Werbet: 0,
-              Nailton: 0,
-              Phillipe: 0,
+            // Aplica o estado de visibilidade
+            if (placares_ocultos) {
+              ocultarPlacares();
+            } else {
+              mostrarPlacares();
+            }
+          } catch (error) {
+            console.error("Erro ao carregar apostas:", error);
+          }
+        }
+
+        async function salvarApostas() {
+          try {
+            // Busca o registro atual
+            const { data, error: fetchError } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (fetchError) throw fetchError;
+
+            const novosDados = {
+              nome_rodada: document.getElementById("nome-rodada").value,
+              jogos: obterJogosDaTabela(),
+              apostas: obterApostasDaTabela(),
+              resultados: obterResultadosDaTabela(),
+              placares_ocultos: await carregarEstadoVisibilidade(),
             };
 
-            for (let i = 0; i < 10; i++) {
-              const resultadoCasa = resultados[i].time1;
-              const resultadoFora = resultados[i].time2;
+            // Se não existe registro, cria um novo
+            if (!data || data.length === 0) {
+              // Adiciona os campos que podem não estar presentes nos novos dados
+              novosDados.ranking = {};
+              novosDados.vitorias_empates = {};
 
-              // Ignora jogos sem resultado
-              if (resultadoCasa === "" || resultadoFora === "") continue;
+              const { error: insertError } = await supabaseClient
+                .from("alphabet_table")
+                .insert(novosDados);
 
-              jogadores.forEach((jogador) => {
-                const apostaCasa = apostas[jogador][i].time1;
-                const apostaFora = apostas[jogador][i].time2;
+              if (insertError) throw insertError;
+            } else {
+              // Atualiza o registro existente
+              const { error: updateError } = await supabaseClient
+                .from("alphabet_table")
+                .update(novosDados)
+                .eq("id", data[0].id);
 
-                // Ignora apostas em branco
-                if (apostaCasa === "" || apostaFora === "") return;
-
-                if (
-                  apostaCasa === resultadoCasa &&
-                  apostaFora === resultadoFora
-                ) {
-                  pontos[jogador] += 3; // Acertou o placar exato
-                  placaresExatos[jogador] += 1; // Incrementa o contador de placares exatos
-                } else if (
-                  (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
-                  (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
-                  (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
-                ) {
-                  pontos[jogador] += 1; // Acertou o vencedor ou empate
-                }
-              });
+              if (updateError) throw updateError;
             }
 
-            // Ordena os jogadores por pontuação (do maior para o menor) e, em caso de empate, por placares exatos
-            const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
-              if (b[1] !== a[1]) {
-                return b[1] - a[1]; // Ordena por pontuação decrescente
-              } else {
-                // Em caso de empate, ordena pelo número de placares exatos
-                const placaresExatosA = placaresExatos[a[0]];
-                const placaresExatosB = placaresExatos[b[0]];
-                return placaresExatosB - placaresExatosA;
+            console.log("Dados salvos com sucesso");
+          } catch (error) {
+            console.error("Erro ao salvar dados:", error);
+          }
+        }
+        function preencherTabela(jogos, apostas, resultados) {
+          console.log("Preenchendo tabela com jogos:", jogos); // Verifique os jogos recebidos
+          const inputsJogos = document.querySelectorAll(".input-jogo");
+          const inputsApostas = document.querySelectorAll(".aposta");
+          const inputsResultados = document.querySelectorAll(".resultado");
+
+          // Preenche os nomes dos times
+          inputsJogos.forEach((input, index) => {
+            input.value = jogos[index] || "";
+          });
+
+          // Preenche as apostas dos jogadores
+          const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+          jogadores.forEach((jogador, jogadorIndex) => {
+            for (let i = 0; i < 10; i++) {
+              const indexCasa = i * 8 + jogadorIndex * 2; // Índice do time1
+              const indexFora = indexCasa + 1; // Índice do time2
+              inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+              inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
+            }
+          });
+
+          // Preenche os resultados
+          for (let i = 0; i < 10; i++) {
+            inputsResultados[i * 2].value = resultados[i].time1 || "";
+            inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+          }
+        }
+
+        function obterJogosDaTabela() {
+          const jogos = [];
+          const inputs = document.querySelectorAll(".input-jogo");
+          inputs.forEach((input) => jogos.push(input.value));
+          return jogos;
+        }
+
+        function obterApostasDaTabela() {
+          const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
+          const inputs = document.querySelectorAll(".aposta");
+
+          for (let i = 0; i < 10; i++) {
+            apostas.Jardel.push({
+              time1: inputs[i * 8].value,
+              time2: inputs[i * 8 + 1].value,
+            });
+            apostas.Werbet.push({
+              time1: inputs[i * 8 + 2].value,
+              time2: inputs[i * 8 + 3].value,
+            });
+            apostas.Nailton.push({
+              time1: inputs[i * 8 + 4].value,
+              time2: inputs[i * 8 + 5].value,
+            });
+            apostas.Phillipe.push({
+              time1: inputs[i * 8 + 6].value,
+              time2: inputs[i * 8 + 7].value,
+            });
+          }
+
+          return apostas;
+        }
+
+        function obterResultadosDaTabela() {
+          const resultados = [];
+          const inputs = document.querySelectorAll(".resultado");
+
+          for (let i = 0; i < 10; i++) {
+            resultados.push({
+              time1: inputs[i * 2].value,
+              time2: inputs[i * 2 + 1].value,
+            });
+          }
+
+          return resultados;
+        }
+
+        // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
+        function calcularPontuacao() {
+          const apostas = obterApostasDaTabela();
+          const resultados = obterResultadosDaTabela();
+          const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+          const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+          const placaresExatos = {
+            Jardel: 0,
+            Werbet: 0,
+            Nailton: 0,
+            Phillipe: 0,
+          };
+
+          for (let i = 0; i < 10; i++) {
+            const resultadoCasa = resultados[i].time1;
+            const resultadoFora = resultados[i].time2;
+
+            // Ignora jogos sem resultado
+            if (resultadoCasa === "" || resultadoFora === "") continue;
+
+            jogadores.forEach((jogador) => {
+              const apostaCasa = apostas[jogador][i].time1;
+              const apostaFora = apostas[jogador][i].time2;
+
+              // Ignora apostas em branco
+              if (apostaCasa === "" || apostaFora === "") return;
+
+              if (
+                apostaCasa === resultadoCasa &&
+                apostaFora === resultadoFora
+              ) {
+                pontos[jogador] += 3; // Acertou o placar exato
+                placaresExatos[jogador] += 1; // Incrementa o contador de placares exatos
+              } else if (
+                (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
+                (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
+                (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
+              ) {
+                pontos[jogador] += 1; // Acertou o vencedor ou empate
               }
             });
+          }
 
-            // Verifica a pontuação máxima
-            const pontuacaoMaxima = jogadoresOrdenados[0][1];
+          // Ordena os jogadores por pontuação (do maior para o menor) e, em caso de empate, por placares exatos
+          const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
+            if (b[1] !== a[1]) {
+              return b[1] - a[1]; // Ordena por pontuação decrescente
+            } else {
+              // Em caso de empate, ordena pelo número de placares exatos
+              const placaresExatosA = placaresExatos[a[0]];
+              const placaresExatosB = placaresExatos[b[0]];
+              return placaresExatosB - placaresExatosA;
+            }
+          });
 
-            // Verifica se todos os jogadores estão com 0 pontos
-            const todosZerados = jogadoresOrdenados.every(
-              ([_, pontuacao]) => pontuacao === 0
-            );
+          // Verifica a pontuação máxima
+          const pontuacaoMaxima = jogadoresOrdenados[0][1];
 
-            // Se todos estiverem zerados, não há vencedores
-            const vencedores = todosZerados
-              ? []
-              : jogadoresOrdenados.filter(
-                  ([_, pontuacao]) => pontuacao === pontuacaoMaxima
-                );
+          // Verifica se todos os jogadores estão com 0 pontos
+          const todosZerados = jogadoresOrdenados.every(
+            ([_, pontuacao]) => pontuacao === 0
+          );
 
-            // Atualiza a exibição da pontuação
-            const pontuacaoHTML = jogadoresOrdenados
-              .map(([jogador, pontuacao]) => {
-                const isVencedor = vencedores.some(
-                  ([vencedor]) => vencedor === jogador
-                );
-                return `<div class="pontuacao-card ${
-                  isVencedor ? "vencedor" : ""
-                }"><h3>${jogador}</h3>
+          // Se todos estiverem zerados, não há vencedores
+          const vencedores = todosZerados
+            ? []
+            : jogadoresOrdenados.filter(
+                ([_, pontuacao]) => pontuacao === pontuacaoMaxima
+              );
+
+          // Atualiza a exibição da pontuação
+          const pontuacaoHTML = jogadoresOrdenados
+            .map(([jogador, pontuacao]) => {
+              const isVencedor = vencedores.some(
+                ([vencedor]) => vencedor === jogador
+              );
+              return `<div class="pontuacao-card ${
+                isVencedor ? "vencedor" : ""
+              }"><h3>${jogador}</h3>
               <span>
               <p>${pontuacao} pontos</p>
               <p>Placares exatos: ${placaresExatos[jogador]}</p></div>`;
-              })
-              .join("");
+            })
+            .join("");
 
-            document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
-          }
+          document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+        }
 
-          // Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
-          function adicionarEventosCalculoPontuacao() {
-            // Adiciona eventos aos campos de apostas
-            const inputsApostas = document.querySelectorAll(".aposta");
-            inputsApostas.forEach((input) => {
-              input.addEventListener("input", function () {
-                salvarApostasDebounced(); // Salva as apostas automaticamente
-                calcularPontuacao(); // Recalcula a pontuação
-              });
-
-              input.addEventListener("keydown", function (event) {
-                if (event.key === "Delete" || event.key === "Backspace") {
-                  salvarApostasDebounced(); // Salva as apostas automaticamente
-                  calcularPontuacao(); // Recalcula a pontuação
-                }
-              });
+        // Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
+        function adicionarEventosCalculoPontuacao() {
+          // Adiciona eventos aos campos de apostas
+          const inputsApostas = document.querySelectorAll(".aposta");
+          inputsApostas.forEach((input) => {
+            input.addEventListener("input", function () {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
             });
 
-            // Adiciona eventos aos campos de resultado
-            const inputsResultados = document.querySelectorAll(".resultado");
-            inputsResultados.forEach((input) => {
-              input.addEventListener("input", function () {
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Delete" || event.key === "Backspace") {
                 salvarApostasDebounced(); // Salva as apostas automaticamente
                 calcularPontuacao(); // Recalcula a pontuação
-              });
-
-              input.addEventListener("keydown", function (event) {
-                if (event.key === "Delete" || event.key === "Backspace") {
-                  salvarApostasDebounced(); // Salva as apostas automaticamente
-                  calcularPontuacao(); // Recalcula a pontuação
-                }
-              });
+              }
             });
-          }
+          });
 
-          function limparApostas() {
-            document
-              .querySelectorAll("input")
-              .forEach((input) => (input.value = ""));
-            document.getElementById("pontuacao").innerHTML = "";
-          }
+          // Adiciona eventos aos campos de resultado
+          const inputsResultados = document.querySelectorAll(".resultado");
+          inputsResultados.forEach((input) => {
+            input.addEventListener("input", function () {
+              salvarApostasDebounced(); // Salva as apostas automaticamente
+              calcularPontuacao(); // Recalcula a pontuação
+            });
 
-          let todasPartidas = [];
-          let rodadaAtual = 1;
-          let totalRodadas = 0;
-          let rodadaExibida = null; // Armazena a rodada que está sendo exibida na tabela principal
-          let partidasPorRodada = {};
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                salvarApostasDebounced(); // Salva as apostas automaticamente
+                calcularPontuacao(); // Recalcula a pontuação
+              }
+            });
+          });
+        }
 
-          // Mapeamento de abreviações dos times, nomes completos e URLs dos escudos
-          const timesInfo = {
-            "SE Palmeiras": {
-              abrev: "PAL",
-              nome: "Palmeiras",
-              escudo:
-                "https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png",
-            },
-            "Botafogo FR": {
-              abrev: "BOT",
-              nome: "Botafogo",
-              escudo:
-                "https://logodetimes.com/times/botafogo/logo-botafogo-256.png",
-            },
-            "CR Flamengo": {
-              abrev: "FLA",
-              nome: "Flamengo",
-              escudo:
-                "https://logodetimes.com/times/flamengo/logo-flamengo-256.png",
-            },
-            "Fluminense FC": {
-              abrev: "FLU",
-              nome: "Fluminense",
-              escudo:
-                "https://logodetimes.com/times/fluminense/logo-fluminense-256.png",
-            },
-            "Grêmio FBPA": {
-              abrev: "GRE",
-              nome: "Grêmio",
-              escudo: "https://logodetimes.com/times/gremio/logo-gremio-256.png",
-            },
-            "São Paulo FC": {
-              abrev: "SAO",
-              nome: "São Paulo",
-              escudo:
-                "https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png",
-            },
-            "CA Mineiro": {
-              abrev: "CAM",
-              nome: "Atlético-MG",
-              escudo:
-                "https://logodetimes.com/times/atletico-mineiro/logo-atletico-mineiro-256.png",
-            },
-            "SC Recife": {
-              abrev: "SPT",
-              nome: "Sport",
-              escudo:
-                "https://logodetimes.com/times/sport-recife/logo-sport-recife-256.png",
-            },
-            "SC Internacional": {
-              abrev: "INT",
-              nome: "Internacional",
-              escudo:
-                "https://logodetimes.com/times/internacional/logo-internacional-256.png",
-            },
-            "Cruzeiro EC": {
-              abrev: "CRU",
-              nome: "Cruzeiro",
-              escudo:
-                "https://logodetimes.com/times/cruzeiro/logo-cruzeiro-256.png",
-            },
-            "SC Corinthians Paulista": {
-              abrev: "COR",
-              nome: "Corinthians",
-              escudo:
-                "https://logodetimes.com/times/corinthians/logo-corinthians-256.png",
-            },
-            "Santos FC": {
-              abrev: "SAN",
-              nome: "Santos",
-              escudo: "https://logodetimes.com/times/santos/logo-santos-256.png",
-            },
-            "EC Bahia": {
-              abrev: "BAH",
-              nome: "Bahia",
-              escudo: "https://logodetimes.com/times/bahia/logo-bahia-256.png",
-            },
-            "CR Vasco da Gama": {
-              abrev: "VAS",
-              nome: "Vasco",
-              escudo:
-                "https://logodetimes.com/times/vasco-da-gama/logo-vasco-da-gama-256.png",
-            },
-            "Mirassol FC": {
-              abrev: "MIR",
-              nome: "Mirassol",
-              escudo:
-                "https://logodetimes.com/times/mirassol/logo-mirassol-256.png",
-            },
-            "EC Juventude": {
-              abrev: "JUV",
-              nome: "Juventude",
-              escudo:
-                "https://logodetimes.com/times/juventude/logo-juventude-256.png",
-            },
-            "Ceará SC": {
-              abrev: "CEA",
-              nome: "Ceará",
-              escudo: "https://logodetimes.com/times/ceara/logo-ceara-256.png",
-            },
-            "Fortaleza EC": {
-              abrev: "FOR",
-              nome: "Fortaleza",
-              escudo:
-                "https://logodetimes.com/times/fortaleza/logo-fortaleza-256.png",
-            },
-            "RB Bragantino": {
-              abrev: "RBB",
-              nome: "RB Bragantino",
-              escudo:
-                "https://logodetimes.com/times/red-bull-bragantino/logo-red-bull-bragantino-256.png",
-            },
-            "EC Vitória": {
-              abrev: "VIT",
-              nome: "Vitória",
-              escudo:
-                "https://logodetimes.com/times/vitoria/logo-vitoria-256.png",
-            },
+        function limparApostas() {
+          document
+            .querySelectorAll("input")
+            .forEach((input) => (input.value = ""));
+          document.getElementById("pontuacao").innerHTML = "";
+        }
+
+        let todasPartidas = [];
+        let rodadaAtual = 1;
+        let totalRodadas = 0;
+        let rodadaExibida = null; // Armazena a rodada que está sendo exibida na tabela principal
+        let partidasPorRodada = {};
+
+        // Mapeamento de abreviações dos times, nomes completos e URLs dos escudos
+        const timesInfo = {
+          "SE Palmeiras": {
+            abrev: "PAL",
+            nome: "Palmeiras",
+            escudo:
+              "https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png",
+          },
+          "Botafogo FR": {
+            abrev: "BOT",
+            nome: "Botafogo",
+            escudo:
+              "https://logodetimes.com/times/botafogo/logo-botafogo-256.png",
+          },
+          "CR Flamengo": {
+            abrev: "FLA",
+            nome: "Flamengo",
+            escudo:
+              "https://logodetimes.com/times/flamengo/logo-flamengo-256.png",
+          },
+          "Fluminense FC": {
+            abrev: "FLU",
+            nome: "Fluminense",
+            escudo:
+              "https://logodetimes.com/times/fluminense/logo-fluminense-256.png",
+          },
+          "Grêmio FBPA": {
+            abrev: "GRE",
+            nome: "Grêmio",
+            escudo: "https://logodetimes.com/times/gremio/logo-gremio-256.png",
+          },
+          "São Paulo FC": {
+            abrev: "SAO",
+            nome: "São Paulo",
+            escudo:
+              "https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png",
+          },
+          "CA Mineiro": {
+            abrev: "CAM",
+            nome: "Atlético-MG",
+            escudo:
+              "https://logodetimes.com/times/atletico-mineiro/logo-atletico-mineiro-256.png",
+          },
+          "SC Recife": {
+            abrev: "SPT",
+            nome: "Sport",
+            escudo:
+              "https://logodetimes.com/times/sport-recife/logo-sport-recife-256.png",
+          },
+          "SC Internacional": {
+            abrev: "INT",
+            nome: "Internacional",
+            escudo:
+              "https://logodetimes.com/times/internacional/logo-internacional-256.png",
+          },
+          "Cruzeiro EC": {
+            abrev: "CRU",
+            nome: "Cruzeiro",
+            escudo:
+              "https://logodetimes.com/times/cruzeiro/logo-cruzeiro-256.png",
+          },
+          "SC Corinthians Paulista": {
+            abrev: "COR",
+            nome: "Corinthians",
+            escudo:
+              "https://logodetimes.com/times/corinthians/logo-corinthians-256.png",
+          },
+          "Santos FC": {
+            abrev: "SAN",
+            nome: "Santos",
+            escudo: "https://logodetimes.com/times/santos/logo-santos-256.png",
+          },
+          "EC Bahia": {
+            abrev: "BAH",
+            nome: "Bahia",
+            escudo: "https://logodetimes.com/times/bahia/logo-bahia-256.png",
+          },
+          "CR Vasco da Gama": {
+            abrev: "VAS",
+            nome: "Vasco",
+            escudo:
+              "https://logodetimes.com/times/vasco-da-gama/logo-vasco-da-gama-256.png",
+          },
+          "Mirassol FC": {
+            abrev: "MIR",
+            nome: "Mirassol",
+            escudo:
+              "https://logodetimes.com/times/mirassol/logo-mirassol-256.png",
+          },
+          "EC Juventude": {
+            abrev: "JUV",
+            nome: "Juventude",
+            escudo:
+              "https://logodetimes.com/times/juventude/logo-juventude-256.png",
+          },
+          "Ceará SC": {
+            abrev: "CEA",
+            nome: "Ceará",
+            escudo: "https://logodetimes.com/times/ceara/logo-ceara-256.png",
+          },
+          "Fortaleza EC": {
+            abrev: "FOR",
+            nome: "Fortaleza",
+            escudo:
+              "https://logodetimes.com/times/fortaleza/logo-fortaleza-256.png",
+          },
+          "RB Bragantino": {
+            abrev: "RBB",
+            nome: "RB Bragantino",
+            escudo:
+              "https://logodetimes.com/times/red-bull-bragantino/logo-red-bull-bragantino-256.png",
+          },
+          "EC Vitória": {
+            abrev: "VIT",
+            nome: "Vitória",
+            escudo:
+              "https://logodetimes.com/times/vitoria/logo-vitoria-256.png",
+          },
+        };
+
+        // Função para lidar com erros de imagem
+        function handleImageError(img) {
+          img.onerror = null; // Evita loop infinito
+          img.src = "https://logodetimes.com/imagens/generico-256.png"; // Escudo genérico
+        }
+
+        // Função para formatar data
+        function formatarData(dataUTC) {
+          const data = new Date(dataUTC);
+          const options = { weekday: "long", day: "numeric", month: "long" };
+          return data.toLocaleDateString("pt-BR", options);
+        }
+
+        // Função para formatar hora
+        function formatarHora(dataUTC) {
+          const data = new Date(dataUTC);
+          return data.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        }
+
+        // Função para traduzir status
+        function traduzirStatus(status) {
+          const statusMap = {
+            SCHEDULED: "Agendado",
+            TIMED: "Horário Definido",
+            IN_PLAY: "Em Andamento",
+            PAUSED: "Intervalo",
+            FINISHED: "Encerrado",
+            POSTPONED: "Adiado",
+            SUSPENDED: "Suspenso",
+            CANCELED: "Cancelado",
           };
+          return statusMap[status] || status;
+        }
 
-          // Função para lidar com erros de imagem
-          function handleImageError(img) {
-            img.onerror = null; // Evita loop infinito
-            img.src = "https://logodetimes.com/imagens/generico-256.png"; // Escudo genérico
-          }
+        // Função para definir classe CSS com base no status
+        function statusClass(status) {
+          if (status === "FINISHED") return "status-FINISHED";
+          if (status === "IN_PLAY" || status === "PAUSED") return "status-LIVE";
+          return "status-SCHEDULED";
+        }
 
-          // Função para formatar data
-          function formatarData(dataUTC) {
-            const data = new Date(dataUTC);
-            const options = { weekday: "long", day: "numeric", month: "long" };
-            return data.toLocaleDateString("pt-BR", options);
-          }
+        async function buscarCalendario() {
+          const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
 
-          // Função para formatar hora
-          function formatarHora(dataUTC) {
-            const data = new Date(dataUTC);
-            return data.toLocaleTimeString("pt-BR", {
-              hour: "2-digit",
-              minute: "2-digit",
+          try {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(`Erro de rede: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Dados recebidos:", data);
+
+            // Atualiza as variáveis globais
+            todasPartidas = data.matches;
+
+            // Agrupa as partidas por rodada
+            partidasPorRodada = {}; // Reinicializa o objeto
+            todasPartidas.forEach((partida) => {
+              const rodada = partida.matchday;
+              if (!partidasPorRodada[rodada]) {
+                partidasPorRodada[rodada] = [];
+              }
+              partidasPorRodada[rodada].push(partida);
             });
-          }
 
-          // Função para traduzir status
-          function traduzirStatus(status) {
-            const statusMap = {
-              SCHEDULED: "Agendado",
-              TIMED: "Horário Definido",
-              IN_PLAY: "Em Andamento",
-              PAUSED: "Intervalo",
-              FINISHED: "Encerrado",
-              POSTPONED: "Adiado",
-              SUSPENDED: "Suspenso",
-              CANCELED: "Cancelado",
-            };
-            return statusMap[status] || status;
-          }
+            console.log("Partidas por rodada:", partidasPorRodada); // Verifica o agrupamento
 
-          // Função para definir classe CSS com base no status
-          function statusClass(status) {
-            if (status === "FINISHED") return "status-FINISHED";
-            if (status === "IN_PLAY" || status === "PAUSED") return "status-LIVE";
-            return "status-SCHEDULED";
-          }
+            // Ordena as rodadas por data de início
+            const rodadasOrdenadas = Object.keys(partidasPorRodada)
+              .map((rodada) => ({
+                rodada: parseInt(rodada),
+                dataInicio: new Date(partidasPorRodada[rodada][0].utcDate), // Data do primeiro jogo da rodada
+                dataFim: new Date(
+                  partidasPorRodada[rodada][
+                    partidasPorRodada[rodada].length - 1
+                  ].utcDate
+                ), // Data do último jogo da rodada
+              }))
+              .sort((a, b) => a.dataInicio - b.dataInicio);
 
-          async function buscarCalendario() {
-            const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
+            console.log("Rodadas ordenadas:", rodadasOrdenadas); // Verifica a ordenação
 
-            try {
-              const response = await fetch(url);
-              if (!response.ok) {
-                throw new Error(`Erro de rede: ${response.status}`);
+            // Determina a rodada atual com base na data atual
+            const dataAtual = new Date();
+            rodadaAtual = 1; // Inicializa com a primeira rodada
+
+            for (const rodada of rodadasOrdenadas) {
+              if (
+                dataAtual >= rodada.dataInicio &&
+                dataAtual <= rodada.dataFim
+              ) {
+                rodadaAtual = rodada.rodada;
+                break;
+              } else if (dataAtual > rodada.dataFim) {
+                rodadaAtual = rodada.rodada; // Atualiza para a última rodada concluída
               }
+            }
 
-              const data = await response.json();
-              console.log("Dados recebidos:", data);
+            // Define o total de rodadas
+            totalRodadas = rodadasOrdenadas.length;
 
-              // Atualiza as variáveis globais
-              todasPartidas = data.matches;
+            console.log("Rodada atual:", rodadaAtual); // Verifica a rodada atual
+            console.log("Total de rodadas:", totalRodadas); // Verifica o total de rodadas
 
-              // Agrupa as partidas por rodada
-              partidasPorRodada = {}; // Reinicializa o objeto
-              todasPartidas.forEach((partida) => {
-                const rodada = partida.matchday;
-                if (!partidasPorRodada[rodada]) {
-                  partidasPorRodada[rodada] = [];
-                }
-                partidasPorRodada[rodada].push(partida);
-              });
+            // Exibe a rodada atual
+            exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
 
-              console.log("Partidas por rodada:", partidasPorRodada); // Verifica o agrupamento
-
-              // Ordena as rodadas por data de início
-              const rodadasOrdenadas = Object.keys(partidasPorRodada)
-                .map((rodada) => ({
-                  rodada: parseInt(rodada),
-                  dataInicio: new Date(partidasPorRodada[rodada][0].utcDate), // Data do primeiro jogo da rodada
-                  dataFim: new Date(
-                    partidasPorRodada[rodada][
-                      partidasPorRodada[rodada].length - 1
-                    ].utcDate
-                  ), // Data do último jogo da rodada
-                }))
-                .sort((a, b) => a.dataInicio - b.dataInicio);
-
-              console.log("Rodadas ordenadas:", rodadasOrdenadas); // Verifica a ordenação
-
-              // Determina a rodada atual com base na data atual
-              const dataAtual = new Date();
-              rodadaAtual = 1; // Inicializa com a primeira rodada
-
-              for (const rodada of rodadasOrdenadas) {
-                if (
-                  dataAtual >= rodada.dataInicio &&
-                  dataAtual <= rodada.dataFim
-                ) {
-                  rodadaAtual = rodada.rodada;
-                  break;
-                } else if (dataAtual > rodada.dataFim) {
-                  rodadaAtual = rodada.rodada; // Atualiza para a última rodada concluída
-                }
-              }
-
-              // Define o total de rodadas
-              totalRodadas = rodadasOrdenadas.length;
-
-              console.log("Rodada atual:", rodadaAtual); // Verifica a rodada atual
-              console.log("Total de rodadas:", totalRodadas); // Verifica o total de rodadas
-
-              // Exibe a rodada atual
-              exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-
-              // Atualiza a navegação
-              atualizarNavegacao();
-            } catch (error) {
-              console.error("Erro ao buscar dados:", error);
-              document.getElementById("calendario-jogos").innerHTML = `
+            // Atualiza a navegação
+            atualizarNavegacao();
+          } catch (error) {
+            console.error("Erro ao buscar dados:", error);
+            document.getElementById("calendario-jogos").innerHTML = `
         <div class="error">
           <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
           <p>Por favor, tente novamente mais tarde ou verifique sua conexão com a internet.</p>
         </div>
       `;
-            }
           }
+        }
 
-          // Atualiza a navegação
-          document.getElementById("anterior").addEventListener("click", () => {
-            if (rodadaAtual > 1) {
-              rodadaAtual--;
-              exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-              atualizarNavegacao();
-            }
-          });
+        // Atualiza a navegação
+        document.getElementById("anterior").addEventListener("click", () => {
+          if (rodadaAtual > 1) {
+            rodadaAtual--;
+            exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+            atualizarNavegacao();
+          }
+        });
 
-          document.getElementById("proxima").addEventListener("click", () => {
-            console.log("Rodada atual antes:", rodadaAtual); // Verifica o valor atual
-            if (rodadaAtual < totalRodadas) {
-              rodadaAtual++;
-              console.log("Rodada atual depois:", rodadaAtual); // Verifica o valor após incrementar
-              exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-              atualizarNavegacao();
-            } else {
-              console.log("Não há mais rodadas para exibir.");
-            }
-          });
+        document.getElementById("proxima").addEventListener("click", () => {
+          console.log("Rodada atual antes:", rodadaAtual); // Verifica o valor atual
+          if (rodadaAtual < totalRodadas) {
+            rodadaAtual++;
+            console.log("Rodada atual depois:", rodadaAtual); // Verifica o valor após incrementar
+            exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+            atualizarNavegacao();
+          } else {
+            console.log("Não há mais rodadas para exibir.");
+          }
+        });
 
-          function exibirRodada(rodada, partidas) {
-            const calendario = document.getElementById("calendario-jogos");
-            calendario.innerHTML = ""; // Limpa o conteúdo anterior
+        function exibirRodada(rodada, partidas) {
+          const calendario = document.getElementById("calendario-jogos");
+          calendario.innerHTML = ""; // Limpa o conteúdo anterior
 
-            if (!partidas || partidas.length === 0) {
-              calendario.innerHTML = `
+          if (!partidas || partidas.length === 0) {
+            calendario.innerHTML = `
         <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
           <p>Nenhum jogo encontrado para esta rodada.</p>
         </div>
       `;
-              return;
-            }
+            return;
+          }
 
-            partidas.forEach((partida) => {
-              const timeCasaInfo = timesInfo[partida.homeTeam.name] || {
-                abrev: partida.homeTeam.name.substring(0, 3).toUpperCase(),
-                nome: partida.homeTeam.name,
-                escudo: "https://logodetimes.com/imagens/generico-256.png",
-              };
+          partidas.forEach((partida) => {
+            const timeCasaInfo = timesInfo[partida.homeTeam.name] || {
+              abrev: partida.homeTeam.name.substring(0, 3).toUpperCase(),
+              nome: partida.homeTeam.name,
+              escudo: "https://logodetimes.com/imagens/generico-256.png",
+            };
 
-              const timeForaInfo = timesInfo[partida.awayTeam.name] || {
-                abrev: partida.awayTeam.name.substring(0, 3).toUpperCase(),
-                nome: partida.awayTeam.name,
-                escudo: "https://logodetimes.com/imagens/generico-256.png",
-              };
+            const timeForaInfo = timesInfo[partida.awayTeam.name] || {
+              abrev: partida.awayTeam.name.substring(0, 3).toUpperCase(),
+              nome: partida.awayTeam.name,
+              escudo: "https://logodetimes.com/imagens/generico-256.png",
+            };
 
-              const temPlacar = partida.score.fullTime.home !== null;
-              const statusTexto = traduzirStatus(partida.status);
-              const statusClasse = statusClass(partida.status);
+            const temPlacar = partida.score.fullTime.home !== null;
+            const statusTexto = traduzirStatus(partida.status);
+            const statusClasse = statusClass(partida.status);
 
-              const jogoHTML = `
+            const jogoHTML = `
         <div class="jogo">
           <div class="jogo-header">
             <div class="jogo-data">${formatarData(partida.utcDate)}</div>
@@ -2481,16 +2481,16 @@
           <div class="jogo-times">
             <div class="time">
               <img src="${timeCasaInfo.escudo}" alt="${
-                timeCasaInfo.nome
-              }" class="time-escudo" onerror="handleImageError(this)">
+              timeCasaInfo.nome
+            }" class="time-escudo" onerror="handleImageError(this)">
               <div class="time-abrev">${timeCasaInfo.abrev}</div>
               <div class="time-nome">${timeCasaInfo.nome}</div>
             </div>
             <div class="versus">X</div>
             <div class="time">
               <img src="${timeForaInfo.escudo}" alt="${
-                timeForaInfo.nome
-              }" class="time-escudo" onerror="handleImageError(this)">
+              timeForaInfo.nome
+            }" class="time-escudo" onerror="handleImageError(this)">
               <div class="time-abrev">${timeForaInfo.abrev}</div>
               <div class="time-nome">${timeForaInfo.nome}</div>
             </div>
@@ -2514,123 +2514,123 @@
           </div>
         </div>
       `;
-              calendario.innerHTML += jogoHTML;
-            });
+            calendario.innerHTML += jogoHTML;
+          });
+        }
+
+        function atualizarNavegacao() {
+          // Atualiza o texto que exibe a rodada atual
+          document.getElementById(
+            "rodada-atual"
+          ).textContent = `Rodada ${rodadaAtual} de ${totalRodadas}`;
+
+          // Desabilita o botão "Anterior" se estiver na primeira rodada
+          document.getElementById("anterior").disabled = rodadaAtual === 1;
+
+          // Desabilita o botão "Próxima" se estiver na última rodada
+          document.getElementById("proxima").disabled =
+            rodadaAtual === totalRodadas;
+        }
+
+        // Chama a função para buscar o calendário ao carregar a página
+        window.addEventListener("DOMContentLoaded", buscarCalendario);
+
+        // Dados da tabela principal
+        let dadosTabelaPrincipal = {
+          nomeRodada: "",
+          jogos: [],
+          resultados: [],
+        };
+
+        async function preencherTabelaPrincipalComRodadaAtual(rodada) {
+          // Verifica se a rodada que está sendo preenchida já é a mesma que está sendo exibida
+          if (rodadaExibida === rodada) {
+            console.log(`A tabela já está preenchida com a Rodada ${rodada}.`);
+            return; // Não faz nada se a rodada já estiver sendo exibida
           }
 
-          function atualizarNavegacao() {
-            // Atualiza o texto que exibe a rodada atual
-            document.getElementById(
-              "rodada-atual"
-            ).textContent = `Rodada ${rodadaAtual} de ${totalRodadas}`;
-
-            // Desabilita o botão "Anterior" se estiver na primeira rodada
-            document.getElementById("anterior").disabled = rodadaAtual === 1;
-
-            // Desabilita o botão "Próxima" se estiver na última rodada
-            document.getElementById("proxima").disabled =
-              rodadaAtual === totalRodadas;
+          // Pergunta antes de preencher a tabela
+          const confirmacao = confirm(
+            `Deseja preencher a tabela com a Rodada ${rodada}?`
+          );
+          if (!confirmacao) {
+            console.log("Preenchimento cancelado pelo usuário.");
+            return; // Cancela o preenchimento se o usuário não confirmar
           }
 
-          // Chama a função para buscar o calendário ao carregar a página
-          window.addEventListener("DOMContentLoaded", buscarCalendario);
+          const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
 
-          // Dados da tabela principal
-          let dadosTabelaPrincipal = {
-            nomeRodada: "",
-            jogos: [],
-            resultados: [],
-          };
-
-          async function preencherTabelaPrincipalComRodadaAtual(rodada) {
-            // Verifica se a rodada que está sendo preenchida já é a mesma que está sendo exibida
-            if (rodadaExibida === rodada) {
-              console.log(`A tabela já está preenchida com a Rodada ${rodada}.`);
-              return; // Não faz nada se a rodada já estiver sendo exibida
+          try {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(`Erro de rede: ${response.status}`);
             }
 
-            // Pergunta antes de preencher a tabela
-            const confirmacao = confirm(
-              `Deseja preencher a tabela com a Rodada ${rodada}?`
+            const data = await response.json();
+
+            // Filtra os jogos da rodada atual
+            const jogosRodadaAtual = data.matches.filter(
+              (partida) => partida.matchday === rodada
             );
-            if (!confirmacao) {
-              console.log("Preenchimento cancelado pelo usuário.");
-              return; // Cancela o preenchimento se o usuário não confirmar
+
+            if (jogosRodadaAtual.length === 0) {
+              console.log(`Nenhum jogo encontrado para a rodada ${rodada}.`);
+              return;
             }
 
-            const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
+            // Atualiza os dados da tabela principal
+            dadosTabelaPrincipal.nomeRodada = `Rodada ${rodada}`;
+            dadosTabelaPrincipal.jogos = jogosRodadaAtual.map((partida) => ({
+              casa: partida.homeTeam.name,
+              fora: partida.awayTeam.name,
+            }));
 
-            try {
-              const response = await fetch(url);
-              if (!response.ok) {
-                throw new Error(`Erro de rede: ${response.status}`);
-              }
+            // Preenche os resultados reais (se disponíveis)
+            dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(
+              (partida) => ({
+                casa: partida.score.fullTime.home || "", // Usa o resultado real ou vazio se não houver
+                fora: partida.score.fullTime.away || "", // Usa o resultado real ou vazio se não houver
+              })
+            );
 
-              const data = await response.json();
+            // Preenche a tabela principal
+            preencherTabelaPrincipalHTML();
 
-              // Filtra os jogos da rodada atual
-              const jogosRodadaAtual = data.matches.filter(
-                (partida) => partida.matchday === rodada
-              );
+            // Atualiza a variável global com a rodada exibida
+            rodadaExibida = rodada;
 
-              if (jogosRodadaAtual.length === 0) {
-                console.log(`Nenhum jogo encontrado para a rodada ${rodada}.`);
-                return;
-              }
-
-              // Atualiza os dados da tabela principal
-              dadosTabelaPrincipal.nomeRodada = `Rodada ${rodada}`;
-              dadosTabelaPrincipal.jogos = jogosRodadaAtual.map((partida) => ({
-                casa: partida.homeTeam.name,
-                fora: partida.awayTeam.name,
-              }));
-
-              // Preenche os resultados reais (se disponíveis)
-              dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(
-                (partida) => ({
-                  casa: partida.score.fullTime.home || "", // Usa o resultado real ou vazio se não houver
-                  fora: partida.score.fullTime.away || "", // Usa o resultado real ou vazio se não houver
-                })
-              );
-
-              // Preenche a tabela principal
-              preencherTabelaPrincipalHTML();
-
-              // Atualiza a variável global com a rodada exibida
-              rodadaExibida = rodada;
-
-              // Força o salvamento dos dados após preencher a tabela
-              await salvarApostas();
-            } catch (error) {
-              console.error("Erro ao buscar dados da tabela principal:", error);
-              alert(
-                "Erro ao carregar os dados da tabela principal. Tente novamente."
-              );
-            }
+            // Força o salvamento dos dados após preencher a tabela
+            await salvarApostas();
+          } catch (error) {
+            console.error("Erro ao buscar dados da tabela principal:", error);
+            alert(
+              "Erro ao carregar os dados da tabela principal. Tente novamente."
+            );
           }
-          // Função para preencher o HTML da tabela principal
-          function preencherTabelaPrincipalHTML() {
-            const tabelaApostas = document.getElementById("tabela-apostas");
-            tabelaApostas.innerHTML = ""; // Limpa a tabela
+        }
+        // Função para preencher o HTML da tabela principal
+        function preencherTabelaPrincipalHTML() {
+          const tabelaApostas = document.getElementById("tabela-apostas");
+          tabelaApostas.innerHTML = ""; // Limpa a tabela
 
-            // Preenche o nome da rodada
-            document.getElementById("nome-rodada").value =
-              dadosTabelaPrincipal.nomeRodada;
+          // Preenche o nome da rodada
+          document.getElementById("nome-rodada").value =
+            dadosTabelaPrincipal.nomeRodada;
 
-            // Preenche os jogos e resultados
-            dadosTabelaPrincipal.jogos.forEach((jogo, index) => {
-              const resultado = dadosTabelaPrincipal.resultados[index];
+          // Preenche os jogos e resultados
+          dadosTabelaPrincipal.jogos.forEach((jogo, index) => {
+            const resultado = dadosTabelaPrincipal.resultados[index];
 
-              // Obtém as abreviações dos times
-              const timeCasaAbrev =
-                timesInfo[jogo.casa]?.abrev ||
-                jogo.casa.substring(0, 3).toUpperCase();
-              const timeForaAbrev =
-                timesInfo[jogo.fora]?.abrev ||
-                jogo.fora.substring(0, 3).toUpperCase();
+            // Obtém as abreviações dos times
+            const timeCasaAbrev =
+              timesInfo[jogo.casa]?.abrev ||
+              jogo.casa.substring(0, 3).toUpperCase();
+            const timeForaAbrev =
+              timesInfo[jogo.fora]?.abrev ||
+              jogo.fora.substring(0, 3).toUpperCase();
 
-              const linha = document.createElement("tr");
-              linha.innerHTML = `
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
         <td>
           <input type="text" class="input-jogo" value="${timeCasaAbrev} x ${timeForaAbrev}">
         </td>
@@ -2670,61 +2670,61 @@
           </div>
         </td>
       `;
-              tabelaApostas.appendChild(linha);
-            });
-            // Adiciona eventos de salvamento aos campos preenchidos automaticamente
-            adicionarEventosSalvamento();
-            // Aplica o estado de visibilidade após preencher a tabela
-            verificarEstadoPlacares();
-            adicionarNavegacao();
-            adicionarNavegacaoJogos();
+            tabelaApostas.appendChild(linha);
+          });
+          // Adiciona eventos de salvamento aos campos preenchidos automaticamente
+          adicionarEventosSalvamento();
+          // Aplica o estado de visibilidade após preencher a tabela
+          verificarEstadoPlacares();
+          adicionarNavegacao();
+          adicionarNavegacaoJogos();
+        }
+
+        let intervaloAtualizacao; // Variável para armazenar o intervalo
+
+        // Função para atualizar a tabela
+        function atualizarTabela() {
+          if (!rodadaExibida) {
+            console.log("Nenhuma rodada exibida. Atualização ignorada.");
+            return;
           }
 
-          let intervaloAtualizacao; // Variável para armazenar o intervalo
-
-          // Função para atualizar a tabela
-          function atualizarTabela() {
-            if (!rodadaExibida) {
-              console.log("Nenhuma rodada exibida. Atualização ignorada.");
-              return;
-            }
-
-            if (rodadaExibida === rodadaAtual) {
-              preencherTabelaPrincipalComRodadaAtual(rodadaExibida, false); // Atualiza sem confirmação
-            } else {
-              console.log(
-                "Rodada exibida diferente da atual. Atualização ignorada."
-              );
-            }
+          if (rodadaExibida === rodadaAtual) {
+            preencherTabelaPrincipalComRodadaAtual(rodadaExibida, false); // Atualiza sem confirmação
+          } else {
+            console.log(
+              "Rodada exibida diferente da atual. Atualização ignorada."
+            );
           }
+        }
 
-          // Inicia a atualização automática (executa imediatamente e a cada 30s)
-          function iniciarAtualizacaoAutomatica() {
-            atualizarTabela(); // Atualiza imediatamente ao carregar
-            intervaloAtualizacao = setInterval(atualizarTabela, 30000); // Repete a cada 30s
+        // Inicia a atualização automática (executa imediatamente e a cada 30s)
+        function iniciarAtualizacaoAutomatica() {
+          atualizarTabela(); // Atualiza imediatamente ao carregar
+          intervaloAtualizacao = setInterval(atualizarTabela, 30000); // Repete a cada 30s
+        }
+
+        // Para a atualização quando a página é fechada
+        function pararAtualizacaoAutomatica() {
+          if (intervaloAtualizacao) {
+            clearInterval(intervaloAtualizacao);
+            intervaloAtualizacao = null;
+            console.log("Atualização automática parada.");
           }
+        }
 
-          // Para a atualização quando a página é fechada
-          function pararAtualizacaoAutomatica() {
-            if (intervaloAtualizacao) {
-              clearInterval(intervaloAtualizacao);
-              intervaloAtualizacao = null;
-              console.log("Atualização automática parada.");
-            }
-          }
+        // Adicionar evento ao botão para iniciar/parar a atualização automática
+        document
+          .getElementById("preencher-tabela-principal")
+          .addEventListener("click", () => {
+            preencherTabelaPrincipalComRodadaAtual(rodadaAtual); // Preenche a tabela imediatamente
+            iniciarAtualizacaoAutomatica(); // Inicia a atualização automática
+          });
 
-          // Adicionar evento ao botão para iniciar/parar a atualização automática
-          document
-            .getElementById("preencher-tabela-principal")
-            .addEventListener("click", () => {
-              preencherTabelaPrincipalComRodadaAtual(rodadaAtual); // Preenche a tabela imediatamente
-              iniciarAtualizacaoAutomatica(); // Inicia a atualização automática
-            });
-
-          // Parar a atualização automática ao sair da página
-          window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
-          window.addEventListener("unload", pararAtualizacaoAutomatica); // Fallback extra
-        </script>
-      </div>
-    </body>
-  </html>
+        // Parar a atualização automática ao sair da página
+        window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
+        window.addEventListener("unload", pararAtualizacaoAutomatica); // Fallback extra
+      </script>
+    </div>
+  </body>
+</html>
