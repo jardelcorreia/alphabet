@@ -470,6 +470,37 @@
         color: var(--color-gray-500);
       }
 
+      /* Estilos base para inputs */
+      .input-placar {
+        transition: background-color var(--transition-normal),
+          color var(--transition-normal);
+      }
+
+      /* Light mode styles */
+      .input-placar {
+        background-color: white;
+        color: var(--color-dark);
+      }
+
+      /* Dark mode styles */
+      body.dark-mode .input-placar {
+        background-color: var(--color-dark);
+        color: var(--color-light);
+      }
+
+      /* Light mode disabled */
+      .input-placar:disabled {
+        background-color: #f0f0f0;
+        color: #333;
+        cursor: not-allowed;
+      }
+
+      /* Dark mode disabled */
+      body.dark-mode .input-placar:disabled {
+        background-color: #334155;
+        color: #f8fafc;
+      }
+
       /* Score Cards */
       .pontuacao-container {
         display: flex;
@@ -1428,12 +1459,17 @@
           verificarEstadoPlacares();
         }
 
+        function mostrarPlacares() {
+          document.querySelectorAll(".aposta").forEach((input) => {
+            input.style.display = "";
+            input.disabled = true;
+          });
+        }
+
         function ocultarPlacares() {
           const loggedInUser = localStorage.getItem("loggedInUser");
-          const inputsApostas = document.querySelectorAll(".aposta");
-
-          inputsApostas.forEach((input) => {
-            const colunaJogador = input.classList.contains("jogador0")
+          document.querySelectorAll(".aposta").forEach((input) => {
+            const jogador = input.classList.contains("jogador0")
               ? "Jardel"
               : input.classList.contains("jogador1")
               ? "Werbet"
@@ -1443,24 +1479,12 @@
               ? "Phillipe"
               : null;
 
-            // Oculta os placares dos outros jogadores
-            if (colunaJogador && colunaJogador !== loggedInUser) {
+            if (jogador && jogador !== loggedInUser) {
               input.style.display = "none";
             } else {
-              input.style.display = ""; // Mostra os placares do jogador logado
-              input.disabled = false; // Permite edição apenas para o jogador logado
-              input.style.backgroundColor = "";
+              input.style.display = "";
+              input.disabled = false;
             }
-          });
-        }
-
-        function mostrarPlacares() {
-          const inputsApostas = document.querySelectorAll(".aposta");
-
-          inputsApostas.forEach((input) => {
-            input.style.display = ""; // Mostra o input
-            input.disabled = true; // Torna o input não editável
-            input.style.backgroundColor = "#f0f0f0";
           });
         }
 
@@ -1663,17 +1687,7 @@
 
         // Função para inicializar o modo escuro
         function initializeDarkMode() {
-          // Verifica se o botão já existe
-          let darkModeToggle = document.getElementById("toggle-dark-mode");
-
-          // Se o botão não existir, cria um novo
-          if (!darkModeToggle) {
-            darkModeToggle = document.createElement("button");
-            darkModeToggle.id = "toggle-dark-mode";
-            document.body.appendChild(darkModeToggle);
-          }
-
-          // Verifica se o usuário já escolheu o modo escuro anteriormente
+          const darkModeToggle = document.getElementById("toggle-dark-mode");
           const isDarkMode = localStorage.getItem("darkMode") === "true";
 
           // Aplica a preferência salva
@@ -1684,6 +1698,9 @@
             document.body.classList.remove("dark-mode");
             darkModeToggle.textContent = "🌙 Dark";
           }
+
+          // Atualiza os estilos dos inputs desabilitados
+          updateDisabledInputsStyle();
 
           // Adiciona o evento de clique ao botão
           darkModeToggle.addEventListener("click", function () {
@@ -1697,10 +1714,30 @@
             localStorage.setItem("darkMode", isDarkModeNow);
 
             // Atualiza o texto do botão
-            if (isDarkModeNow) {
-              this.textContent = "☀️ Light";
-            } else {
-              this.textContent = "🌙 Dark";
+            this.textContent = isDarkModeNow ? "☀️ Light" : "🌙 Dark";
+
+            // Atualiza os estilos dos inputs desabilitados
+            updateDisabledInputsStyle();
+          });
+        }
+
+        function updateDisabledInputsStyle() {
+          const isDarkMode = document.body.classList.contains("dark-mode");
+          const inputsApostas = document.querySelectorAll(".aposta");
+
+          // Verifica se os placares estão visíveis (desabilitados)
+          const placaresVisiveis =
+            localStorage.getItem("placaresOcultos") !== "true";
+
+          inputsApostas.forEach((input) => {
+            if (input.disabled && placaresVisiveis) {
+              if (isDarkMode) {
+                input.style.backgroundColor = "#334155";
+                input.style.color = "#f8fafc";
+              } else {
+                input.style.backgroundColor = "#f0f0f0";
+                input.style.color = "#333";
+              }
             }
           });
         }
