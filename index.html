@@ -2674,8 +2674,8 @@
             // Preenche os resultados reais (se disponíveis)
             dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(
               (partida) => ({
-                casa: partida.score.fullTime.home || "", // Usa o resultado real ou vazio se não houver
-                fora: partida.score.fullTime.away || "", // Usa o resultado real ou vazio se não houver
+                casa: partida.score.fullTime.home?.toString() ?? "", // Usa o operador ?. e ?? para tratar null/undefined
+                fora: partida.score.fullTime.away?.toString() ?? "", // Usa o operador ?. e ?? para tratar null/undefined
               })
             );
 
