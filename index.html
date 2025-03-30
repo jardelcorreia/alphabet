@@ -2684,6 +2684,10 @@
         }
         // Função para preencher o HTML da tabela principal
         function preencherTabelaPrincipalHTML() {
+          // Primeiro, obtemos os valores atuais das apostas e resultados
+          const apostasAtuais = obterApostasDaTabela();
+          const resultadosAtuais = obterResultadosDaTabela();
+
           const tabelaApostas = document.getElementById("tabela-apostas");
           tabelaApostas.innerHTML = ""; // Limpa a tabela
 
@@ -2693,7 +2697,28 @@
 
           // Preenche os jogos e resultados
           dadosTabelaPrincipal.jogos.forEach((jogo, index) => {
-            const resultado = dadosTabelaPrincipal.resultados[index];
+            const resultadoAPI = dadosTabelaPrincipal.resultados[index] || {};
+            const resultadoAtual = resultadosAtuais[index] || {
+              time1: "",
+              time2: "",
+            };
+
+            // Tratamento explícito para resultados zero - modificado aqui
+            const resultadoCasa =
+              resultadoAPI.casa !== undefined && resultadoAPI.casa !== null
+                ? resultadoAPI.casa
+                : resultadoAtual.time1 !== undefined &&
+                  resultadoAtual.time1 !== null
+                ? resultadoAtual.time1
+                : "";
+
+            const resultadoFora =
+              resultadoAPI.fora !== undefined && resultadoAPI.fora !== null
+                ? resultadoAPI.fora
+                : resultadoAtual.time2 !== undefined &&
+                  resultadoAtual.time2 !== null
+                ? resultadoAtual.time2
+                : "";
 
             // Obtém as abreviações dos times
             const timeCasaAbrev =
@@ -2703,49 +2728,92 @@
               timesInfo[jogo.fora]?.abrev ||
               jogo.fora.substring(0, 3).toUpperCase();
 
+            // Obtém os valores atuais das apostas para este jogo (se existirem)
+            const apostaJardel = apostasAtuais.Jardel[index] || {
+              time1: "",
+              time2: "",
+            };
+            const apostaWerbet = apostasAtuais.Werbet[index] || {
+              time1: "",
+              time2: "",
+            };
+            const apostaNailton = apostasAtuais.Nailton[index] || {
+              time1: "",
+              time2: "",
+            };
+            const apostaPhillipe = apostasAtuais.Phillipe[index] || {
+              time1: "",
+              time2: "",
+            };
+
             const linha = document.createElement("tr");
             linha.innerHTML = `
-        <td>
-          <input type="text" class="input-jogo" value="${timeCasaAbrev} x ${timeForaAbrev}">
-        </td>
-        <td>
-          <div class="input-container">
-            <input type="number" class="aposta input-placar jogador0" min="0">
-            <span class="placar-separador">x</span>
-            <input type="number" class="aposta input-placar jogador0" min="0">
-          </div>
-        </td>
-        <td>
-          <div class="input-container">
-            <input type="number" class="aposta input-placar jogador1" min="0">
-            <span class="placar-separador">x</span>
-            <input type="number" class="aposta input-placar jogador1" min="0">
-          </div>
-        </td>
-        <td>
-          <div class="input-container">
-            <input type="number" class="aposta input-placar jogador2" min="0">
-            <span class="placar-separador">x</span>
-            <input type="number" class="aposta input-placar jogador2" min="0">
-          </div>
-        </td>
-        <td>
-          <div class="input-container">
-            <input type="number" class="aposta input-placar jogador3" min="0">
-            <span class="placar-separador">x</span>
-            <input type="number" class="aposta input-placar jogador3" min="0">
-          </div>
-        </td>
-        <td>
-          <div class="input-container">
-            <input type="number" class="resultado input-placar" value="${resultado.casa}" readonly>
-            <span class="placar-separador">x</span>
-            <input type="number" class="resultado input-placar" value="${resultado.fora}" readonly>
-          </div>
-        </td>
-      `;
+      <td>
+        <input type="text" class="input-jogo" value="${timeCasaAbrev} x ${timeForaAbrev}">
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador0" min="0" value="${
+            apostaJardel.time1
+          }">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador0" min="0" value="${
+            apostaJardel.time2
+          }">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador1" min="0" value="${
+            apostaWerbet.time1
+          }">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador1" min="0" value="${
+            apostaWerbet.time2
+          }">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador2" min="0" value="${
+            apostaNailton.time1
+          }">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador2" min="0" value="${
+            apostaNailton.time2
+          }">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="aposta input-placar jogador3" min="0" value="${
+            apostaPhillipe.time1
+          }">
+          <span class="placar-separador">x</span>
+          <input type="number" class="aposta input-placar jogador3" min="0" value="${
+            apostaPhillipe.time2
+          }">
+        </div>
+      </td>
+      <td>
+        <div class="input-container">
+          <input type="number" class="resultado input-placar" value="${
+            resultadoCasa === 0 || resultadoCasa === "0"
+              ? "0"
+              : resultadoCasa || ""
+          }">
+          <span class="placar-separador">x</span>
+          <input type="number" class="resultado input-placar" value="${
+            resultadoFora === 0 || resultadoFora === "0"
+              ? "0"
+              : resultadoFora || ""
+          }">
+        </div>
+      </td>
+    `;
             tabelaApostas.appendChild(linha);
           });
+
           // Adiciona eventos de salvamento aos campos preenchidos automaticamente
           adicionarEventosSalvamento();
           // Aplica o estado de visibilidade após preencher a tabela
