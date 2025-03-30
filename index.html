@@ -2663,7 +2663,8 @@
             dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(
               (partida) => ({
                 casa: partida.score.fullTime.home || "", // Usa o resultado real ou vazio se não houver
-                fora: partida.score.fullTime.away || "", // Usa o resultado real ou vazio se não houver
+                fora: partid
+                  a.score.fullTime.away || "", // Usa o resultado real ou vazio se não houver
               })
             );
 
@@ -2683,7 +2684,7 @@
           }
         }
         // Função para preencher o HTML da tabela principal
-        function preencherTabelaPrincipalHTML() {
+       function preencherTabelaPrincipalHTML() {
           // Primeiro, obtemos os valores atuais das apostas e resultados
           const apostasAtuais = obterApostasDaTabela();
           const resultadosAtuais = obterResultadosDaTabela();
@@ -2697,28 +2698,7 @@
 
           // Preenche os jogos e resultados
           dadosTabelaPrincipal.jogos.forEach((jogo, index) => {
-            const resultadoAPI = dadosTabelaPrincipal.resultados[index] || {};
-            const resultadoAtual = resultadosAtuais[index] || {
-              time1: "",
-              time2: "",
-            };
-
-            // Tratamento explícito para resultados zero - modificado aqui
-            const resultadoCasa =
-              resultadoAPI.casa !== undefined && resultadoAPI.casa !== null
-                ? resultadoAPI.casa
-                : resultadoAtual.time1 !== undefined &&
-                  resultadoAtual.time1 !== null
-                ? resultadoAtual.time1
-                : "";
-
-            const resultadoFora =
-              resultadoAPI.fora !== undefined && resultadoAPI.fora !== null
-                ? resultadoAPI.fora
-                : resultadoAtual.time2 !== undefined &&
-                  resultadoAtual.time2 !== null
-                ? resultadoAtual.time2
-                : "";
+            const resultado = dadosTabelaPrincipal.resultados[index];
 
             // Obtém as abreviações dos times
             const timeCasaAbrev =
@@ -2742,6 +2722,10 @@
               time2: "",
             };
             const apostaPhillipe = apostasAtuais.Phillipe[index] || {
+              time1: "",
+              time2: "",
+            };
+            const resultadoAtual = resultadosAtuais[index] || {
               time1: "",
               time2: "",
             };
@@ -2798,15 +2782,11 @@
       <td>
         <div class="input-container">
           <input type="number" class="resultado input-placar" value="${
-            resultadoCasa === 0 || resultadoCasa === "0"
-              ? "0"
-              : resultadoCasa || ""
+            resultado.casa || resultadoAtual.time1
           }">
           <span class="placar-separador">x</span>
           <input type="number" class="resultado input-placar" value="${
-            resultadoFora === 0 || resultadoFora === "0"
-              ? "0"
-              : resultadoFora || ""
+            resultado.fora || resultadoAtual.time2
           }">
         </div>
       </td>
