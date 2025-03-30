@@ -1204,6 +1204,18 @@
         color: var(--color-gray-400);
       }
 
+      body.dark-mode .placar {
+        color: var(
+          --color-light
+        ) !important; /* Garante que o texto do placar seja visível */
+      }
+
+      body.dark-mode .placar-separator {
+        color: var(
+          --color-light
+        ) !important; /* Garante que o separador do placar seja visível */
+      }
+
       /* Loading and error messages */
       body.dark-mode .loading {
         color: var(--color-gray-300);
