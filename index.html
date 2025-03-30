@@ -2852,36 +2852,92 @@
             // Atualiza apenas os resultados (não sobrescreve as apostas)
             const resultadosAtuais = obterResultadosDaTabela();
             const inputsResultados = document.querySelectorAll(".resultado");
+            let resultadosModificados = false;
 
             jogosRodada.forEach((partida, index) => {
               if (
                 partida.score.fullTime.home !== null &&
                 partida.score.fullTime.away !== null
               ) {
-                // Atualiza apenas se o resultado for válido
-                resultadosAtuais[index] = {
-                  time1: partida.score.fullTime.home.toString(),
-                  time2: partida.score.fullTime.away.toString(),
+                // Verifica se o resultado é diferente do atual
+                const resultadoAtual = resultadosAtuais[index] || {
+                  time1: "",
+                  time2: "",
                 };
+                const novoResultadoCasa =
+                  partida.score.fullTime.home.toString();
+                const novoResultadoFora =
+                  partida.score.fullTime.away.toString();
 
-                // Atualiza os inputs
                 if (
-                  inputsResultados[index * 2] &&
-                  inputsResultados[index * 2 + 1]
+                  resultadoAtual.time1 !== novoResultadoCasa ||
+                  resultadoAtual.time2 !== novoResultadoFora
                 ) {
-                  inputsResultados[index * 2].value =
-                    partida.score.fullTime.home;
-                  inputsResultados[index * 2 + 1].value =
-                    partida.score.fullTime.away;
+                  resultadosModificados = true;
+
+                  // Atualiza os resultados atuais
+                  resultadosAtuais[index] = {
+                    time1: novoResultadoCasa,
+                    time2: novoResultadoFora,
+                  };
+
+                  // Atualiza os inputs
+                  if (
+                    inputsResultados[index * 2] &&
+                    inputsResultados[index * 2 + 1]
+                  ) {
+                    inputsResultados[index * 2].value = novoResultadoCasa;
+                    inputsResultados[index * 2 + 1].value = novoResultadoFora;
+                  }
                 }
               }
             });
 
+            if (resultadosModificados) {
+              // Salva os resultados atualizados no Supabase
+              await salvarResultadosNoSupabase(resultadosAtuais);
+              console.log("Resultados atualizados e salvos no Supabase!");
+            } else {
+              console.log("Nenhum resultado novo para atualizar.");
+            }
+
             // Recalcula a pontuação
             calcularPontuacao();
-            console.log("Tabela atualizada com sucesso!");
           } catch (error) {
             console.error("Erro ao atualizar tabela:", error);
+          }
+        }
+
+        // Função para salvar apenas os resultados no Supabase
+        async function salvarResultadosNoSupabase(resultados) {
+          try {
+            // Busca o registro atual
+            const { data, error: fetchError } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (fetchError) throw fetchError;
+
+            if (!data || data.length === 0) {
+              console.log(
+                "Nenhum registro encontrado para atualizar os resultados"
+              );
+              return;
+            }
+
+            // Atualiza apenas os resultados no registro existente
+            const { error: updateError } = await supabaseClient
+              .from("alphabet_table")
+              .update({ resultados })
+              .eq("id", data[0].id);
+
+            if (updateError) throw updateError;
+
+            console.log("Resultados salvos com sucesso no Supabase");
+          } catch (error) {
+            console.error("Erro ao salvar resultados:", error);
           }
         }
 
