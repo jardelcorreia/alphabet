@@ -2663,8 +2663,7 @@
             dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(
               (partida) => ({
                 casa: partida.score.fullTime.home || "", // Usa o resultado real ou vazio se não houver
-                fora: partid
-                  a.score.fullTime.away || "", // Usa o resultado real ou vazio se não houver
+                fora: partida.score.fullTime.away || "", // Usa o resultado real ou vazio se não houver
               })
             );
 
@@ -2684,7 +2683,7 @@
           }
         }
         // Função para preencher o HTML da tabela principal
-       function preencherTabelaPrincipalHTML() {
+        function preencherTabelaPrincipalHTML() {
           // Primeiro, obtemos os valores atuais das apostas e resultados
           const apostasAtuais = obterApostasDaTabela();
           const resultadosAtuais = obterResultadosDaTabela();
