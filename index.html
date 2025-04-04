@@ -482,6 +482,43 @@
         color: var(--color-dark);
       }
 
+      /* estilos do feedback visual de apostas salvas*/
+      .feedback-completo {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-secondary);
+    color: white;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .feedback-completo.visible {
+    opacity: 1;
+  }
+
+  .feedback-completo i {
+    font-size: 1.5rem;
+  }
+
+  @keyframes slideIn {
+    from { bottom: -50px; }
+    to { bottom: 20px; }
+  }
+
+  @keyframes slideOut {
+    from { bottom: 20px; }
+    to { bottom: -50px; }
+  }
+
       /* Dark mode styles */
       body.dark-mode .input-placar {
         background-color: var(--color-dark);
@@ -1336,6 +1373,11 @@
         </table>
       </div>
 
+      <div id="feedback-apostas" class="feedback-completo">
+        <i class="fas fa-check-circle"></i>
+        <span>Suas apostas foram salvas!</span>
+      </div>
+
       <div class="pontuacao-container" id="pontuacao"></div>
 
       <div class="container">
@@ -1416,13 +1458,27 @@
           const inputs = document.querySelectorAll(
             ".aposta, .resultado, .input-jogo, #nome-rodada"
           );
+          
           inputs.forEach((input) => {
-            input.addEventListener("input", salvarApostasDebounced);
-            input.addEventListener("change", salvarApostasDebounced);
-            input.addEventListener("blur", salvarApostasDebounced);
-            input.addEventListener("keydown", function (event) {
+            input.addEventListener("input", function() {
+              salvarApostasDebounced();
+              mostrarFeedbackApostasCompletas(); // Verifica após cada input
+            });
+            
+            input.addEventListener("change", function() {
+              salvarApostasDebounced();
+              mostrarFeedbackApostasCompletas(); // Verifica após mudança
+            });
+            
+            input.addEventListener("blur", function() {
+              salvarApostasDebounced();
+              mostrarFeedbackApostasCompletas(); // Verifica ao sair do campo
+            });
+            
+            input.addEventListener("keydown", function(event) {
               if (event.key === "Delete" || event.key === "Backspace") {
                 salvarApostasDebounced();
+                mostrarFeedbackApostasCompletas(); // Verifica ao apagar
               }
             });
           });
@@ -1689,6 +1745,7 @@
               await verificarEstadoPlacares();
               await verificarPermissoesUsuario(); // Verificar permissões do usuário
               carregarApostas(); // Carrega as apostas salvas
+              setTimeout(mostrarFeedbackApostasCompletas, 1000);
             } else {
               alert("Nome de usuário ou senha incorretos!");
             }
@@ -1827,6 +1884,52 @@
             .getElementById("nome-rodada")
             .addEventListener("input", salvarApostasDebounced);
         });
+
+        function verificarApostasCompletas() {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+          if (!loggedInUser) return false;
+
+          // Determina qual classe de jogador verificar baseado no usuário logado
+          const jogadorClass =
+            loggedInUser === "Jardel"
+              ? "jogador0"
+              : loggedInUser === "Werbet"
+              ? "jogador1"
+              : loggedInUser === "Nailton"
+              ? "jogador2"
+              : loggedInUser === "Phillipe"
+              ? "jogador3"
+              : null;
+
+          if (!jogadorClass) return false;
+
+          const apostasUsuario = document.querySelectorAll(
+            `.aposta.${jogadorClass}`
+          );
+          let todasPreenchidas = true;
+
+          apostasUsuario.forEach((aposta) => {
+            if (aposta.value === "") {
+              todasPreenchidas = false;
+            }
+          });
+
+          return todasPreenchidas;
+        }
+
+        // Função para mostrar o feedback
+        function mostrarFeedbackApostasCompletas() {
+          const feedback = document.getElementById("feedback-apostas");
+          
+          if (verificarApostasCompletas()) {
+            feedback.classList.add("visible");
+            
+            // Remove o feedback após 3 segundos
+            setTimeout(() => {
+              feedback.classList.remove("visible");
+            }, 3000);
+          }
+        }
 
         function adicionarNavegacaoJogos() {
           const inputsJogos = document.querySelectorAll(".input-jogo");
