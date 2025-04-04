@@ -2539,82 +2539,102 @@
         }
 
         async function buscarCalendario() {
-          const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
+          const url = "/.netlify/functions/fetchMatches";
 
           try {
             const response = await fetch(url);
-            if (!response.ok) {
+            if (!response.ok)
               throw new Error(`Erro de rede: ${response.status}`);
-            }
 
             const data = await response.json();
-            console.log("Dados recebidos:", data);
-
-            // Atualiza as variáveis globais
             todasPartidas = data.matches;
 
             // Agrupa as partidas por rodada
-            partidasPorRodada = {}; // Reinicializa o objeto
+            partidasPorRodada = {};
             todasPartidas.forEach((partida) => {
               const rodada = partida.matchday;
-              if (!partidasPorRodada[rodada]) {
-                partidasPorRodada[rodada] = [];
-              }
+              if (!partidasPorRodada[rodada]) partidasPorRodada[rodada] = [];
               partidasPorRodada[rodada].push(partida);
             });
-
-            console.log("Partidas por rodada:", partidasPorRodada); // Verifica o agrupamento
 
             // Ordena as rodadas por data de início
             const rodadasOrdenadas = Object.keys(partidasPorRodada)
               .map((rodada) => ({
                 rodada: parseInt(rodada),
-                dataInicio: new Date(partidasPorRodada[rodada][0].utcDate), // Data do primeiro jogo da rodada
+                dataInicio: new Date(partidasPorRodada[rodada][0].utcDate),
                 dataFim: new Date(
                   partidasPorRodada[rodada][
                     partidasPorRodada[rodada].length - 1
                   ].utcDate
-                ), // Data do último jogo da rodada
+                ),
               }))
               .sort((a, b) => a.dataInicio - b.dataInicio);
 
-            console.log("Rodadas ordenadas:", rodadasOrdenadas); // Verifica a ordenação
-
-            // Determina a rodada atual com base na data atual
             const dataAtual = new Date();
-            rodadaAtual = 1; // Inicializa com a primeira rodada
+            let rodadaParaExibir = 1;
+
+            // Verifica se há jogos pendentes na rodada atual
+            let rodadaAtualTemJogosPendentes = false;
 
             for (const rodada of rodadasOrdenadas) {
               if (
                 dataAtual >= rodada.dataInicio &&
                 dataAtual <= rodada.dataFim
               ) {
-                rodadaAtual = rodada.rodada;
+                rodadaParaExibir = rodada.rodada;
+
+                const jogosPendentes = partidasPorRodada[rodada.rodada].filter(
+                  (jogo) => {
+                    const dataJogo = new Date(jogo.utcDate);
+                    return (
+                      dataJogo > dataAtual ||
+                      ["SCHEDULED", "TIMED"].includes(jogo.status)
+                    );
+                  }
+                );
+
+                rodadaAtualTemJogosPendentes = jogosPendentes.length > 0;
                 break;
               } else if (dataAtual > rodada.dataFim) {
-                rodadaAtual = rodada.rodada; // Atualiza para a última rodada concluída
+                rodadaParaExibir = rodada.rodada;
               }
             }
 
-            // Define o total de rodadas
+            // Se não há jogos pendentes, verifica a próxima rodada
+            if (!rodadaAtualTemJogosPendentes) {
+              const proximaRodada = rodadasOrdenadas.find(
+                (r) => r.rodada === rodadaParaExibir + 1
+              );
+
+              if (proximaRodada) {
+                // Cria uma data representando 0h do dia anterior ao início da próxima rodada
+                const diaAnterior = new Date(proximaRodada.dataInicio);
+                diaAnterior.setDate(diaAnterior.getDate() - 1);
+                diaAnterior.setHours(0, 0, 0, 0); // Meia-noite do dia anterior
+
+                // Se a data atual é igual ou posterior à meia-noite do dia anterior
+                if (dataAtual >= diaAnterior) {
+                  rodadaParaExibir = proximaRodada.rodada;
+                  console.log(
+                    `Mostrando próxima rodada (${proximaRodada.rodada}) a partir de 0h do dia anterior`
+                  );
+                }
+              }
+            }
+
             totalRodadas = rodadasOrdenadas.length;
+            rodadaAtual = rodadaParaExibir;
 
-            console.log("Rodada atual:", rodadaAtual); // Verifica a rodada atual
-            console.log("Total de rodadas:", totalRodadas); // Verifica o total de rodadas
-
-            // Exibe a rodada atual
+            console.log("Rodada a ser exibida:", rodadaAtual);
             exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-
-            // Atualiza a navegação
             atualizarNavegacao();
           } catch (error) {
             console.error("Erro ao buscar dados:", error);
             document.getElementById("calendario-jogos").innerHTML = `
-        <div class="error">
-          <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
-          <p>Por favor, tente novamente mais tarde ou verifique sua conexão com a internet.</p>
-        </div>
-      `;
+      <div class="error">
+        <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
+      </div>
+    `;
           }
         }
 
