@@ -484,40 +484,48 @@
 
       /* estilos do feedback visual de apostas salvas*/
       .feedback-completo {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--color-secondary);
-    color: white;
-    padding: var(--space-md) var(--space-lg);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    z-index: 10000;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-  }
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--color-secondary);
+        color: white;
+        padding: var(--space-md) var(--space-lg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+      }
 
-  .feedback-completo.visible {
-    opacity: 1;
-  }
+      .feedback-completo.visible {
+        opacity: 1;
+      }
 
-  .feedback-completo i {
-    font-size: 1.5rem;
-  }
+      .feedback-completo i {
+        font-size: 1.5rem;
+      }
 
-  @keyframes slideIn {
-    from { bottom: -50px; }
-    to { bottom: 20px; }
-  }
+      @keyframes slideIn {
+        from {
+          bottom: -50px;
+        }
+        to {
+          bottom: 20px;
+        }
+      }
 
-  @keyframes slideOut {
-    from { bottom: 20px; }
-    to { bottom: -50px; }
-  }
+      @keyframes slideOut {
+        from {
+          bottom: 20px;
+        }
+        to {
+          bottom: -50px;
+        }
+      }
 
       /* Dark mode styles */
       body.dark-mode .input-placar {
@@ -1458,24 +1466,24 @@
           const inputs = document.querySelectorAll(
             ".aposta, .resultado, .input-jogo, #nome-rodada"
           );
-          
+
           inputs.forEach((input) => {
-            input.addEventListener("input", function() {
+            input.addEventListener("input", function () {
               salvarApostasDebounced();
               mostrarFeedbackApostasCompletas(); // Verifica após cada input
             });
-            
-            input.addEventListener("change", function() {
+
+            input.addEventListener("change", function () {
               salvarApostasDebounced();
               mostrarFeedbackApostasCompletas(); // Verifica após mudança
             });
-            
-            input.addEventListener("blur", function() {
+
+            input.addEventListener("blur", function () {
               salvarApostasDebounced();
               mostrarFeedbackApostasCompletas(); // Verifica ao sair do campo
             });
-            
-            input.addEventListener("keydown", function(event) {
+
+            input.addEventListener("keydown", function (event) {
               if (event.key === "Delete" || event.key === "Backspace") {
                 salvarApostasDebounced();
                 mostrarFeedbackApostasCompletas(); // Verifica ao apagar
@@ -1920,10 +1928,10 @@
         // Função para mostrar o feedback
         function mostrarFeedbackApostasCompletas() {
           const feedback = document.getElementById("feedback-apostas");
-          
+
           if (verificarApostasCompletas()) {
             feedback.classList.add("visible");
-            
+
             // Remove o feedback após 3 segundos
             setTimeout(() => {
               feedback.classList.remove("visible");
@@ -2734,13 +2742,16 @@
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
           // Verifica se a rodada que está sendo preenchida já é a mesma que está sendo exibida
           if (rodadaExibida === rodada) {
-            console.log(`A tabela já está preenchida com a Rodada ${rodada}.`);
-            return; // Não faz nada se a rodada já estiver sendo exibida
+            console.log(
+              `A tabela já está preenchida com a Rodada ${rodada}. Atualizando apenas resultados...`
+            );
+            await atualizarTabela(); // Atualiza apenas os resultados
+            return;
           }
 
           // Pergunta antes de preencher a tabela
           const confirmacao = confirm(
-            `Deseja preencher a tabela com a Rodada ${rodada}?`
+            `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`
           );
           if (!confirmacao) {
             console.log("Preenchimento cancelado pelo usuário.");
@@ -2767,6 +2778,17 @@
               return;
             }
 
+            // Limpa as apostas existentes
+            const apostasIniciais = {
+              Jardel: Array(10).fill({ time1: "", time2: "" }),
+              Werbet: Array(10).fill({ time1: "", time2: "" }),
+              Nailton: Array(10).fill({ time1: "", time2: "" }),
+              Phillipe: Array(10).fill({ time1: "", time2: "" }),
+            };
+
+            // Prepara resultados iniciais
+            const resultadosIniciais = Array(10).fill({ time1: "", time2: "" });
+
             // Atualiza os dados da tabela principal
             dadosTabelaPrincipal.nomeRodada = `Rodada ${rodada}`;
             dadosTabelaPrincipal.jogos = jogosRodadaAtual.map((partida) => ({
@@ -2777,19 +2799,22 @@
             // Preenche os resultados reais (se disponíveis)
             dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(
               (partida) => ({
-                casa: partida.score.fullTime.home?.toString() ?? "", // Usa o operador ?. e ?? para tratar null/undefined
-                fora: partida.score.fullTime.away?.toString() ?? "", // Usa o operador ?. e ?? para tratar null/undefined
+                casa: partida.score.fullTime.home?.toString() ?? "",
+                fora: partida.score.fullTime.away?.toString() ?? "",
               })
             );
 
-            // Preenche a tabela principal
-            preencherTabelaPrincipalHTML();
+            // Preenche a tabela principal com apostas vazias
+            preencherTabelaPrincipalHTML(apostasIniciais, resultadosIniciais);
 
             // Atualiza a variável global com a rodada exibida
             rodadaExibida = rodada;
 
             // Força o salvamento dos dados após preencher a tabela
             await salvarApostas();
+
+            // Inicia a atualização automática
+            iniciarAtualizacaoAutomatica();
           } catch (error) {
             console.error("Erro ao buscar dados da tabela principal:", error);
             alert(
@@ -2798,10 +2823,17 @@
           }
         }
         // Função para preencher o HTML da tabela principal
-        function preencherTabelaPrincipalHTML() {
-          // Primeiro, obtemos os valores atuais das apostas e resultados
-          const apostasAtuais = obterApostasDaTabela();
-          const resultadosAtuais = obterResultadosDaTabela();
+        function preencherTabelaPrincipalHTML(
+          apostasAtuais = null,
+          resultadosAtuais = null
+        ) {
+          // Se não forem fornecidos, obtemos os valores atuais
+          if (!apostasAtuais) {
+            apostasAtuais = obterApostasDaTabela();
+          }
+          if (!resultadosAtuais) {
+            resultadosAtuais = obterResultadosDaTabela();
+          }
 
           const tabelaApostas = document.getElementById("tabela-apostas");
           tabelaApostas.innerHTML = ""; // Limpa a tabela
@@ -2822,7 +2854,7 @@
               timesInfo[jogo.fora]?.abrev ||
               jogo.fora.substring(0, 3).toUpperCase();
 
-            // Obtém os valores atuais das apostas para este jogo (se existirem)
+            // Obtém os valores das apostas para este jogo
             const apostaJardel = apostasAtuais.Jardel[index] || {
               time1: "",
               time2: "",
@@ -2924,17 +2956,21 @@
           try {
             console.log("Iniciando atualização da tabela...");
 
-            // Se não há rodada exibida, usa a rodada atual
-            const rodadaParaAtualizar = rodadaExibida || rodadaAtual;
-
-            if (!rodadaParaAtualizar) {
-              console.log("Nenhuma rodada definida para atualização.");
+            // Se não há rodada exibida, não atualiza
+            if (!rodadaExibida) {
+              console.log("Nenhuma rodada exibida na tabela principal.");
               return;
             }
 
-            console.log(
-              `Atualizando tabela para rodada ${rodadaParaAtualizar}...`
-            );
+            // Verifica se a rodada exibida na tabela principal é diferente da rodada atual do calendário
+            if (rodadaExibida !== rodadaAtual) {
+              console.log(
+                `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando.`
+              );
+              return;
+            }
+
+            console.log(`Atualizando tabela para rodada ${rodadaExibida}...`);
 
             // Busca os dados mais recentes
             const response = await fetch("/.netlify/functions/fetchMatches");
@@ -2942,12 +2978,12 @@
 
             const data = await response.json();
             const jogosRodada = data.matches.filter(
-              (m) => m.matchday === rodadaParaAtualizar
+              (m) => m.matchday === rodadaExibida
             );
 
             if (jogosRodada.length === 0) {
               console.log(
-                `Nenhum jogo encontrado para rodada ${rodadaParaAtualizar}`
+                `Nenhum jogo encontrado para rodada ${rodadaExibida}`
               );
               return;
             }
@@ -3069,15 +3105,9 @@
         // Modifique o evento do botão "Preencher Tabela"
         document
           .getElementById("preencher-tabela-principal")
-          .addEventListener("click", async () => {
-            const confirmacao = confirm(
-              `Deseja preencher a tabela com a Rodada ${rodadaAtual}?`
-            );
-            if (confirmacao) {
-              await preencherTabelaPrincipalComRodadaAtual(rodadaAtual);
-              iniciarAtualizacaoAutomatica();
-            }
-          });
+          .addEventListener("click", () =>
+            preencherTabelaPrincipalComRodadaAtual(rodadaAtual)
+          );
 
         // Inicia a atualização automática se já houver uma rodada exibida
         document.addEventListener("DOMContentLoaded", () => {
