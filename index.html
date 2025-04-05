@@ -2094,6 +2094,12 @@
               placares_ocultos,
             } = data[0];
 
+            // Extrai o número da rodada do nome_rodada (assumindo formato "Rodada X")
+            if (nome_rodada && nome_rodada.includes("Rodada")) {
+              rodadaExibida = parseInt(nome_rodada.split(" ")[1]);
+              console.log(`Rodada exibida definida como: ${rodadaExibida}`);
+            }
+
             // Preenche o nome da rodada
             document.getElementById("nome-rodada").value = nome_rodada || "";
 
@@ -2760,6 +2766,9 @@
         };
 
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
+          // Atualiza a variável global com a rodada exibida
+          rodadaExibida = rodada;
+          console.log(`Rodada exibida definida como: ${rodadaExibida}`);
           // Verifica se a rodada que está sendo preenchida já é a mesma que está sendo exibida
           if (rodadaExibida === rodada) {
             console.log(
