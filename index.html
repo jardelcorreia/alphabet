@@ -2111,6 +2111,10 @@
 
             preencherTabela(jogos, apostas, resultados);
             calcularPontuacao(); // Calcula a pontuação após carregar os dados
+            // Atualiza a tabela imediatamente após carregar
+            await atualizarTabela();
+            // Inicia a atualização automática
+            iniciarAtualizacaoAutomatica();
 
             // Aplica o estado de visibilidade
             if (placares_ocultos) {
@@ -2985,10 +2989,16 @@
           try {
             console.log("Iniciando atualização da tabela...");
 
-            // Se não há rodada exibida, não atualiza
+            // Se não há rodada exibida, tenta determinar a rodada atual
             if (!rodadaExibida) {
-              console.log("Nenhuma rodada exibida na tabela principal.");
-              return;
+              await buscarCalendario(); // Isso vai definir rodadaAtual
+              if (rodadaAtual) {
+                rodadaExibida = rodadaAtual;
+                console.log(`Definindo rodada exibida como: ${rodadaExibida}`);
+              } else {
+                console.log("Nenhuma rodada disponível para atualização.");
+                return;
+              }
             }
 
             // Verifica se a rodada exibida na tabela principal é diferente da rodada atual do calendário
