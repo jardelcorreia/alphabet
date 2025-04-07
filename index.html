@@ -2722,14 +2722,16 @@
           </div>
           
           ${
-            temPlacar
+            (partida.status === 'FINISHED' || partida.status === 'IN_PLAY' || partida.status === 'PAUSED') && 
+            partida.score.fullTime.home !== null && 
+            partida.score.fullTime.away !== null
               ? `
-            <div class="placar">
-              <span>${partida.score.fullTime.home}</span>
-              <span class="placar-separator">:</span>
-              <span>${partida.score.fullTime.away}</span>
-            </div>
-          `
+              <div class="placar">
+                <span>${partida.score.fullTime.home}</span>
+                <span class="placar-separator">:</span>
+                <span>${partida.score.fullTime.away}</span>
+              </div>
+            `
               : ""
           }
           
@@ -2984,76 +2986,74 @@
 
         // Função melhorada para atualizar a tabela
         async function atualizarTabela() {
-          try {
-            console.log("[Atualização] Iniciando verificação de atualizações...");
-        
-            // Verificação de rodada
-            if (!rodadaExibida) {
-              console.log("[Atualização] Nenhuma rodada definida. Buscando calendário...");
-              await buscarCalendario();
-              if (rodadaAtual) {
-                rodadaExibida = rodadaAtual;
-                console.log(`[Atualização] Rodada definida como: ${rodadaExibida}`);
-              } else {
-                console.log("[Atualização] Nenhuma rodada disponível para atualização.");
-                return;
-              }
-            }
-        
-            if (rodadaExibida !== rodadaAtual) {
-              console.log(`[Atualização] Conflito de rodadas (Tabela: ${rodadaExibida} vs Calendário: ${rodadaAtual}). Abortando.`);
-              return;
-            }
-        
-            // Busca os dados sem cache
-            const response = await fetch(`/.netlify/functions/fetchMatches?t=${Date.now()}`);
-            if (!response.ok) {
-              throw new Error(`[Atualização] Erro HTTP ${response.status}`);
-            }
-        
-            const data = await response.json();
-            const jogosRodada = data.matches.filter(m => m.matchday === rodadaExibida);
-        
-            if (jogosRodada.length === 0) {
-              console.log(`[Atualização] Nenhum jogo encontrado para a rodada ${rodadaExibida}`);
-              return;
-            }
-        
-            // Processamento silencioso
-            const resultadosAtuais = obterResultadosDaTabela();
-            const inputsResultados = document.querySelectorAll(".resultado");
-            let atualizacoes = 0;
-        
-            jogosRodada.forEach((partida, index) => {
-              if (partida.score.fullTime.home !== null && partida.score.fullTime.away !== null) {
-                const novoResultadoCasa = partida.score.fullTime.home.toString();
-                const novoResultadoFora = partida.score.fullTime.away.toString();
-                const resultadoAtual = resultadosAtuais[index] || { time1: "", time2: "" };
-        
-                if (resultadoAtual.time1 !== novoResultadoCasa || resultadoAtual.time2 !== novoResultadoFora) {
-                  resultadosAtuais[index] = { time1: novoResultadoCasa, time2: novoResultadoFora };
-                  
-                  if (inputsResultados[index * 2] && inputsResultados[index * 2 + 1]) {
-                    inputsResultados[index * 2].value = novoResultadoCasa;
-                    inputsResultados[index * 2 + 1].value = novoResultadoFora;
-                    atualizacoes++;
-                  }
+            try {
+              console.log("[Atualização] Iniciando verificação de atualizações...");
+          
+              // Verificação de rodada
+              if (!rodadaExibida) {
+                console.log("[Atualização] Nenhuma rodada definida. Buscando calendário...");
+                await buscarCalendario();
+                if (rodadaAtual) {
+                  rodadaExibida = rodadaAtual;
+                  console.log(`[Atualização] Rodada definida como: ${rodadaExibida}`);
+                } else {
+                  console.log("[Atualização] Nenhuma rodada disponível para atualização.");
+                  return;
                 }
               }
-            });
-        
-            if (atualizacoes > 0) {
-              console.log(`[Atualização] ${atualizacoes} placar(es) atualizado(s)`);
-              await salvarResultadosNoSupabase(resultadosAtuais);
-              calcularPontuacao();
-            } else {
-              console.log("[Atualização] Nenhuma mudança detectada nos placares");
+          
+              // Busca os dados mais recentes
+              const response = await fetch(`/.netlify/functions/fetchMatches?t=${Date.now()}`);
+              if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
+          
+              const data = await response.json();
+              const jogosRodada = data.matches.filter(m => m.matchday === rodadaExibida);
+          
+              if (jogosRodada.length === 0) {
+                console.log(`[Atualização] Nenhum jogo encontrado para a rodada ${rodadaExibida}`);
+                return;
+              }
+          
+              const resultadosAtuais = obterResultadosDaTabela();
+              const inputsResultados = document.querySelectorAll(".resultado");
+              let atualizacoes = 0;
+          
+              jogosRodada.forEach((partida, index) => {
+                // Atualiza apenas para jogos finalizados ou em andamento com placar válido
+                if ((partida.status === 'FINISHED' || partida.status === 'IN_PLAY' || partida.status === 'PAUSED') &&
+                    partida.score.fullTime.home !== null && 
+                    partida.score.fullTime.away !== null) {
+                  
+                  const novoResultadoCasa = partida.score.fullTime.home.toString();
+                  const novoResultadoFora = partida.score.fullTime.away.toString();
+                  const resultadoAtual = resultadosAtuais[index] || { time1: "", time2: "" };
+          
+                  // Só atualiza se houve mudança
+                  if (resultadoAtual.time1 !== novoResultadoCasa || resultadoAtual.time2 !== novoResultadoFora) {
+                    resultadosAtuais[index] = { time1: novoResultadoCasa, time2: novoResultadoFora };
+                    
+                    if (inputsResultados[index * 2] && inputsResultados[index * 2 + 1]) {
+                      inputsResultados[index * 2].value = novoResultadoCasa;
+                      inputsResultados[index * 2 + 1].value = novoResultadoFora;
+                      atualizacoes++;
+                    }
+                  }
+                }
+              });
+          
+              if (atualizacoes > 0) {
+                console.log(`[Atualização] ${atualizacoes} placar(es) atualizado(s)`);
+                await salvarResultadosNoSupabase(resultadosAtuais);
+                calcularPontuacao();
+                
+                // Atualiza o calendário de jogos para refletir as mudanças
+                exibirRodada(rodadaExibida, jogosRodada);
+              }
+          
+            } catch (error) {
+              console.error(`[Atualização] Erro: ${error.message}`);
             }
-        
-          } catch (error) {
-            console.error(`[Atualização] Erro: ${error.message}`);
           }
-        }
 
         // Função para salvar apenas os resultados no Supabase
         async function salvarResultadosNoSupabase(resultados) {
