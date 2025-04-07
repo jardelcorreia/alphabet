@@ -1884,6 +1884,8 @@
           adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
           carregarApostas();
           createAdvancedTitle(); // Carrega as apostas salvas
+          // Inicia a atualização automática
+          iniciarAtualizacaoAutomatica();
 
           // Adiciona evento de input para o nome da rodada
           document
@@ -2110,7 +2112,7 @@
             preencherTabela(jogos, apostas, resultados);
             calcularPontuacao(); // Calcula a pontuação após carregar os dados
             // Atualiza a tabela imediatamente após carregar
-            await atualizarTabela();
+            await atualizarTabela();            
             // Inicia a atualização automática
             iniciarAtualizacaoAutomatica();
 
@@ -2247,7 +2249,7 @@
         }
 
         // Função para calcular a pontuação automaticamente ao digitar ou apagar apostas
-        function calcularPontuacao() {
+        async function calcularPontuacao() {
           const apostas = obterApostasDaTabela();
           const resultados = obterResultadosDaTabela();
           const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
@@ -2263,60 +2265,49 @@
             const resultadoCasa = resultados[i].time1;
             const resultadoFora = resultados[i].time2;
 
-            // Ignora jogos sem resultado
             if (resultadoCasa === "" || resultadoFora === "") continue;
 
             jogadores.forEach((jogador) => {
               const apostaCasa = apostas[jogador][i].time1;
               const apostaFora = apostas[jogador][i].time2;
 
-              // Ignora apostas em branco
               if (apostaCasa === "" || apostaFora === "") return;
 
               if (
                 apostaCasa === resultadoCasa &&
                 apostaFora === resultadoFora
               ) {
-                pontos[jogador] += 3; // Acertou o placar exato
-                placaresExatos[jogador] += 1; // Incrementa o contador de placares exatos
+                pontos[jogador] += 3;
+                placaresExatos[jogador] += 1;
               } else if (
                 (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
                 (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
                 (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
               ) {
-                pontos[jogador] += 1; // Acertou o vencedor ou empate
+                pontos[jogador] += 1;
               }
             });
           }
 
-          // Ordena os jogadores por pontuação (do maior para o menor) e, em caso de empate, por placares exatos
+          // Salva o histórico da rodada atual
+          await salvarHistoricoPontuacao(pontos);
+
+          // Restante da função (exibição dos resultados)
           const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
-            if (b[1] !== a[1]) {
-              return b[1] - a[1]; // Ordena por pontuação decrescente
-            } else {
-              // Em caso de empate, ordena pelo número de placares exatos
-              const placaresExatosA = placaresExatos[a[0]];
-              const placaresExatosB = placaresExatos[b[0]];
-              return placaresExatosB - placaresExatosA;
-            }
+            if (b[1] !== a[1]) return b[1] - a[1];
+            return placaresExatos[b[0]] - placaresExatos[a[0]];
           });
 
-          // Verifica a pontuação máxima
           const pontuacaoMaxima = jogadoresOrdenados[0][1];
-
-          // Verifica se todos os jogadores estão com 0 pontos
           const todosZerados = jogadoresOrdenados.every(
             ([_, pontuacao]) => pontuacao === 0
           );
-
-          // Se todos estiverem zerados, não há vencedores
           const vencedores = todosZerados
             ? []
             : jogadoresOrdenados.filter(
                 ([_, pontuacao]) => pontuacao === pontuacaoMaxima
               );
 
-          // Atualiza a exibição da pontuação
           const pontuacaoHTML = jogadoresOrdenados
             .map(([jogador, pontuacao]) => {
               const isVencedor = vencedores.some(
@@ -2325,13 +2316,52 @@
               return `<div class="pontuacao-card ${
                 isVencedor ? "vencedor" : ""
               }"><h3>${jogador}</h3>
-              <span>
-              <p>${pontuacao} pontos</p>
-              <p>Placares exatos: ${placaresExatos[jogador]}</p></div>`;
+        <span>
+        <p>${pontuacao} pontos</p>
+        <p>Placares exatos: ${placaresExatos[jogador]}</p></div>`;
             })
             .join("");
 
           document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+        }
+
+        async function salvarHistoricoPontuacao(pontos) {
+          try {
+            // Busca o registro atual
+            const { data, error: fetchError } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (fetchError) throw fetchError;
+
+            if (!data || data.length === 0) {
+              console.log(
+                "Nenhum registro encontrado para atualizar o histórico"
+              );
+              return;
+            }
+
+            const nomeRodada =
+              document.getElementById("nome-rodada").value || "Rodada sem nome";
+            const historicoAtual = data[0].historico_pontuacao || {};
+
+            // Adiciona a pontuação atual ao histórico
+            historicoAtual[nomeRodada] = pontos;
+
+            // Atualiza apenas o histórico no registro existente
+            const { error: updateError } = await supabaseClient
+              .from("alphabet_table")
+              .update({ historico_pontuacao: historicoAtual })
+              .eq("id", data[0].id);
+
+            if (updateError) throw updateError;
+
+            console.log("Histórico de pontuação salvo com sucesso");
+          } catch (error) {
+            console.error("Erro ao salvar histórico de pontuação:", error);
+          }
         }
 
         // Adiciona eventos de input e keydown para recalcular a pontuação ao digitar ou apagar apostas
@@ -2985,73 +3015,102 @@
         // Função melhorada para atualizar a tabela
         async function atualizarTabela() {
           try {
-            console.log("[Atualização] Iniciando verificação de atualizações...");
-        
-            // Verificação de rodada
+            console.log("Iniciando atualização da tabela...");
+
+            // Se não há rodada exibida, tenta determinar a rodada atual
             if (!rodadaExibida) {
-              console.log("[Atualização] Nenhuma rodada definida. Buscando calendário...");
-              await buscarCalendario();
+              await buscarCalendario(); // Isso vai definir rodadaAtual
               if (rodadaAtual) {
                 rodadaExibida = rodadaAtual;
-                console.log(`[Atualização] Rodada definida como: ${rodadaExibida}`);
+                console.log(`Definindo rodada exibida como: ${rodadaExibida}`);
               } else {
-                console.log("[Atualização] Nenhuma rodada disponível para atualização.");
+                console.log("Nenhuma rodada disponível para atualização.");
                 return;
               }
             }
-        
+
+            // Verifica se a rodada exibida na tabela principal é diferente da rodada atual do calendário
             if (rodadaExibida !== rodadaAtual) {
-              console.log(`[Atualização] Conflito de rodadas (Tabela: ${rodadaExibida} vs Calendário: ${rodadaAtual}). Abortando.`);
+              console.log(
+                `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando.`
+              );
               return;
             }
-        
-            // Busca os dados sem cache
-            const response = await fetch(`/.netlify/functions/fetchMatches?t=${Date.now()}`);
-            if (!response.ok) {
-              throw new Error(`[Atualização] Erro HTTP ${response.status}`);
-            }
-        
+
+            console.log(`Atualizando tabela para rodada ${rodadaExibida}...`);
+
+            // Busca os dados mais recentes
+            const response = await fetch("/.netlify/functions/fetchMatches");
+            if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+
             const data = await response.json();
-            const jogosRodada = data.matches.filter(m => m.matchday === rodadaExibida);
-        
+            const jogosRodada = data.matches.filter(
+              (m) => m.matchday === rodadaExibida
+            );
+
             if (jogosRodada.length === 0) {
-              console.log(`[Atualização] Nenhum jogo encontrado para a rodada ${rodadaExibida}`);
+              console.log(
+                `Nenhum jogo encontrado para rodada ${rodadaExibida}`
+              );
               return;
             }
-        
-            // Processamento silencioso
+
+            // Atualiza apenas os resultados (não sobrescreve as apostas)
             const resultadosAtuais = obterResultadosDaTabela();
             const inputsResultados = document.querySelectorAll(".resultado");
-            let atualizacoes = 0;
-        
+            let resultadosModificados = false;
+
             jogosRodada.forEach((partida, index) => {
-              if (partida.score.fullTime.home !== null && partida.score.fullTime.away !== null) {
-                const novoResultadoCasa = partida.score.fullTime.home.toString();
-                const novoResultadoFora = partida.score.fullTime.away.toString();
-                const resultadoAtual = resultadosAtuais[index] || { time1: "", time2: "" };
-        
-                if (resultadoAtual.time1 !== novoResultadoCasa || resultadoAtual.time2 !== novoResultadoFora) {
-                  resultadosAtuais[index] = { time1: novoResultadoCasa, time2: novoResultadoFora };
-                  
-                  if (inputsResultados[index * 2] && inputsResultados[index * 2 + 1]) {
+              if (
+                partida.score.fullTime.home !== null &&
+                partida.score.fullTime.away !== null
+              ) {
+                // Verifica se o resultado é diferente do atual
+                const resultadoAtual = resultadosAtuais[index] || {
+                  time1: "",
+                  time2: "",
+                };
+                const novoResultadoCasa =
+                  partida.score.fullTime.home.toString();
+                const novoResultadoFora =
+                  partida.score.fullTime.away.toString();
+
+                if (
+                  resultadoAtual.time1 !== novoResultadoCasa ||
+                  resultadoAtual.time2 !== novoResultadoFora
+                ) {
+                  resultadosModificados = true;
+
+                  // Atualiza os resultados atuais
+                  resultadosAtuais[index] = {
+                    time1: novoResultadoCasa,
+                    time2: novoResultadoFora,
+                  };
+
+                  // Atualiza os inputs
+                  if (
+                    inputsResultados[index * 2] &&
+                    inputsResultados[index * 2 + 1]
+                  ) {
                     inputsResultados[index * 2].value = novoResultadoCasa;
                     inputsResultados[index * 2 + 1].value = novoResultadoFora;
-                    atualizacoes++;
                   }
                 }
               }
             });
-        
-            if (atualizacoes > 0) {
-              console.log(`[Atualização] ${atualizacoes} placar(es) atualizado(s)`);
+
+            if (resultadosModificados) {
+              // Salva os resultados atualizados no Supabase
               await salvarResultadosNoSupabase(resultadosAtuais);
-              calcularPontuacao();
+              console.log("Resultados atualizados e salvos no Supabase!");
             } else {
-              console.log("[Atualização] Nenhuma mudança detectada nos placares");
+              console.log("Nenhum resultado novo para atualizar.");
             }
-        
+
+            // Recalcula a pontuação
+            calcularPontuacao();
           } catch (error) {
-            console.error(`[Atualização] Erro: ${error.message}`);
+            console.error("Erro ao atualizar tabela:", error);
           }
         }
 
@@ -3116,6 +3175,13 @@
           .addEventListener("click", () =>
             preencherTabelaPrincipalComRodadaAtual(rodadaAtual)
           );
+
+        // Inicia a atualização automática se já houver uma rodada exibida
+        document.addEventListener("DOMContentLoaded", () => {
+          if (rodadaExibida) {
+            iniciarAtualizacaoAutomatica();
+          }
+        });
 
         // Garante que o intervalo seja limpo ao sair
         window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
