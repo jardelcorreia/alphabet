@@ -3146,13 +3146,6 @@
             preencherTabelaPrincipalComRodadaAtual(rodadaAtual)
           );
 
-        // Inicia a atualização automática se já houver uma rodada exibida
-        document.addEventListener("DOMContentLoaded", () => {
-          if (rodadaExibida) {
-            iniciarAtualizacaoAutomatica();
-          }
-        });
-
         // Garante que o intervalo seja limpo ao sair
         window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
       </script>
