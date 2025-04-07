@@ -1884,8 +1884,6 @@
           adicionarEventosCalculoPontuacao(); // Adiciona eventos para calcular a pontuação
           carregarApostas();
           createAdvancedTitle(); // Carrega as apostas salvas
-          // Inicia a atualização automática
-          iniciarAtualizacaoAutomatica();
 
           // Adiciona evento de input para o nome da rodada
           document
@@ -3139,13 +3137,6 @@
             preencherTabelaPrincipalComRodadaAtual(rodadaAtual);
           } else {
             alert("Por favor, aguarde até que os dados do calendário sejam carregados.");
-          }
-        });
-
-        // Inicia a atualização automática se já houver uma rodada exibida
-        document.addEventListener("DOMContentLoaded", () => {
-          if (rodadaExibida) {
-            iniciarAtualizacaoAutomatica();
           }
         });
 
