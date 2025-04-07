@@ -2770,47 +2770,40 @@
         };
 
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
-          // Atualiza a variável global com a rodada exibida
-          rodadaExibida = rodada;
-          console.log(`Rodada exibida definida como: ${rodadaExibida}`);
           // Verifica se a rodada que está sendo preenchida já é a mesma que está sendo exibida
           if (rodadaExibida === rodada) {
-            console.log(
-              `A tabela já está preenchida com a Rodada ${rodada}. Atualizando apenas resultados...`
-            );
+            console.log(`A tabela já está preenchida com a Rodada ${rodada}. Atualizando apenas resultados...`);
             await atualizarTabela(); // Atualiza apenas os resultados
             return;
           }
-
+        
           // Pergunta antes de preencher a tabela
-          const confirmacao = confirm(
-            `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`
-          );
+          const confirmacao = confirm(`Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`);
           if (!confirmacao) {
             console.log("Preenchimento cancelado pelo usuário.");
             return; // Cancela o preenchimento se o usuário não confirmar
           }
-
+        
           const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
-
+        
           try {
             const response = await fetch(url);
             if (!response.ok) {
               throw new Error(`Erro de rede: ${response.status}`);
             }
-
+        
             const data = await response.json();
-
+        
             // Filtra os jogos da rodada atual
             const jogosRodadaAtual = data.matches.filter(
               (partida) => partida.matchday === rodada
             );
-
+        
             if (jogosRodadaAtual.length === 0) {
               console.log(`Nenhum jogo encontrado para a rodada ${rodada}.`);
               return;
             }
-
+        
             // Limpa as apostas existentes
             const apostasIniciais = {
               Jardel: Array(10).fill({ time1: "", time2: "" }),
@@ -2818,17 +2811,17 @@
               Nailton: Array(10).fill({ time1: "", time2: "" }),
               Phillipe: Array(10).fill({ time1: "", time2: "" }),
             };
-
+        
             // Prepara resultados iniciais
             const resultadosIniciais = Array(10).fill({ time1: "", time2: "" });
-
+        
             // Atualiza os dados da tabela principal
             dadosTabelaPrincipal.nomeRodada = `Rodada ${rodada}`;
             dadosTabelaPrincipal.jogos = jogosRodadaAtual.map((partida) => ({
               casa: partida.homeTeam.name,
               fora: partida.awayTeam.name,
             }));
-
+        
             // Preenche os resultados reais (se disponíveis)
             dadosTabelaPrincipal.resultados = jogosRodadaAtual.map(
               (partida) => ({
@@ -2836,23 +2829,22 @@
                 fora: partida.score.fullTime.away?.toString() ?? "",
               })
             );
-
+        
             // Preenche a tabela principal com apostas vazias
             preencherTabelaPrincipalHTML(apostasIniciais, resultadosIniciais);
-
+        
             // Atualiza a variável global com a rodada exibida
             rodadaExibida = rodada;
-
+            console.log(`Rodada exibida definida como: ${rodadaExibida}`);
+        
             // Força o salvamento dos dados após preencher a tabela
             await salvarApostas();
-
+        
             // Inicia a atualização automática
             iniciarAtualizacaoAutomatica();
           } catch (error) {
             console.error("Erro ao buscar dados da tabela principal:", error);
-            alert(
-              "Erro ao carregar os dados da tabela principal. Tente novamente."
-            );
+            alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
           }
         }
         // Função para preencher o HTML da tabela principal
@@ -3141,12 +3133,14 @@
           }
         }
 
-        // Modifique o evento do botão "Preencher Tabela"
-        document
-          .getElementById("preencher-tabela-principal")
-          .addEventListener("click", () =>
-            preencherTabelaPrincipalComRodadaAtual(rodadaAtual)
-          );
+        document.getElementById("preencher-tabela-principal").addEventListener("click", () => {
+          // Verifica se rodadaAtual está definida (deve ser definida pela função buscarCalendario)
+          if (typeof rodadaAtual !== 'undefined') {
+            preencherTabelaPrincipalComRodadaAtual(rodadaAtual);
+          } else {
+            alert("Por favor, aguarde até que os dados do calendário sejam carregados.");
+          }
+        });
 
         // Inicia a atualização automática se já houver uma rodada exibida
         document.addEventListener("DOMContentLoaded", () => {
