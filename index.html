@@ -2983,78 +2983,89 @@
         let intervaloAtualizacao = null;
 
         // Função melhorada para atualizar a tabela
-        async function atualizarTabela() {
-          try {
-            console.log("[Atualização] Iniciando verificação de atualizações...");
-        
-            // Verificação de rodada
-            if (!rodadaExibida) {
-              console.log("[Atualização] Nenhuma rodada definida. Buscando calendário...");
+        let cacheResultados = {}; // Armazena o último estado conhecido
+
+          async function atualizarTabela() {
+            try {
+              console.log("[SYNC] Iniciando verificação...");
+              
+              if (!rodadaExibida && !(await definirRodadaAutomatica())) {
+                return;
+              }
+          
+              const data = await fetchMatches();
+              const jogosRodada = data.matches
+                .filter(m => m.matchday === rodadaExibida)
+                .map(jogo => ({
+                  id: jogo.id,
+                  status: jogo.status,
+                  casa: jogo.score.fullTime.home,
+                  fora: jogo.score.fullTime.away,
+                  lastUpdated: new Date(jogo.lastUpdated).getTime()
+                }));
+          
+              let atualizacoes = 0;
+              const resultadosAtuais = obterResultadosDaTabela();
+          
+              jogosRodada.forEach((jogo, index) => {
+                if (jogo.status === 'FINISHED' && cacheResultados[jogo.id]?.status === 'FINISHED') {
+                  console.log(`[SYNC] Jogo ${jogo.id} já finalizado - ignorando`);
+                  return;
+                }
+          
+                const precisaAtualizar = 
+                  !cacheResultados[jogo.id] ||
+                  cacheResultados[jogo.id].lastUpdated < jogo.lastUpdated ||
+                  cacheResultados[jogo.id].casa !== jogo.casa ||
+                  cacheResultados[jogo.id].fora !== jogo.fora;
+          
+                if (precisaAtualizar && jogo.casa !== null && jogo.fora !== null) {
+                  resultadosAtuais[index] = { 
+                    time1: jogo.casa.toString(), 
+                    time2: jogo.fora.toString() 
+                  };
+                  
+                  const inputs = document.querySelectorAll(`.jogo[data-id="${jogo.id}"] .resultado`);
+                  if (inputs.length === 2) {
+                    inputs[0].value = jogo.casa;
+                    inputs[1].value = jogo.fora;
+                    atualizacoes++;
+                  }
+          
+                  cacheResultados[jogo.id] = {
+                    status: jogo.status,
+                    casa: jogo.casa,
+                    fora: jogo.fora,
+                    lastUpdated: jogo.lastUpdated
+                  };
+                }
+              });
+          
+              if (atualizacoes > 0) {
+                await salvarResultadosNoSupabase(resultadosAtuais);
+                calcularPontuacao();
+                console.log(`[SYNC] ${atualizacoes} atualizações válidas`);
+              } else {
+                console.log('[SYNC] Nenhuma atualização necessária');
+              }
+          
+            } catch (error) {
+              console.error('[SYNC] Erro:', error);
+            }
+          }
+          
+          async function definirRodadaAutomatica() {
+            try {
               await buscarCalendario();
               if (rodadaAtual) {
                 rodadaExibida = rodadaAtual;
-                console.log(`[Atualização] Rodada definida como: ${rodadaExibida}`);
-              } else {
-                console.log("[Atualização] Nenhuma rodada disponível para atualização.");
-                return;
+                return true;
               }
+            } catch (e) {
+              console.warn('[SYNC] Falha ao definir rodada:', e);
             }
-        
-            if (rodadaExibida !== rodadaAtual) {
-              console.log(`[Atualização] Conflito de rodadas (Tabela: ${rodadaExibida} vs Calendário: ${rodadaAtual}). Abortando.`);
-              return;
-            }
-        
-            // Busca os dados sem cache
-            const response = await fetch(`/.netlify/functions/fetchMatches?t=${Date.now()}`);
-            if (!response.ok) {
-              throw new Error(`[Atualização] Erro HTTP ${response.status}`);
-            }
-        
-            const data = await response.json();
-            const jogosRodada = data.matches.filter(m => m.matchday === rodadaExibida);
-        
-            if (jogosRodada.length === 0) {
-              console.log(`[Atualização] Nenhum jogo encontrado para a rodada ${rodadaExibida}`);
-              return;
-            }
-        
-            // Processamento silencioso
-            const resultadosAtuais = obterResultadosDaTabela();
-            const inputsResultados = document.querySelectorAll(".resultado");
-            let atualizacoes = 0;
-        
-            jogosRodada.forEach((partida, index) => {
-              if (partida.score.fullTime.home !== null && partida.score.fullTime.away !== null) {
-                const novoResultadoCasa = partida.score.fullTime.home.toString();
-                const novoResultadoFora = partida.score.fullTime.away.toString();
-                const resultadoAtual = resultadosAtuais[index] || { time1: "", time2: "" };
-        
-                if (resultadoAtual.time1 !== novoResultadoCasa || resultadoAtual.time2 !== novoResultadoFora) {
-                  resultadosAtuais[index] = { time1: novoResultadoCasa, time2: novoResultadoFora };
-                  
-                  if (inputsResultados[index * 2] && inputsResultados[index * 2 + 1]) {
-                    inputsResultados[index * 2].value = novoResultadoCasa;
-                    inputsResultados[index * 2 + 1].value = novoResultadoFora;
-                    atualizacoes++;
-                  }
-                }
-              }
-            });
-        
-            if (atualizacoes > 0) {
-              console.log(`[Atualização] ${atualizacoes} placar(es) atualizado(s)`);
-              await salvarResultadosNoSupabase(resultadosAtuais);
-              calcularPontuacao();
-            } else {
-              console.log("[Atualização] Nenhuma mudança detectada nos placares");
-            }
-        
-          } catch (error) {
-            console.error(`[Atualização] Erro: ${error.message}`);
+            return false;
           }
-        }
-
         // Função para salvar apenas os resultados no Supabase
         async function salvarResultadosNoSupabase(resultados) {
           try {
