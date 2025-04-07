@@ -2669,80 +2669,76 @@
 
         function exibirRodada(rodada, partidas) {
           const calendario = document.getElementById("calendario-jogos");
-          calendario.innerHTML = "";
-        
+          calendario.innerHTML = ""; // Limpa o conteúdo anterior
+
           if (!partidas || partidas.length === 0) {
             calendario.innerHTML = `
-              <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
-                <p>Nenhum jogo encontrado para esta rodada.</p>
-              </div>
-            `;
+        <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
+          <p>Nenhum jogo encontrado para esta rodada.</p>
+        </div>
+      `;
             return;
           }
-        
+
           partidas.forEach((partida) => {
             const timeCasaInfo = timesInfo[partida.homeTeam.name] || {
               abrev: partida.homeTeam.name.substring(0, 3).toUpperCase(),
               nome: partida.homeTeam.name,
               escudo: "https://logodetimes.com/imagens/generico-256.png",
             };
-        
+
             const timeForaInfo = timesInfo[partida.awayTeam.name] || {
               abrev: partida.awayTeam.name.substring(0, 3).toUpperCase(),
               nome: partida.awayTeam.name,
               escudo: "https://logodetimes.com/imagens/generico-256.png",
             };
-        
-            // Verifica se deve mostrar placar (finalizado ou em andamento com placar válido)
-            const mostrarPlacar = (partida.status === 'FINISHED' || 
-                                 partida.status === 'IN_PLAY' || 
-                                 partida.status === 'PAUSED') &&
-                                partida.score.fullTime.home !== null && 
-                                partida.score.fullTime.away !== null;
-        
-            // Define qual placar mostrar (fullTime para finalizados, current para ao vivo)
-            const placarCasa = mostrarPlacar ? partida.score.fullTime.home : null;
-            const placarFora = mostrarPlacar ? partida.score.fullTime.away : null;
-        
+
+            const temPlacar = partida.score.fullTime.home !== null;
             const statusTexto = traduzirStatus(partida.status);
             const statusClasse = statusClass(partida.status);
-        
+
             const jogoHTML = `
-              <div class="jogo">
-                <div class="jogo-header">
-                  <div class="jogo-data">${formatarData(partida.utcDate)}</div>
-                </div>
-                
-                <div class="jogo-times">
-                  <div class="time">
-                    <img src="${timeCasaInfo.escudo}" alt="${timeCasaInfo.nome}" 
-                         class="time-escudo" onerror="handleImageError(this)">
-                    <div class="time-abrev">${timeCasaInfo.abrev}</div>
-                    <div class="time-nome">${timeCasaInfo.nome}</div>
-                  </div>
-                  <div class="versus">X</div>
-                  <div class="time">
-                    <img src="${timeForaInfo.escudo}" alt="${timeForaInfo.nome}" 
-                         class="time-escudo" onerror="handleImageError(this)">
-                    <div class="time-abrev">${timeForaInfo.abrev}</div>
-                    <div class="time-nome">${timeForaInfo.nome}</div>
-                  </div>
-                </div>
-                
-                ${mostrarPlacar ? `
-                  <div class="placar">
-                    <span>${placarCasa}</span>
-                    <span class="placar-separator">:</span>
-                    <span>${placarFora}</span>
-                  </div>
-                ` : ''}
-                
-                <div class="jogo-footer">
-                  <div class="status ${statusClasse}">${statusTexto}</div>
-                  <div class="horario">${formatarHora(partida.utcDate)}</div>
-                </div>
-              </div>
-            `;
+        <div class="jogo">
+          <div class="jogo-header">
+            <div class="jogo-data">${formatarData(partida.utcDate)}</div>
+          </div>
+          
+          <div class="jogo-times">
+            <div class="time">
+              <img src="${timeCasaInfo.escudo}" alt="${
+              timeCasaInfo.nome
+            }" class="time-escudo" onerror="handleImageError(this)">
+              <div class="time-abrev">${timeCasaInfo.abrev}</div>
+              <div class="time-nome">${timeCasaInfo.nome}</div>
+            </div>
+            <div class="versus">X</div>
+            <div class="time">
+              <img src="${timeForaInfo.escudo}" alt="${
+              timeForaInfo.nome
+            }" class="time-escudo" onerror="handleImageError(this)">
+              <div class="time-abrev">${timeForaInfo.abrev}</div>
+              <div class="time-nome">${timeForaInfo.nome}</div>
+            </div>
+          </div>
+          
+          ${
+            temPlacar
+              ? `
+            <div class="placar">
+              <span>${partida.score.fullTime.home}</span>
+              <span class="placar-separator">:</span>
+              <span>${partida.score.fullTime.away}</span>
+            </div>
+          `
+              : ""
+          }
+          
+          <div class="jogo-footer">
+            <div class="status ${statusClasse}">${statusTexto}</div>
+            <div class="horario">${formatarHora(partida.utcDate)}</div>
+          </div>
+        </div>
+      `;
             calendario.innerHTML += jogoHTML;
           });
         }
@@ -2988,74 +2984,76 @@
 
         // Função melhorada para atualizar a tabela
         async function atualizarTabela() {
-            try {
-              console.log("[Atualização] Iniciando verificação de atualizações...");
-          
-              // Verificação de rodada
-              if (!rodadaExibida) {
-                console.log("[Atualização] Nenhuma rodada definida. Buscando calendário...");
-                await buscarCalendario();
-                if (rodadaAtual) {
-                  rodadaExibida = rodadaAtual;
-                  console.log(`[Atualização] Rodada definida como: ${rodadaExibida}`);
-                } else {
-                  console.log("[Atualização] Nenhuma rodada disponível para atualização.");
-                  return;
-                }
-              }
-          
-              // Busca os dados mais recentes
-              const response = await fetch(`/.netlify/functions/fetchMatches?t=${Date.now()}`);
-              if (!response.ok) throw new Error(`Erro HTTP ${response.status}`);
-          
-              const data = await response.json();
-              const jogosRodada = data.matches.filter(m => m.matchday === rodadaExibida);
-          
-              if (jogosRodada.length === 0) {
-                console.log(`[Atualização] Nenhum jogo encontrado para a rodada ${rodadaExibida}`);
+          try {
+            console.log("[Atualização] Iniciando verificação de atualizações...");
+        
+            // Verificação de rodada
+            if (!rodadaExibida) {
+              console.log("[Atualização] Nenhuma rodada definida. Buscando calendário...");
+              await buscarCalendario();
+              if (rodadaAtual) {
+                rodadaExibida = rodadaAtual;
+                console.log(`[Atualização] Rodada definida como: ${rodadaExibida}`);
+              } else {
+                console.log("[Atualização] Nenhuma rodada disponível para atualização.");
                 return;
               }
-          
-              const resultadosAtuais = obterResultadosDaTabela();
-              const inputsResultados = document.querySelectorAll(".resultado");
-              let atualizacoes = 0;
-          
-              jogosRodada.forEach((partida, index) => {
-                // Atualiza apenas para jogos finalizados ou em andamento com placar válido
-                if ((partida.status === 'FINISHED' || partida.status === 'IN_PLAY' || partida.status === 'PAUSED') &&
-                    partida.score.fullTime.home !== null && 
-                    partida.score.fullTime.away !== null) {
+            }
+        
+            if (rodadaExibida !== rodadaAtual) {
+              console.log(`[Atualização] Conflito de rodadas (Tabela: ${rodadaExibida} vs Calendário: ${rodadaAtual}). Abortando.`);
+              return;
+            }
+        
+            // Busca os dados sem cache
+            const response = await fetch(`/.netlify/functions/fetchMatches?t=${Date.now()}`);
+            if (!response.ok) {
+              throw new Error(`[Atualização] Erro HTTP ${response.status}`);
+            }
+        
+            const data = await response.json();
+            const jogosRodada = data.matches.filter(m => m.matchday === rodadaExibida);
+        
+            if (jogosRodada.length === 0) {
+              console.log(`[Atualização] Nenhum jogo encontrado para a rodada ${rodadaExibida}`);
+              return;
+            }
+        
+            // Processamento silencioso
+            const resultadosAtuais = obterResultadosDaTabela();
+            const inputsResultados = document.querySelectorAll(".resultado");
+            let atualizacoes = 0;
+        
+            jogosRodada.forEach((partida, index) => {
+              if (partida.score.fullTime.home !== null && partida.score.fullTime.away !== null) {
+                const novoResultadoCasa = partida.score.fullTime.home.toString();
+                const novoResultadoFora = partida.score.fullTime.away.toString();
+                const resultadoAtual = resultadosAtuais[index] || { time1: "", time2: "" };
+        
+                if (resultadoAtual.time1 !== novoResultadoCasa || resultadoAtual.time2 !== novoResultadoFora) {
+                  resultadosAtuais[index] = { time1: novoResultadoCasa, time2: novoResultadoFora };
                   
-                  const novoResultadoCasa = partida.score.fullTime.home.toString();
-                  const novoResultadoFora = partida.score.fullTime.away.toString();
-                  const resultadoAtual = resultadosAtuais[index] || { time1: "", time2: "" };
-          
-                  // Só atualiza se houve mudança
-                  if (resultadoAtual.time1 !== novoResultadoCasa || resultadoAtual.time2 !== novoResultadoFora) {
-                    resultadosAtuais[index] = { time1: novoResultadoCasa, time2: novoResultadoFora };
-                    
-                    if (inputsResultados[index * 2] && inputsResultados[index * 2 + 1]) {
-                      inputsResultados[index * 2].value = novoResultadoCasa;
-                      inputsResultados[index * 2 + 1].value = novoResultadoFora;
-                      atualizacoes++;
-                    }
+                  if (inputsResultados[index * 2] && inputsResultados[index * 2 + 1]) {
+                    inputsResultados[index * 2].value = novoResultadoCasa;
+                    inputsResultados[index * 2 + 1].value = novoResultadoFora;
+                    atualizacoes++;
                   }
                 }
-              });
-          
-              if (atualizacoes > 0) {
-                console.log(`[Atualização] ${atualizacoes} placar(es) atualizado(s)`);
-                await salvarResultadosNoSupabase(resultadosAtuais);
-                calcularPontuacao();
-                
-                // Atualiza o calendário de jogos para refletir as mudanças
-                exibirRodada(rodadaExibida, jogosRodada);
               }
-          
-            } catch (error) {
-              console.error(`[Atualização] Erro: ${error.message}`);
+            });
+        
+            if (atualizacoes > 0) {
+              console.log(`[Atualização] ${atualizacoes} placar(es) atualizado(s)`);
+              await salvarResultadosNoSupabase(resultadosAtuais);
+              calcularPontuacao();
+            } else {
+              console.log("[Atualização] Nenhuma mudança detectada nos placares");
             }
+        
+          } catch (error) {
+            console.error(`[Atualização] Erro: ${error.message}`);
           }
+        }
 
         // Função para salvar apenas os resultados no Supabase
         async function salvarResultadosNoSupabase(resultados) {
