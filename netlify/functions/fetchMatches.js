@@ -8,7 +8,6 @@ exports.handler = async () => {
     const response = await fetch(url, {
       headers: {
         "X-Auth-Token": apiKey,
-        "Cache-Control": "no-cache",
       },
     });
 
