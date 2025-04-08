@@ -1418,15 +1418,18 @@
       </footer>
       <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
       <script>
-        // Initialize Supabase client
-        const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co"; // Replace with your Supabase URL
+        // Configurações iniciais
+        const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co";
         const SUPABASE_ANON_KEY =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4"; // Replace with your Supabase anon key
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4";
         const supabaseClient = supabase.createClient(
           SUPABASE_URL,
           SUPABASE_ANON_KEY
         );
 
+<<<<<<< HEAD
+        // Variáveis globais
+=======
         window.addEventListener("load", async function () {
           const loggedInUser = localStorage.getItem("loggedInUser");
           if (loggedInUser) {
@@ -2376,13 +2379,15 @@
           document.getElementById("pontuacao").innerHTML = "";
         }
 
+>>>>>>> b52eacd8caea676e7313134f370165dcaf8a7f39
         let todasPartidas = [];
         let rodadaAtual = 1;
         let totalRodadas = 0;
-        let rodadaExibida = null; // Armazena a rodada que está sendo exibida na tabela principal
+        let rodadaExibida = null;
         let partidasPorRodada = {};
+        let intervaloAtualizacao = null;
 
-        // Mapeamento de abreviações dos times, nomes completos e URLs dos escudos
+        // Mapeamento de times
         const timesInfo = {
           "SE Palmeiras": {
             abrev: "PAL",
@@ -2502,62 +2507,684 @@
           },
         };
 
-        // Função para lidar com erros de imagem
-        function handleImageError(img) {
-          img.onerror = null; // Evita loop infinito
-          img.src = "https://logodetimes.com/imagens/generico-256.png"; // Escudo genérico
+        // Inicialização da página
+        document.addEventListener("DOMContentLoaded", async function () {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+          if (loggedInUser) {
+            document.getElementById("login-container").classList.add("hidden");
+            document.getElementById("main-content").classList.remove("hidden");
+            initializeDarkMode();
+            createAdvancedTitle();
+            criarLinhasTabela();
+            adicionarEventos();
+            // Inicia a atualização automática imediatamente
+            iniciarAtualizacaoAutomatica();
+            await verificarEstadoPlacares();
+            await verificarPermissoesUsuario();
+            await carregarApostas();
+            await buscarCalendario();
+          }
+        });
+
+        // Funções de login/logout
+        function handleKeyPress(event) {
+          if (event.key === "Enter") login();
         }
 
-        // Função para formatar data
-        function formatarData(dataUTC) {
-          const data = new Date(dataUTC);
-          const options = { weekday: "long", day: "numeric", month: "long" };
-          return data.toLocaleDateString("pt-BR", options);
+        async function login() {
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+
+          try {
+            const response = await fetch("/.netlify/functions/senhas");
+            if (!response.ok) throw new Error("Erro ao buscar senhas");
+            const senhasCriptografadas = await response.json();
+
+            if (senhasCriptografadas[username]) {
+              const descriptResponse = await fetch(
+                "/.netlify/functions/descriptografar",
+                {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    textoCriptografado: senhasCriptografadas[username],
+                  }),
+                }
+              );
+
+              if (!descriptResponse.ok)
+                throw new Error("Erro ao descriptografar");
+              const { textoDescriptografado } = await descriptResponse.json();
+
+              if (textoDescriptografado === password) {
+                localStorage.setItem("loggedInUser", username);
+                document
+                  .getElementById("login-container")
+                  .classList.add("hidden");
+                document
+                  .getElementById("main-content")
+                  .classList.remove("hidden");
+                initializeDarkMode();
+                createAdvancedTitle();
+                criarLinhasTabela();
+                adicionarEventos();
+                await verificarEstadoPlacares();
+                await verificarPermissoesUsuario();
+                await carregarApostas();
+                await buscarCalendario();
+              } else {
+                alert("Nome de usuário ou senha incorretos!");
+              }
+            } else {
+              alert("Nome de usuário ou senha incorretos!");
+            }
+          } catch (error) {
+            console.error("Erro no login:", error);
+            alert("Erro ao fazer login. Tente novamente.");
+          }
         }
 
-        // Função para formatar hora
-        function formatarHora(dataUTC) {
-          const data = new Date(dataUTC);
-          return data.toLocaleTimeString("pt-BR", {
-            hour: "2-digit",
-            minute: "2-digit",
+        function logout() {
+          localStorage.removeItem("loggedInUser");
+          document.getElementById("login-container").classList.remove("hidden");
+          document.getElementById("main-content").classList.add("hidden");
+          pararAtualizacaoAutomatica();
+        }
+
+        // Funções de UI
+        function createAdvancedTitle() {
+          const titulo = "Brasileirão AlphaBet 2025";
+          const containerTitulo = document.querySelector(".container-titulo");
+          containerTitulo.innerHTML = "";
+
+          const palavras = titulo.split(" ");
+          palavras.forEach((palavra, wordIndex) => {
+            const wordWrapper = document.createElement("div");
+            wordWrapper.style.display = "inline-flex";
+            wordWrapper.style.margin = "0 0.25rem";
+
+            palavra.split("").forEach((letra, letterIndex) => {
+              const span = document.createElement("span");
+              span.textContent = letra;
+              span.classList.add("letra");
+              span.style.animationDelay = `${
+                (wordIndex * palavra.length + letterIndex) * 0.1
+              }s`;
+              span.style.animationDuration = `${0.8 + Math.random() * 0.2}s`;
+              wordWrapper.appendChild(span);
+            });
+
+            containerTitulo.appendChild(wordWrapper);
           });
         }
 
-        // Função para traduzir status
-        function traduzirStatus(status) {
-          const statusMap = {
-            SCHEDULED: "Agendado",
-            TIMED: "Horário Definido",
-            IN_PLAY: "Em Andamento",
-            PAUSED: "Intervalo",
-            FINISHED: "Encerrado",
-            POSTPONED: "Adiado",
-            SUSPENDED: "Suspenso",
-            CANCELED: "Cancelado",
+        function initializeDarkMode() {
+          const darkModeToggle = document.getElementById("toggle-dark-mode");
+          const isDarkMode = localStorage.getItem("darkMode") === "true";
+
+          if (isDarkMode) {
+            document.body.classList.add("dark-mode");
+            darkModeToggle.textContent = "☀️ Light";
+          } else {
+            document.body.classList.remove("dark-mode");
+            darkModeToggle.textContent = "🌙 Dark";
+          }
+
+          darkModeToggle.addEventListener("click", function () {
+            document.body.classList.toggle("dark-mode");
+            const isDarkModeNow = document.body.classList.contains("dark-mode");
+            localStorage.setItem("darkMode", isDarkModeNow);
+            this.textContent = isDarkModeNow ? "☀️ Light" : "🌙 Dark";
+          });
+        }
+
+        // Funções de tabela de apostas
+        function criarLinhasTabela() {
+          const tabela = document.getElementById("tabela-apostas");
+          for (let i = 1; i <= 10; i++) {
+            const linha = document.createElement("tr");
+            linha.innerHTML = `
+          <td><input type="text" class="input-jogo" placeholder="casa x fora"></td>
+          ${["Jardel", "Werbet", "Nailton", "Phillipe"]
+            .map(
+              (jogador, jogadorIndex) => `
+            <td>
+              <div class="input-container">
+                <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
+                <span class="placar-separador">x</span>
+                <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
+              </div>
+            </td>
+          `
+            )
+            .join("")}
+          <td>
+            <div class="input-container">
+              <input type="number" class="resultado input-placar" min="0">
+              <span class="placar-separador">x</span>
+              <input type="number" class="resultado input-placar" min="0">
+            </div>
+          </td>
+        `;
+            tabela.appendChild(linha);
+          }
+        }
+
+        function adicionarEventos() {
+          adicionarNavegacao();
+          adicionarNavegacaoJogos();
+          adicionarEventosSalvamento();
+          adicionarEventosCalculoPontuacao();
+
+          document
+            .getElementById("nome-rodada")
+            .addEventListener("input", salvarApostasDebounced);
+          document
+            .getElementById("preencher-tabela-principal")
+            .addEventListener("click", () => {
+              if (typeof rodadaAtual !== "undefined") {
+                preencherTabelaPrincipalComRodadaAtual(rodadaAtual);
+              } else {
+                alert(
+                  "Por favor, aguarde até que os dados do calendário sejam carregados."
+                );
+              }
+            });
+
+          document.getElementById("anterior").addEventListener("click", () => {
+            if (rodadaAtual > 1) {
+              rodadaAtual--;
+              exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+              atualizarNavegacao();
+            }
+          });
+
+          document.getElementById("proxima").addEventListener("click", () => {
+            if (rodadaAtual < totalRodadas) {
+              rodadaAtual++;
+              exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
+              atualizarNavegacao();
+            }
+          });
+        }
+
+        function adicionarNavegacao() {
+          for (let i = 0; i < 4; i++) {
+            const coluna = document.querySelectorAll(`input.jogador${i}`);
+            coluna.forEach((input, index) => {
+              input.addEventListener("input", (event) => {
+                if (event.target.value.length === 1) {
+                  let nextIndex = index + 1;
+                  if (nextIndex < coluna.length) coluna[nextIndex].focus();
+                }
+              });
+
+              input.addEventListener("keydown", (event) => {
+                if (event.key === "Delete" || event.key === "Backspace") {
+                  event.preventDefault();
+                  if (input.value === "") {
+                    const prevIndex = index - 1;
+                    if (prevIndex >= 0) coluna[prevIndex].focus();
+                  } else {
+                    input.value = "";
+                  }
+                }
+              });
+            });
+          }
+
+          const placarReal = document.querySelectorAll("input.resultado");
+          placarReal.forEach((input, index) => {
+            input.addEventListener("input", (event) => {
+              if (event.target.value.length === 1) {
+                let nextIndex = index + 1;
+                if (nextIndex < placarReal.length)
+                  placarReal[nextIndex].focus();
+              }
+            });
+
+            input.addEventListener("keydown", (event) => {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                event.preventDefault();
+                if (input.value === "") {
+                  const prevIndex = index - 1;
+                  if (prevIndex >= 0) placarReal[prevIndex].focus();
+                } else {
+                  input.value = "";
+                }
+              }
+            });
+          });
+        }
+
+        function adicionarNavegacaoJogos() {
+          const inputsJogos = document.querySelectorAll(".input-jogo");
+          inputsJogos.forEach((input, index) => {
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Enter" || event.key === "Tab") {
+                event.preventDefault();
+                const nextIndex = index + 1;
+                if (nextIndex < inputsJogos.length)
+                  inputsJogos[nextIndex].focus();
+              }
+
+              if (event.key === "Delete" || event.key === "Backspace") {
+                event.preventDefault();
+                if (input.value.length > 0) {
+                  input.value = input.value.slice(0, -1);
+                } else {
+                  const prevIndex = index - 1;
+                  if (prevIndex >= 0) inputsJogos[prevIndex].focus();
+                }
+              }
+            });
+          });
+        }
+
+        // Funções de salvamento
+        const salvarApostasDebounced = debounce(salvarApostas, 500);
+
+        function debounce(func, wait) {
+          let timeout;
+          return function (...args) {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(this, args), wait);
           };
-          return statusMap[status] || status;
         }
 
-        // Função para definir classe CSS com base no status
-        function statusClass(status) {
-          if (status === "FINISHED") return "status-FINISHED";
-          if (status === "IN_PLAY" || status === "PAUSED") return "status-LIVE";
-          return "status-SCHEDULED";
-        }
-
-        async function buscarCalendario() {
-          const url = "/.netlify/functions/fetchMatches";
-
+        async function salvarApostas() {
           try {
-            const response = await fetch(url);
+            const { data, error: fetchError } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (fetchError) throw fetchError;
+
+            const novosDados = {
+              nome_rodada: document.getElementById("nome-rodada").value,
+              jogos: obterJogosDaTabela(),
+              apostas: obterApostasDaTabela(),
+              resultados: obterResultadosDaTabela(),
+              placares_ocultos: await carregarEstadoVisibilidade(),
+            };
+
+            if (!data || data.length === 0) {
+              novosDados.ranking = {};
+              novosDados.vitorias_empates = {};
+              const { error: insertError } = await supabaseClient
+                .from("alphabet_table")
+                .insert(novosDados);
+              if (insertError) throw insertError;
+            } else {
+              const { error: updateError } = await supabaseClient
+                .from("alphabet_table")
+                .update(novosDados)
+                .eq("id", data[0].id);
+              if (updateError) throw updateError;
+            }
+          } catch (error) {
+            console.error("Erro ao salvar dados:", error);
+          }
+        }
+
+        function obterJogosDaTabela() {
+          const jogos = [];
+          document
+            .querySelectorAll(".input-jogo")
+            .forEach((input) => jogos.push(input.value));
+          return jogos;
+        }
+
+        function obterApostasDaTabela() {
+          const apostas = { Jardel: [], Werbet: [], Nailton: [], Phillipe: [] };
+          const inputs = document.querySelectorAll(".aposta");
+
+          for (let i = 0; i < 10; i++) {
+            apostas.Jardel.push({
+              time1: inputs[i * 8].value,
+              time2: inputs[i * 8 + 1].value,
+            });
+            apostas.Werbet.push({
+              time1: inputs[i * 8 + 2].value,
+              time2: inputs[i * 8 + 3].value,
+            });
+            apostas.Nailton.push({
+              time1: inputs[i * 8 + 4].value,
+              time2: inputs[i * 8 + 5].value,
+            });
+            apostas.Phillipe.push({
+              time1: inputs[i * 8 + 6].value,
+              time2: inputs[i * 8 + 7].value,
+            });
+          }
+
+          return apostas;
+        }
+
+        function obterResultadosDaTabela() {
+          const resultados = [];
+          const inputs = document.querySelectorAll(".resultado");
+
+          for (let i = 0; i < 10; i++) {
+            resultados.push({
+              time1: inputs[i * 2].value,
+              time2: inputs[i * 2 + 1].value,
+            });
+          }
+
+          return resultados;
+        }
+
+        function adicionarEventosSalvamento() {
+          const inputs = document.querySelectorAll(
+            ".aposta, .resultado, .input-jogo, #nome-rodada"
+          );
+          inputs.forEach((input) => {
+            input.addEventListener("input", function () {
+              salvarApostasDebounced();
+              mostrarFeedbackApostasCompletas();
+            });
+
+            input.addEventListener("change", function () {
+              salvarApostasDebounced();
+              mostrarFeedbackApostasCompletas();
+            });
+
+            input.addEventListener("blur", function () {
+              salvarApostasDebounced();
+              mostrarFeedbackApostasCompletas();
+            });
+
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                salvarApostasDebounced();
+                mostrarFeedbackApostasCompletas();
+              }
+            });
+          });
+        }
+
+        function verificarApostasCompletas() {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+          if (!loggedInUser) return false;
+
+          const jogadorClass =
+            loggedInUser === "Jardel"
+              ? "jogador0"
+              : loggedInUser === "Werbet"
+              ? "jogador1"
+              : loggedInUser === "Nailton"
+              ? "jogador2"
+              : loggedInUser === "Phillipe"
+              ? "jogador3"
+              : null;
+
+          if (!jogadorClass) return false;
+
+          const apostasUsuario = document.querySelectorAll(
+            `.aposta.${jogadorClass}`
+          );
+          let todasPreenchidas = true;
+
+          apostasUsuario.forEach((aposta) => {
+            if (aposta.value === "") todasPreenchidas = false;
+          });
+
+          return todasPreenchidas;
+        }
+
+        function mostrarFeedbackApostasCompletas() {
+          const feedback = document.getElementById("feedback-apostas");
+          if (verificarApostasCompletas()) {
+            feedback.classList.add("visible");
+            setTimeout(() => feedback.classList.remove("visible"), 3000);
+          }
+        }
+
+        // Funções de visibilidade
+        async function toggleVisibility() {
+          const isHidden = await carregarEstadoVisibilidade();
+          const novoEstado = !isHidden;
+          await salvarEstadoVisibilidade(novoEstado);
+          verificarEstadoPlacares();
+        }
+
+        function mostrarPlacares() {
+          document.querySelectorAll(".aposta").forEach((input) => {
+            input.style.display = "";
+            input.disabled = true;
+          });
+        }
+
+        function ocultarPlacares() {
+          const loggedInUser = localStorage.getItem("loggedInUser");
+          document.querySelectorAll(".aposta").forEach((input) => {
+            const jogador = input.classList.contains("jogador0")
+              ? "Jardel"
+              : input.classList.contains("jogador1")
+              ? "Werbet"
+              : input.classList.contains("jogador2")
+              ? "Nailton"
+              : input.classList.contains("jogador3")
+              ? "Phillipe"
+              : null;
+
+            if (jogador && jogador !== loggedInUser) {
+              input.style.display = "none";
+            } else {
+              input.style.display = "";
+              input.disabled = false;
+            }
+          });
+        }
+
+        async function salvarEstadoVisibilidade(estado) {
+          try {
+            const { data, error: fetchError } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (fetchError) throw fetchError;
+
+            if (!data || data.length === 0) {
+              const { error: insertError } = await supabaseClient
+                .from("alphabet_table")
+                .insert({ placares_ocultos: estado });
+              if (insertError) throw insertError;
+            } else {
+              const { error: updateError } = await supabaseClient
+                .from("alphabet_table")
+                .update({ placares_ocultos: estado })
+                .eq("id", data[0].id);
+              if (updateError) throw updateError;
+            }
+          } catch (error) {
+            console.error("Erro ao salvar estado de visibilidade:", error);
+          }
+        }
+
+        async function carregarEstadoVisibilidade() {
+          try {
+            const { data, error } = await supabaseClient
+              .from("alphabet_table")
+              .select("placares_ocultos")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (error) throw error;
+            return data && data.length > 0 ? data[0].placares_ocultos : false;
+          } catch (error) {
+            console.error("Erro ao carregar estado de visibilidade:", error);
+            return false;
+          }
+        }
+
+        async function verificarEstadoPlacares() {
+          try {
+            const isHidden = await carregarEstadoVisibilidade();
+            const toggleButton = document.getElementById("toggle-visibility");
+            const toggleText = document.getElementById("toggle-text");
+
+            const loggedInUser = localStorage.getItem("loggedInUser");
+            toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
+
+            toggleText.textContent = isHidden
+              ? "Mostrar Placar"
+              : "Ocultar Placar";
+            toggleButton.onclick = toggleVisibility;
+
+            if (isHidden) ocultarPlacares();
+            else mostrarPlacares();
+          } catch (error) {
+            console.error("Erro ao verificar estado dos placares:", error);
+          }
+        }
+
+        async function verificarPermissoesUsuario() {
+          try {
+            const loggedInUser = localStorage.getItem("loggedInUser");
+            const toggleButton = document.getElementById("toggle-visibility");
+            const preencherTabelaButton = document.getElementById(
+              "preencher-tabela-principal"
+            );
+
+            toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
+            preencherTabelaButton.classList.toggle(
+              "hidden",
+              loggedInUser !== "Jardel"
+            );
+          } catch (error) {
+            console.error("Erro ao verificar permissões do usuário:", error);
+          }
+        }
+
+        // Funções de pontuação
+        function calcularPontuacao() {
+          const apostas = obterApostasDaTabela();
+          const resultados = obterResultadosDaTabela();
+          const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+          const pontos = { Jardel: 0, Werbet: 0, Nailton: 0, Phillipe: 0 };
+          const placaresExatos = {
+            Jardel: 0,
+            Werbet: 0,
+            Nailton: 0,
+            Phillipe: 0,
+          };
+
+          for (let i = 0; i < 10; i++) {
+            const resultadoCasa = resultados[i].time1;
+            const resultadoFora = resultados[i].time2;
+
+            if (resultadoCasa === "" || resultadoFora === "") continue;
+
+            jogadores.forEach((jogador) => {
+              const apostaCasa = apostas[jogador][i].time1;
+              const apostaFora = apostas[jogador][i].time2;
+
+              if (apostaCasa === "" || apostaFora === "") return;
+
+              if (
+                apostaCasa === resultadoCasa &&
+                apostaFora === resultadoFora
+              ) {
+                pontos[jogador] += 3;
+                placaresExatos[jogador] += 1;
+              } else if (
+                (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
+                (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
+                (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
+              ) {
+                pontos[jogador] += 1;
+              }
+            });
+          }
+
+          const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
+            if (b[1] !== a[1]) return b[1] - a[1];
+            return placaresExatos[b[0]] - placaresExatos[a[0]];
+          });
+
+          const pontuacaoMaxima = jogadoresOrdenados[0][1];
+          const todosZerados = jogadoresOrdenados.every(
+            ([_, pontuacao]) => pontuacao === 0
+          );
+          const vencedores = todosZerados
+            ? []
+            : jogadoresOrdenados.filter(
+                ([_, pontuacao]) => pontuacao === pontuacaoMaxima
+              );
+
+          const pontuacaoHTML = jogadoresOrdenados
+            .map(
+              ([jogador, pontuacao]) => `
+        <div class="pontuacao-card ${
+          vencedores.some(([vencedor]) => vencedor === jogador)
+            ? "vencedor"
+            : ""
+        }">
+          <h3>${jogador}</h3>
+          <span>
+            <p>${pontuacao} pontos</p>
+            <p>Placares exatos: ${placaresExatos[jogador]}</p>
+          </span>
+        </div>
+      `
+            )
+            .join("");
+
+          document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+        }
+
+        function adicionarEventosCalculoPontuacao() {
+          const inputsApostas = document.querySelectorAll(".aposta");
+          inputsApostas.forEach((input) => {
+            input.addEventListener("input", function () {
+              salvarApostasDebounced();
+              calcularPontuacao();
+            });
+
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                salvarApostasDebounced();
+                calcularPontuacao();
+              }
+            });
+          });
+
+          const inputsResultados = document.querySelectorAll(".resultado");
+          inputsResultados.forEach((input) => {
+            input.addEventListener("input", function () {
+              salvarApostasDebounced();
+              calcularPontuacao();
+            });
+
+            input.addEventListener("keydown", function (event) {
+              if (event.key === "Delete" || event.key === "Backspace") {
+                salvarApostasDebounced();
+                calcularPontuacao();
+              }
+            });
+          });
+        }
+
+        function abrirRanking() {
+          window.open("ranking.html", "_blank");
+        }
+
+        // Funções do calendário de jogos
+        async function buscarCalendario() {
+          try {
+            const response = await fetch("/.netlify/functions/fetchMatches");
             if (!response.ok)
               throw new Error(`Erro de rede: ${response.status}`);
 
             const data = await response.json();
             todasPartidas = data.matches;
 
-            // Agrupa as partidas por rodada
             partidasPorRodada = {};
             todasPartidas.forEach((partida) => {
               const rodada = partida.matchday;
@@ -2565,7 +3192,6 @@
               partidasPorRodada[rodada].push(partida);
             });
 
-            // Ordena as rodadas por data de início
             const rodadasOrdenadas = Object.keys(partidasPorRodada)
               .map((rodada) => ({
                 rodada: parseInt(rodada),
@@ -2580,8 +3206,6 @@
 
             const dataAtual = new Date();
             let rodadaParaExibir = 1;
-
-            // Verifica se há jogos pendentes na rodada atual
             let rodadaAtualTemJogosPendentes = false;
 
             for (const rodada of rodadasOrdenadas) {
@@ -2590,7 +3214,6 @@
                 dataAtual <= rodada.dataFim
               ) {
                 rodadaParaExibir = rodada.rodada;
-
                 const jogosPendentes = partidasPorRodada[rodada.rodada].filter(
                   (jogo) => {
                     const dataJogo = new Date(jogo.utcDate);
@@ -2600,7 +3223,6 @@
                     );
                   }
                 );
-
                 rodadaAtualTemJogosPendentes = jogosPendentes.length > 0;
                 break;
               } else if (dataAtual > rodada.dataFim) {
@@ -2608,24 +3230,16 @@
               }
             }
 
-            // Se não há jogos pendentes, verifica a próxima rodada
             if (!rodadaAtualTemJogosPendentes) {
               const proximaRodada = rodadasOrdenadas.find(
                 (r) => r.rodada === rodadaParaExibir + 1
               );
-
               if (proximaRodada) {
-                // Cria uma data representando 0h do dia anterior ao início da próxima rodada
                 const diaAnterior = new Date(proximaRodada.dataInicio);
                 diaAnterior.setDate(diaAnterior.getDate() - 1);
-                diaAnterior.setHours(0, 0, 0, 0); // Meia-noite do dia anterior
-
-                // Se a data atual é igual ou posterior à meia-noite do dia anterior
+                diaAnterior.setHours(0, 0, 0, 0);
                 if (dataAtual >= diaAnterior) {
                   rodadaParaExibir = proximaRodada.rodada;
-                  console.log(
-                    `Mostrando próxima rodada (${proximaRodada.rodada}) a partir de 0h do dia anterior`
-                  );
                 }
               }
             }
@@ -2633,50 +3247,31 @@
             totalRodadas = rodadasOrdenadas.length;
             rodadaAtual = rodadaParaExibir;
 
-            console.log("Rodada a ser exibida:", rodadaAtual);
+            // Atualiza a tabela imediatamente após carregar o calendário
+            await atualizarTabela();
+
             exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
             atualizarNavegacao();
           } catch (error) {
             console.error("Erro ao buscar dados:", error);
             document.getElementById("calendario-jogos").innerHTML = `
-      <div class="error">
-        <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
-      </div>
-    `;
+          <div class="error">
+            <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
+          </div>
+        `;
           }
         }
 
-        // Atualiza a navegação
-        document.getElementById("anterior").addEventListener("click", () => {
-          if (rodadaAtual > 1) {
-            rodadaAtual--;
-            exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-            atualizarNavegacao();
-          }
-        });
-
-        document.getElementById("proxima").addEventListener("click", () => {
-          console.log("Rodada atual antes:", rodadaAtual); // Verifica o valor atual
-          if (rodadaAtual < totalRodadas) {
-            rodadaAtual++;
-            console.log("Rodada atual depois:", rodadaAtual); // Verifica o valor após incrementar
-            exibirRodada(rodadaAtual, partidasPorRodada[rodadaAtual]);
-            atualizarNavegacao();
-          } else {
-            console.log("Não há mais rodadas para exibir.");
-          }
-        });
-
         function exibirRodada(rodada, partidas) {
           const calendario = document.getElementById("calendario-jogos");
-          calendario.innerHTML = ""; // Limpa o conteúdo anterior
+          calendario.innerHTML = "";
 
           if (!partidas || partidas.length === 0) {
             calendario.innerHTML = `
-        <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
-          <p>Nenhum jogo encontrado para esta rodada.</p>
-        </div>
-      `;
+          <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
+            <p>Nenhum jogo encontrado para esta rodada.</p>
+          </div>
+        `;
             return;
           }
 
@@ -2698,76 +3293,117 @@
             const statusClasse = statusClass(partida.status);
 
             const jogoHTML = `
-        <div class="jogo">
-          <div class="jogo-header">
-            <div class="jogo-data">${formatarData(partida.utcDate)}</div>
-          </div>
-          
-          <div class="jogo-times">
-            <div class="time">
-              <img src="${timeCasaInfo.escudo}" alt="${
+          <div class="jogo">
+            <div class="jogo-header">
+              <div class="jogo-data">${formatarData(partida.utcDate)}</div>
+            </div>
+            
+            <div class="jogo-times">
+              <div class="time">
+                <img src="${timeCasaInfo.escudo}" alt="${
               timeCasaInfo.nome
             }" class="time-escudo" onerror="handleImageError(this)">
-              <div class="time-abrev">${timeCasaInfo.abrev}</div>
-              <div class="time-nome">${timeCasaInfo.nome}</div>
-            </div>
-            <div class="versus">X</div>
-            <div class="time">
-              <img src="${timeForaInfo.escudo}" alt="${
+                <div class="time-abrev">${timeCasaInfo.abrev}</div>
+                <div class="time-nome">${timeCasaInfo.nome}</div>
+              </div>
+              <div class="versus">X</div>
+              <div class="time">
+                <img src="${timeForaInfo.escudo}" alt="${
               timeForaInfo.nome
             }" class="time-escudo" onerror="handleImageError(this)">
-              <div class="time-abrev">${timeForaInfo.abrev}</div>
-              <div class="time-nome">${timeForaInfo.nome}</div>
+                <div class="time-abrev">${timeForaInfo.abrev}</div>
+                <div class="time-nome">${timeForaInfo.nome}</div>
+              </div>
+            </div>
+            
+            ${
+              temPlacar
+                ? `
+              <div class="placar">
+                <span>${partida.score.fullTime.home}</span>
+                <span class="placar-separator">:</span>
+                <span>${partida.score.fullTime.away}</span>
+              </div>
+            `
+                : ""
+            }
+            
+            <div class="jogo-footer">
+              <div class="status ${statusClasse}">${statusTexto}</div>
+              <div class="horario">${formatarHora(partida.utcDate)}</div>
             </div>
           </div>
-          
-          ${
-            temPlacar
-              ? `
-            <div class="placar">
-              <span>${partida.score.fullTime.home}</span>
-              <span class="placar-separator">:</span>
-              <span>${partida.score.fullTime.away}</span>
-            </div>
-          `
-              : ""
-          }
-          
-          <div class="jogo-footer">
-            <div class="status ${statusClasse}">${statusTexto}</div>
-            <div class="horario">${formatarHora(partida.utcDate)}</div>
-          </div>
-        </div>
-      `;
+        `;
             calendario.innerHTML += jogoHTML;
           });
         }
 
         function atualizarNavegacao() {
-          // Atualiza o texto que exibe a rodada atual
           document.getElementById(
             "rodada-atual"
           ).textContent = `Rodada ${rodadaAtual} de ${totalRodadas}`;
-
-          // Desabilita o botão "Anterior" se estiver na primeira rodada
           document.getElementById("anterior").disabled = rodadaAtual === 1;
-
-          // Desabilita o botão "Próxima" se estiver na última rodada
           document.getElementById("proxima").disabled =
             rodadaAtual === totalRodadas;
         }
 
-        // Chama a função para buscar o calendário ao carregar a página
-        window.addEventListener("DOMContentLoaded", buscarCalendario);
+        // Funções auxiliares do calendário
+        function handleImageError(img) {
+          img.onerror = null;
+          img.src = "https://logodetimes.com/imagens/generico-256.png";
+        }
 
-        // Dados da tabela principal
-        let dadosTabelaPrincipal = {
-          nomeRodada: "",
-          jogos: [],
-          resultados: [],
-        };
+        function formatarData(dataUTC) {
+          const data = new Date(dataUTC);
+          const options = { weekday: "long", day: "numeric", month: "long" };
+          return data.toLocaleDateString("pt-BR", options);
+        }
 
+        function formatarHora(dataUTC) {
+          const data = new Date(dataUTC);
+          return data.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        }
+
+        function traduzirStatus(status) {
+          const statusMap = {
+            SCHEDULED: "Agendado",
+            TIMED: "Horário Definido",
+            IN_PLAY: "Em Andamento",
+            PAUSED: "Intervalo",
+            FINISHED: "Encerrado",
+            POSTPONED: "Adiado",
+            SUSPENDED: "Suspenso",
+            CANCELED: "Cancelado",
+          };
+          return statusMap[status] || status;
+        }
+
+        function statusClass(status) {
+          if (status === "FINISHED") return "status-FINISHED";
+          if (status === "IN_PLAY" || status === "PAUSED") return "status-LIVE";
+          return "status-SCHEDULED";
+        }
+
+        // Funções de preenchimento da tabela principal
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
+<<<<<<< HEAD
+          if (rodadaExibida === rodada) {
+            console.log(
+              `A tabela já está preenchida com a Rodada ${rodada}. Atualizando apenas resultados...`
+            );
+            await atualizarTabela();
+            return;
+          }
+
+          const confirmacao = confirm(
+            `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`
+          );
+          if (!confirmacao) return;
+
+=======
           // Verifica se a rodada que está sendo preenchida já é a mesma que está sendo exibida
           if (rodadaExibida === rodada) {
             console.log(`A tabela já está preenchida com a Rodada ${rodada}. Atualizando apenas resultados...`);
@@ -2784,15 +3420,21 @@
         
           const url = "/.netlify/functions/fetchMatches"; // Endpoint da API via Netlify Function
         
+>>>>>>> b52eacd8caea676e7313134f370165dcaf8a7f39
           try {
-            const response = await fetch(url);
-            if (!response.ok) {
+            const response = await fetch("/.netlify/functions/fetchMatches");
+            if (!response.ok)
               throw new Error(`Erro de rede: ${response.status}`);
+<<<<<<< HEAD
+
+            const data = await response.json();
+=======
             }
         
             const data = await response.json();
         
             // Filtra os jogos da rodada atual
+>>>>>>> b52eacd8caea676e7313134f370165dcaf8a7f39
             const jogosRodadaAtual = data.matches.filter(
               (partida) => partida.matchday === rodada
             );
@@ -2801,14 +3443,38 @@
               console.log(`Nenhum jogo encontrado para a rodada ${rodada}.`);
               return;
             }
+<<<<<<< HEAD
+
+=======
         
             // Limpa as apostas existentes
+>>>>>>> b52eacd8caea676e7313134f370165dcaf8a7f39
             const apostasIniciais = {
               Jardel: Array(10).fill({ time1: "", time2: "" }),
               Werbet: Array(10).fill({ time1: "", time2: "" }),
               Nailton: Array(10).fill({ time1: "", time2: "" }),
               Phillipe: Array(10).fill({ time1: "", time2: "" }),
             };
+<<<<<<< HEAD
+
+            const resultadosIniciais = Array(10).fill({ time1: "", time2: "" });
+
+            document.getElementById("nome-rodada").value = `Rodada ${rodada}`;
+
+            const inputsJogos = document.querySelectorAll(".input-jogo");
+            jogosRodadaAtual.forEach((partida, index) => {
+              const timeCasaAbrev =
+                timesInfo[partida.homeTeam.name]?.abrev ||
+                partida.homeTeam.name.substring(0, 3).toUpperCase();
+              const timeForaAbrev =
+                timesInfo[partida.awayTeam.name]?.abrev ||
+                partida.awayTeam.name.substring(0, 3).toUpperCase();
+              inputsJogos[index].value = `${timeCasaAbrev} x ${timeForaAbrev}`;
+            });
+
+            rodadaExibida = rodada;
+            await salvarApostas();
+=======
         
             // Prepara resultados iniciais
             const resultadosIniciais = Array(10).fill({ time1: "", time2: "" });
@@ -2839,159 +3505,27 @@
             await salvarApostas();
         
             // Inicia a atualização automática
+>>>>>>> b52eacd8caea676e7313134f370165dcaf8a7f39
             iniciarAtualizacaoAutomatica();
           } catch (error) {
             console.error("Erro ao buscar dados da tabela principal:", error);
             alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
           }
         }
-        // Função para preencher o HTML da tabela principal
-        function preencherTabelaPrincipalHTML(
-          apostasAtuais = null,
-          resultadosAtuais = null
-        ) {
-          // Se não forem fornecidos, obtemos os valores atuais
-          if (!apostasAtuais) {
-            apostasAtuais = obterApostasDaTabela();
-          }
-          if (!resultadosAtuais) {
-            resultadosAtuais = obterResultadosDaTabela();
-          }
 
-          const tabelaApostas = document.getElementById("tabela-apostas");
-          tabelaApostas.innerHTML = ""; // Limpa a tabela
-
-          // Preenche o nome da rodada
-          document.getElementById("nome-rodada").value =
-            dadosTabelaPrincipal.nomeRodada;
-
-          // Preenche os jogos e resultados
-          dadosTabelaPrincipal.jogos.forEach((jogo, index) => {
-            const resultado = dadosTabelaPrincipal.resultados[index];
-
-            // Obtém as abreviações dos times
-            const timeCasaAbrev =
-              timesInfo[jogo.casa]?.abrev ||
-              jogo.casa.substring(0, 3).toUpperCase();
-            const timeForaAbrev =
-              timesInfo[jogo.fora]?.abrev ||
-              jogo.fora.substring(0, 3).toUpperCase();
-
-            // Obtém os valores das apostas para este jogo
-            const apostaJardel = apostasAtuais.Jardel[index] || {
-              time1: "",
-              time2: "",
-            };
-            const apostaWerbet = apostasAtuais.Werbet[index] || {
-              time1: "",
-              time2: "",
-            };
-            const apostaNailton = apostasAtuais.Nailton[index] || {
-              time1: "",
-              time2: "",
-            };
-            const apostaPhillipe = apostasAtuais.Phillipe[index] || {
-              time1: "",
-              time2: "",
-            };
-            const resultadoAtual = resultadosAtuais[index] || {
-              time1: "",
-              time2: "",
-            };
-
-            const linha = document.createElement("tr");
-            linha.innerHTML = `
-      <td>
-        <input type="text" class="input-jogo" value="${timeCasaAbrev} x ${timeForaAbrev}">
-      </td>
-      <td>
-        <div class="input-container">
-          <input type="number" class="aposta input-placar jogador0" min="0" value="${
-            apostaJardel.time1
-          }">
-          <span class="placar-separador">x</span>
-          <input type="number" class="aposta input-placar jogador0" min="0" value="${
-            apostaJardel.time2
-          }">
-        </div>
-      </td>
-      <td>
-        <div class="input-container">
-          <input type="number" class="aposta input-placar jogador1" min="0" value="${
-            apostaWerbet.time1
-          }">
-          <span class="placar-separador">x</span>
-          <input type="number" class="aposta input-placar jogador1" min="0" value="${
-            apostaWerbet.time2
-          }">
-        </div>
-      </td>
-      <td>
-        <div class="input-container">
-          <input type="number" class="aposta input-placar jogador2" min="0" value="${
-            apostaNailton.time1
-          }">
-          <span class="placar-separador">x</span>
-          <input type="number" class="aposta input-placar jogador2" min="0" value="${
-            apostaNailton.time2
-          }">
-        </div>
-      </td>
-      <td>
-        <div class="input-container">
-          <input type="number" class="aposta input-placar jogador3" min="0" value="${
-            apostaPhillipe.time1
-          }">
-          <span class="placar-separador">x</span>
-          <input type="number" class="aposta input-placar jogador3" min="0" value="${
-            apostaPhillipe.time2
-          }">
-        </div>
-      </td>
-      <td>
-        <div class="input-container">
-          <input type="number" class="resultado input-placar" value="${
-            resultado.casa || resultadoAtual.time1
-          }">
-          <span class="placar-separador">x</span>
-          <input type="number" class="resultado input-placar" value="${
-            resultado.fora || resultadoAtual.time2
-          }">
-        </div>
-      </td>
-    `;
-            tabelaApostas.appendChild(linha);
-          });
-
-          // Adiciona eventos de salvamento aos campos preenchidos automaticamente
-          adicionarEventosSalvamento();
-          // Aplica o estado de visibilidade após preencher a tabela
-          verificarEstadoPlacares();
-          adicionarNavegacao();
-          adicionarNavegacaoJogos();
-        }
-
-        // Variável para armazenar o intervalo
-        let intervaloAtualizacao = null;
-
-        // Função melhorada para atualizar a tabela
+        // Funções de atualização automática
         async function atualizarTabela() {
           try {
-            console.log("Iniciando atualização da tabela...");
-
-            // Se não há rodada exibida, tenta determinar a rodada atual
             if (!rodadaExibida) {
-              await buscarCalendario(); // Isso vai definir rodadaAtual
+              await buscarCalendario();
               if (rodadaAtual) {
                 rodadaExibida = rodadaAtual;
-                console.log(`Definindo rodada exibida como: ${rodadaExibida}`);
               } else {
                 console.log("Nenhuma rodada disponível para atualização.");
                 return;
               }
             }
 
-            // Verifica se a rodada exibida na tabela principal é diferente da rodada atual do calendário
             if (rodadaExibida !== rodadaAtual) {
               console.log(
                 `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando.`
@@ -2999,9 +3533,6 @@
               return;
             }
 
-            console.log(`Atualizando tabela para rodada ${rodadaExibida}...`);
-
-            // Busca os dados mais recentes
             const response = await fetch("/.netlify/functions/fetchMatches");
             if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
 
@@ -3017,7 +3548,6 @@
               return;
             }
 
-            // Atualiza apenas os resultados (não sobrescreve as apostas)
             const resultadosAtuais = obterResultadosDaTabela();
             const inputsResultados = document.querySelectorAll(".resultado");
             let resultadosModificados = false;
@@ -3027,7 +3557,6 @@
                 partida.score.fullTime.home !== null &&
                 partida.score.fullTime.away !== null
               ) {
-                // Verifica se o resultado é diferente do atual
                 const resultadoAtual = resultadosAtuais[index] || {
                   time1: "",
                   time2: "",
@@ -3042,14 +3571,11 @@
                   resultadoAtual.time2 !== novoResultadoFora
                 ) {
                   resultadosModificados = true;
-
-                  // Atualiza os resultados atuais
                   resultadosAtuais[index] = {
                     time1: novoResultadoCasa,
                     time2: novoResultadoFora,
                   };
 
-                  // Atualiza os inputs
                   if (
                     inputsResultados[index * 2] &&
                     inputsResultados[index * 2 + 1]
@@ -3062,24 +3588,20 @@
             });
 
             if (resultadosModificados) {
-              // Salva os resultados atualizados no Supabase
               await salvarResultadosNoSupabase(resultadosAtuais);
               console.log("Resultados atualizados e salvos no Supabase!");
             } else {
               console.log("Nenhum resultado novo para atualizar.");
             }
 
-            // Recalcula a pontuação
             calcularPontuacao();
           } catch (error) {
             console.error("Erro ao atualizar tabela:", error);
           }
         }
 
-        // Função para salvar apenas os resultados no Supabase
         async function salvarResultadosNoSupabase(resultados) {
           try {
-            // Busca o registro atual
             const { data, error: fetchError } = await supabaseClient
               .from("alphabet_table")
               .select("*")
@@ -3095,52 +3617,108 @@
               return;
             }
 
-            // Atualiza apenas os resultados no registro existente
             const { error: updateError } = await supabaseClient
               .from("alphabet_table")
               .update({ resultados })
               .eq("id", data[0].id);
 
             if (updateError) throw updateError;
-
-            console.log("Resultados salvos com sucesso no Supabase");
           } catch (error) {
             console.error("Erro ao salvar resultados:", error);
           }
         }
 
-        // Inicia/Reinicia a atualização automática
         function iniciarAtualizacaoAutomatica() {
-          // Limpa intervalo existente
           pararAtualizacaoAutomatica();
-
-          // Executa imediatamente
           atualizarTabela();
-
-          // Configura intervalo (30 segundos)
           intervaloAtualizacao = setInterval(atualizarTabela, 30000);
-          console.log("Atualização automática iniciada (30s)");
         }
 
-        // Para a atualização automática
         function pararAtualizacaoAutomatica() {
           if (intervaloAtualizacao) {
             clearInterval(intervaloAtualizacao);
             intervaloAtualizacao = null;
-            console.log("Atualização automática parada");
           }
         }
 
+<<<<<<< HEAD
+        // Carregar apostas ao iniciar
+        async function carregarApostas() {
+          try {
+            const { data, error } = await supabaseClient
+              .from("alphabet_table")
+              .select("*")
+              .order("id", { ascending: false })
+              .limit(1);
+
+            if (error) throw error;
+
+            if (!data || data.length === 0) {
+              console.log("Nenhum dado encontrado");
+              return;
+            }
+
+            const {
+              nome_rodada,
+              jogos,
+              apostas,
+              resultados,
+              placares_ocultos,
+            } = data[0];
+
+            if (nome_rodada && nome_rodada.includes("Rodada")) {
+              rodadaExibida = parseInt(nome_rodada.split(" ")[1]);
+            }
+
+            document.getElementById("nome-rodada").value = nome_rodada || "";
+
+            if (!Array.isArray(jogos)) {
+              console.error("Erro: jogos não é um array");
+              return;
+            }
+
+            const inputsJogos = document.querySelectorAll(".input-jogo");
+            const inputsApostas = document.querySelectorAll(".aposta");
+            const inputsResultados = document.querySelectorAll(".resultado");
+
+            inputsJogos.forEach((input, index) => {
+              input.value = jogos[index] || "";
+            });
+
+            const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+            jogadores.forEach((jogador, jogadorIndex) => {
+              for (let i = 0; i < 10; i++) {
+                const indexCasa = i * 8 + jogadorIndex * 2;
+                const indexFora = indexCasa + 1;
+                inputsApostas[indexCasa].value =
+                  apostas[jogador][i].time1 || "";
+                inputsApostas[indexFora].value =
+                  apostas[jogador][i].time2 || "";
+              }
+            });
+
+            for (let i = 0; i < 10; i++) {
+              inputsResultados[i * 2].value = resultados[i].time1 || "";
+              inputsResultados[i * 2 + 1].value = resultados[i].time2 || "";
+            }
+
+            calcularPontuacao();
+            if (placares_ocultos) ocultarPlacares();
+            else mostrarPlacares();
+          } catch (error) {
+            console.error("Erro ao carregar apostas:", error);
+=======
         document.getElementById("preencher-tabela-principal").addEventListener("click", () => {
           // Verifica se rodadaAtual está definida (deve ser definida pela função buscarCalendario)
           if (typeof rodadaAtual !== 'undefined') {
             preencherTabelaPrincipalComRodadaAtual(rodadaAtual);
           } else {
             alert("Por favor, aguarde até que os dados do calendário sejam carregados.");
+>>>>>>> b52eacd8caea676e7313134f370165dcaf8a7f39
           }
-        });
+        }
 
-        // Garante que o intervalo seja limpo ao sair
+        // Limpar ao sair
         window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
       </script>
     </div>
