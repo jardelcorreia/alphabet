@@ -269,7 +269,7 @@
 
       header h1 {
         font-family: "Kanit", Arial, sans-serif;
-        font-size: 2.194rem;
+        font-size: 2.2rem;
         font-weight: 600;
         margin-bottom: var(--space-sm);
         letter-spacing: -0.5px;
@@ -282,6 +282,7 @@
         background-clip: text;
         color: transparent;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        line-height: 1.2; /* Adicionado para melhor espaçamento */
       }
 
       header .subtitulo {
@@ -1209,6 +1210,20 @@
           width: 80%;
         }
 
+        @media (max-width: 768px) {
+          header h1 {
+            font-size: 1.9rem; /* Tamanho menor para mobile */
+            padding: 0 var(--space-sm); /* Adiciona padding lateral */
+            word-break: break-word; /* Quebra de palavras longas */
+            line-height: 1.3; /* Ajuste fino no espaçamento */
+          }
+
+          header .subtitulo {
+            font-size: 1rem; /* Ajuste correspondente para o subtítulo */
+            padding: 0 var(--space-sm);
+          }
+        }
+
         .navegacao {
           flex-direction: column;
           gap: var(--space-sm);
@@ -1301,6 +1316,11 @@
           font-size: 0.8rem;
           bottom: 15px;
           right: 15px;
+        }
+
+        header h1 {
+          font-size: 1.5rem; /* Tamanho ainda menor para telas muito pequenas */
+          letter-spacing: -0.3px; /* Ajuste fino no letter-spacing */
         }
       }
 
