@@ -2146,6 +2146,7 @@
             Phillipe: 0,
           };
 
+          // Calcula pontos e placares exatos
           for (let i = 0; i < 10; i++) {
             const resultadoCasa = resultados[i].time1;
             const resultadoFora = resultados[i].time2;
@@ -2174,37 +2175,52 @@
             });
           }
 
+          // Ordena por pontos e depois por placares exatos
           const jogadoresOrdenados = Object.entries(pontos).sort((a, b) => {
-            if (b[1] !== a[1]) return b[1] - a[1];
-            return placaresExatos[b[0]] - placaresExatos[a[0]];
+            if (b[1] !== a[1]) return b[1] - a[1]; // Ordem decrescente de pontos
+            return placaresExatos[b[0]] - placaresExatos[a[0]]; // Desempate por placares exatos
           });
 
-          const pontuacaoMaxima = jogadoresOrdenados[0][1];
+          // Verifica se há pontuação maior que zero
           const todosZerados = jogadoresOrdenados.every(
             ([_, pontuacao]) => pontuacao === 0
           );
-          const vencedores = todosZerados
-            ? []
-            : jogadoresOrdenados.filter(
-                ([_, pontuacao]) => pontuacao === pontuacaoMaxima
-              );
 
+          // Define o(s) vencedor(es) com base nos placares exatos em caso de empate
+          let vencedores = [];
+          if (!todosZerados) {
+            const maiorPontuacao = jogadoresOrdenados[0][1];
+            const jogadoresComMaiorPontuacao = jogadoresOrdenados.filter(
+              ([_, pontuacao]) => pontuacao === maiorPontuacao
+            );
+
+            // Se houver empate, pega o(s) com mais placares exatos
+            const maiorPlacarExato = Math.max(
+              ...jogadoresComMaiorPontuacao.map(
+                ([jogador]) => placaresExatos[jogador]
+              )
+            );
+            vencedores = jogadoresComMaiorPontuacao.filter(
+              ([jogador]) => placaresExatos[jogador] === maiorPlacarExato
+            );
+          }
+
+          // Gera o HTML da pontuação
           const pontuacaoHTML = jogadoresOrdenados
-            .map(
-              ([jogador, pontuacao]) => `
-        <div class="pontuacao-card ${
-          vencedores.some(([vencedor]) => vencedor === jogador)
-            ? "vencedor"
-            : ""
-        }">
+            .map(([jogador, pontuacao]) => {
+              const isVencedor = vencedores.some(
+                ([vencedor]) => vencedor === jogador
+              );
+              return `
+        <div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
           <h3>${jogador}</h3>
           <span>
             <p>${pontuacao} pontos</p>
             <p>Placares exatos: ${placaresExatos[jogador]}</p>
           </span>
         </div>
-      `
-            )
+      `;
+            })
             .join("");
 
           document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
