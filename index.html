@@ -16,25 +16,25 @@
       @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
 
       /* ===============================================================
-   TABLE OF CONTENTS:
-   1. Root Variables & Settings
-   2. Base & Reset
-   3. Typography
-   4. Layout Containers
-   5. Header & Navigation
-   6. Forms & Inputs
-   7. Tables
-   8. Cards & Components
-   9. Buttons & Controls
-   10. Animations & Transitions
-   11. Utilities
-   12. Dark Mode
-   13. Responsive Adjustments
-   =============================================================== */
+TABLE OF CONTENTS:
+1. Root Variables & Settings
+2. Base & Reset
+3. Typography
+4. Layout Containers
+5. Header & Navigation
+6. Forms & Inputs
+7. Tables
+8. Cards & Components
+9. Buttons & Controls
+10. Animations & Transitions
+11. Utilities
+12. Dark Mode
+13. Responsive Adjustments
+=============================================================== */
 
       /* ===============================================================
-   1. ROOT VARIABLES & SETTINGS
-   =============================================================== */
+1. ROOT VARIABLES & SETTINGS
+=============================================================== */
       :root {
         /* Color system */
         --color-primary: #3a86ff;
@@ -88,8 +88,8 @@
       }
 
       /* ===============================================================
-   2. BASE & RESET
-   =============================================================== */
+2. BASE & RESET
+=============================================================== */
       * {
         margin: 0;
         padding: 0;
@@ -114,8 +114,8 @@
       }
 
       /* ===============================================================
-   3. TYPOGRAPHY
-   =============================================================== */
+3. TYPOGRAPHY
+=============================================================== */
       .alpha-bet-title {
         font-size: 2.25rem;
         font-weight: 600;
@@ -142,8 +142,8 @@
       }
 
       /* ===============================================================
-   4. LAYOUT CONTAINERS
-   =============================================================== */
+4. LAYOUT CONTAINERS
+=============================================================== */
       .login-container {
         display: flex;
         justify-content: center;
@@ -233,8 +233,8 @@
       }
 
       /* ===============================================================
-   5. HEADER & NAVIGATION
-   =============================================================== */
+5. HEADER & NAVIGATION
+=============================================================== */
       header {
         background-color: var(--color-primary);
         color: white;
@@ -397,8 +397,8 @@
       }
 
       /* ===============================================================
-   6. FORMS & INPUTS
-   =============================================================== */
+6. FORMS & INPUTS
+=============================================================== */
       .login-container input {
         font-family: inherit;
         width: 100%;
@@ -493,8 +493,8 @@
       }
 
       /* ===============================================================
-   7. TABLES
-   =============================================================== */
+7. TABLES
+=============================================================== */
       table {
         width: 100%;
         min-width: 900px;
@@ -536,8 +536,8 @@
       }
 
       /* ===============================================================
-   8. CARDS & COMPONENTS
-   =============================================================== */
+8. CARDS & COMPONENTS
+=============================================================== */
       #calendario-jogos {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -746,8 +746,8 @@
       }
 
       /* ===============================================================
-   9. BUTTONS & CONTROLS
-   =============================================================== */
+9. BUTTONS & CONTROLS
+=============================================================== */
       .login-container button {
         width: 100%;
         padding: var(--space-md);
@@ -868,8 +868,8 @@
       }
 
       /* ===============================================================
-   10. ANIMATIONS & TRANSITIONS
-   =============================================================== */
+10. ANIMATIONS & TRANSITIONS
+=============================================================== */
       @keyframes letterReveal {
         0% {
           opacity: 0;
@@ -937,15 +937,15 @@
       }
 
       /* ===============================================================
-   11. UTILITIES
-   =============================================================== */
+11. UTILITIES
+=============================================================== */
       .hidden {
         display: none;
       }
 
       /* ===============================================================
-   12. DARK MODE
-   =============================================================== */
+12. DARK MODE
+=============================================================== */
       body.dark-mode {
         background: linear-gradient(135deg, #1e293b, #0f172a);
         color: var(--color-light);
@@ -1171,8 +1171,8 @@
       }
 
       /* ===============================================================
-   13. RESPONSIVE ADJUSTMENTS
-   =============================================================== */
+13. RESPONSIVE ADJUSTMENTS
+=============================================================== */
       @media (max-width: 768px) {
         .table-container {
           overflow-x: auto;
@@ -1715,28 +1715,28 @@
           for (let i = 1; i <= 10; i++) {
             const linha = document.createElement("tr");
             linha.innerHTML = `
-          <td><input type="text" class="input-jogo" placeholder="casa x fora"></td>
-          ${["Jardel", "Werbet", "Nailton", "Phillipe"]
-            .map(
-              (jogador, jogadorIndex) => `
-            <td>
-              <div class="input-container">
-                <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
-                <span class="placar-separador">x</span>
-                <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
-              </div>
-            </td>
-          `
-            )
-            .join("")}
+        <td><input type="text" class="input-jogo" placeholder="casa x fora"></td>
+        ${["Jardel", "Werbet", "Nailton", "Phillipe"]
+          .map(
+            (jogador, jogadorIndex) => `
           <td>
             <div class="input-container">
-              <input type="number" class="resultado input-placar" min="0">
+              <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
               <span class="placar-separador">x</span>
-              <input type="number" class="resultado input-placar" min="0">
+              <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
             </div>
           </td>
-        `;
+        `
+          )
+          .join("")}
+        <td>
+          <div class="input-container">
+            <input type="number" class="resultado input-placar" min="0">
+            <span class="placar-separador">x</span>
+            <input type="number" class="resultado input-placar" min="0">
+          </div>
+        </td>
+      `;
             tabela.appendChild(linha);
           }
         }
@@ -2212,14 +2212,14 @@
                 ([vencedor]) => vencedor === jogador
               );
               return `
-        <div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
-          <h3>${jogador}</h3>
-          <span>
-            <p>${pontuacao} pontos</p>
-            <p>Placares exatos: ${placaresExatos[jogador]}</p>
-          </span>
-        </div>
-      `;
+      <div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
+        <h3>${jogador}</h3>
+        <span>
+          <p>${pontuacao} pontos</p>
+          <p>Placares exatos: ${placaresExatos[jogador]}</p>
+        </span>
+      </div>
+    `;
             })
             .join("");
 
@@ -2342,10 +2342,10 @@
           } catch (error) {
             console.error("Erro ao buscar dados:", error);
             document.getElementById("calendario-jogos").innerHTML = `
-          <div class="error">
-            <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
-          </div>
-        `;
+        <div class="error">
+          <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
+        </div>
+      `;
           }
         }
 
@@ -2355,10 +2355,10 @@
 
           if (!partidas || partidas.length === 0) {
             calendario.innerHTML = `
-          <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
-            <p>Nenhum jogo encontrado para esta rodada.</p>
-          </div>
-        `;
+        <div style="text-align: center; grid-column: 1 / -1; padding: 30px;">
+          <p>Nenhum jogo encontrado para esta rodada.</p>
+        </div>
+      `;
             return;
           }
 
@@ -2380,47 +2380,47 @@
             const statusClasse = statusClass(partida.status);
 
             const jogoHTML = `
-          <div class="jogo">
-            <div class="jogo-header">
-              <div class="jogo-data">${formatarData(partida.utcDate)}</div>
-            </div>
-            
-            <div class="jogo-times">
-              <div class="time">
-                <img src="${timeCasaInfo.escudo}" alt="${
+        <div class="jogo">
+          <div class="jogo-header">
+            <div class="jogo-data">${formatarData(partida.utcDate)}</div>
+          </div>
+          
+          <div class="jogo-times">
+            <div class="time">
+              <img src="${timeCasaInfo.escudo}" alt="${
               timeCasaInfo.nome
             }" class="time-escudo" onerror="handleImageError(this)">
-                <div class="time-abrev">${timeCasaInfo.abrev}</div>
-                <div class="time-nome">${timeCasaInfo.nome}</div>
-              </div>
-              <div class="versus">X</div>
-              <div class="time">
-                <img src="${timeForaInfo.escudo}" alt="${
+              <div class="time-abrev">${timeCasaInfo.abrev}</div>
+              <div class="time-nome">${timeCasaInfo.nome}</div>
+            </div>
+            <div class="versus">X</div>
+            <div class="time">
+              <img src="${timeForaInfo.escudo}" alt="${
               timeForaInfo.nome
             }" class="time-escudo" onerror="handleImageError(this)">
-                <div class="time-abrev">${timeForaInfo.abrev}</div>
-                <div class="time-nome">${timeForaInfo.nome}</div>
-              </div>
-            </div>
-            
-            ${
-              temPlacar
-                ? `
-              <div class="placar">
-                <span>${partida.score.fullTime.home}</span>
-                <span class="placar-separator">:</span>
-                <span>${partida.score.fullTime.away}</span>
-              </div>
-            `
-                : ""
-            }
-            
-            <div class="jogo-footer">
-              <div class="status ${statusClasse}">${statusTexto}</div>
-              <div class="horario">${formatarHora(partida.utcDate)}</div>
+              <div class="time-abrev">${timeForaInfo.abrev}</div>
+              <div class="time-nome">${timeForaInfo.nome}</div>
             </div>
           </div>
-        `;
+          
+          ${
+            temPlacar
+              ? `
+            <div class="placar">
+              <span>${partida.score.fullTime.home}</span>
+              <span class="placar-separator">:</span>
+              <span>${partida.score.fullTime.away}</span>
+            </div>
+          `
+              : ""
+          }
+          
+          <div class="jogo-footer">
+            <div class="status ${statusClasse}">${statusTexto}</div>
+            <div class="horario">${formatarHora(partida.utcDate)}</div>
+          </div>
+        </div>
+      `;
             calendario.innerHTML += jogoHTML;
           });
         }
@@ -2476,6 +2476,14 @@
 
         // Funções de preenchimento da tabela principal
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
+          // Se a rodada solicitada for a mesma que já está exibida
+          if (rodadaExibida === rodada) {
+            // Apenas atualiza os resultados sem pedir confirmação
+            await atualizarTabela();
+            return;
+          }
+
+          // Se for uma rodada diferente, pede confirmação
           const confirmacao = confirm(
             `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`
           );
@@ -2538,11 +2546,23 @@
 
         // Funções de atualização automática
         async function atualizarTabela() {
+          console.log("Atualizando tabela...", {
+            rodadaExibida,
+            rodadaAtual,
+            nomeRodada: document.getElementById("nome-rodada").value,
+          });
           try {
             // Verifica se há uma rodada exibida definida
             if (!rodadaExibida) {
-              console.log("Nenhuma rodada definida na tabela principal.");
-              return;
+              // Tenta obter a rodada do nome_rodada como fallback
+              const nomeRodada = document.getElementById("nome-rodada").value;
+              const match = nomeRodada.match(/\d+/);
+              rodadaExibida = match ? parseInt(match[0]) : null;
+
+              if (!rodadaExibida) {
+                console.log("Nenhuma rodada definida na tabela principal.");
+                return;
+              }
             }
 
             // Verifica se a rodada exibida na tabela principal é a mesma do calendário
@@ -2684,8 +2704,10 @@
               placares_ocultos,
             } = data[0];
 
-            if (nome_rodada && nome_rodada.includes("Rodada")) {
-              rodadaExibida = parseInt(nome_rodada.split(" ")[1]);
+            if (nome_rodada) {
+              const match = nome_rodada.match(/\d+/); // Extrai qualquer número do nome
+              rodadaExibida = match ? parseInt(match[0]) : null;
+              console.log(`Rodada carregada: ${rodadaExibida}`, nome_rodada);
             }
 
             document.getElementById("nome-rodada").value = nome_rodada || "";
