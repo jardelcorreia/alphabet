@@ -2460,14 +2460,6 @@
 
         // Funções de preenchimento da tabela principal
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
-          if (rodadaExibida === rodada) {
-            console.log(
-              `A tabela já está preenchida com a Rodada ${rodada}. Atualizando apenas resultados...`
-            );
-            await atualizarTabela();
-            return;
-          }
-
           const confirmacao = confirm(
             `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`
           );
@@ -2488,17 +2480,17 @@
               return;
             }
 
-            const apostasIniciais = {
-              Jardel: Array(10).fill({ time1: "", time2: "" }),
-              Werbet: Array(10).fill({ time1: "", time2: "" }),
-              Nailton: Array(10).fill({ time1: "", time2: "" }),
-              Phillipe: Array(10).fill({ time1: "", time2: "" }),
-            };
+            // Limpa todos os dados existentes
+            const inputsApostas = document.querySelectorAll(".aposta");
+            const inputsResultados = document.querySelectorAll(".resultado");
 
-            const resultadosIniciais = Array(10).fill({ time1: "", time2: "" });
+            inputsApostas.forEach((input) => (input.value = ""));
+            inputsResultados.forEach((input) => (input.value = ""));
 
+            // Preenche o nome da rodada
             document.getElementById("nome-rodada").value = `Rodada ${rodada}`;
 
+            // Preenche os jogos
             const inputsJogos = document.querySelectorAll(".input-jogo");
             jogosRodadaAtual.forEach((partida, index) => {
               const timeCasaAbrev =
@@ -2510,9 +2502,16 @@
               inputsJogos[index].value = `${timeCasaAbrev} x ${timeForaAbrev}`;
             });
 
+            // Atualiza a rodada exibida
             rodadaExibida = rodada;
+
             await salvarApostas();
-            iniciarAtualizacaoAutomatica();
+            // Reinicia a atualização automática apenas se for a rodada atual
+            if (rodada === rodadaAtual) {
+              iniciarAtualizacaoAutomatica();
+            } else {
+              pararAtualizacaoAutomatica();
+            }
           } catch (error) {
             console.error("Erro ao buscar dados da tabela principal:", error);
             alert(
@@ -2524,19 +2523,16 @@
         // Funções de atualização automática
         async function atualizarTabela() {
           try {
+            // Verifica se há uma rodada exibida definida
             if (!rodadaExibida) {
-              await buscarCalendario();
-              if (rodadaAtual) {
-                rodadaExibida = rodadaAtual;
-              } else {
-                console.log("Nenhuma rodada disponível para atualização.");
-                return;
-              }
+              console.log("Nenhuma rodada definida na tabela principal.");
+              return;
             }
 
+            // Verifica se a rodada exibida na tabela principal é a mesma do calendário
             if (rodadaExibida !== rodadaAtual) {
               console.log(
-                `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando.`
+                `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando resultados.`
               );
               return;
             }
@@ -2546,7 +2542,7 @@
 
             const data = await response.json();
             const jogosRodada = data.matches.filter(
-              (m) => m.matchday === rodadaExibida
+              (m) => m.matchday === rodadaExibida // Usa rodadaExibida em vez de rodadaAtual
             );
 
             if (jogosRodada.length === 0) {
@@ -2598,11 +2594,10 @@
             if (resultadosModificados) {
               await salvarResultadosNoSupabase(resultadosAtuais);
               console.log("Resultados atualizados e salvos no Supabase!");
+              calcularPontuacao();
             } else {
               console.log("Nenhum resultado novo para atualizar.");
             }
-
-            calcularPontuacao();
           } catch (error) {
             console.error("Erro ao atualizar tabela:", error);
           }
