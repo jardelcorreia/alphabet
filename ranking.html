@@ -15,6 +15,7 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
 
+      /* ===== VARIÁVEIS ===== */
       :root {
         --primary: #2563eb;
         --primary-dark: #1d4ed8;
@@ -31,12 +32,31 @@
         --gray-light: #f3f4f6;
       }
 
+      /* ===== BASE ===== */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
 
+      body {
+        font-family: "Kanit", sans-serif;
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe, #c7d2fe);
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 2rem 1rem;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      body.dark-mode {
+        background: linear-gradient(135deg, #1e293b, #334155, #475569);
+        color: var(--light);
+      }
+
+      /* ===== TIPOGRAFIA ===== */
       input,
       input::placeholder,
       textarea,
@@ -64,23 +84,7 @@
         opacity: 0.7;
       }
 
-      body {
-        font-family: "Kanit", sans-serif;
-        background: linear-gradient(135deg, #dbeafe, #bfdbfe, #c7d2fe);
-        color: var(--dark);
-        min-height: 100vh;
-        padding: 2rem 1rem;
-        overflow-x: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      body.dark-mode {
-        background: linear-gradient(135deg, #1e293b, #334155, #475569);
-        color: var(--light);
-      }
-
+      /* ===== LAYOUT ===== */
       .header {
         text-align: center;
         margin-bottom: 2rem;
@@ -120,6 +124,7 @@
         align-items: flex-start;
       }
 
+      /* ===== COMPONENTES ===== */
       .card {
         flex: 1;
         background: rgba(255, 255, 255, 0.95);
@@ -187,6 +192,7 @@
         border-radius: 4px;
       }
 
+      /* ===== FORMULÁRIOS ===== */
       .input-container {
         display: flex;
         align-items: center;
@@ -274,6 +280,7 @@
         outline: none;
       }
 
+      /* ===== CARDS DE JOGADORES ===== */
       .score-cards {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -376,6 +383,7 @@
         color: var(--dark);
       }
 
+      /* ===== ANIMAÇÕES ===== */
       .pulse {
         animation: pulse 2s infinite;
       }
@@ -427,7 +435,7 @@
         color: var(--danger);
       }
 
-      /* Responsividade */
+      /* ===== RESPONSIVIDADE ===== */
       @media (max-width: 992px) {
         .main-container {
           flex-direction: column;
@@ -485,15 +493,15 @@
         /* Score cards layout */
         .score-cards {
           display: grid;
-          grid-template-columns: 1fr; /* Single column */
+          grid-template-columns: 1fr;
           gap: 1rem;
         }
 
         .player-card {
           width: 100%;
-          max-width: 320px; /* Ensures cards aren't too wide on mobile */
-          margin: 0 auto; /* Center the cards */
-          min-height: 180px; /* Ensures consistent height */
+          max-width: 320px;
+          margin: 0 auto;
+          min-height: 180px;
         }
 
         .player-name {
@@ -610,7 +618,9 @@
 
   <body>
     <div class="header">
-      <h1 class="animate__animated animate__fadeInDown">Ranking AlphaBet 2025</h1>
+      <h1 class="animate__animated animate__fadeInDown">
+        Ranking AlphaBet 2025
+      </h1>
       <p class="animate__animated animate__fadeInUp animate__delay-1s">
         Lista de vencedores de cada rodada e placar do campeonato.
       </p>
@@ -1027,12 +1037,12 @@
         );
       }
 
-      window.addEventListener("DOMContentLoaded", () => {
+      // Inicialização
+      document.addEventListener("DOMContentLoaded", () => {
         carregarRanking();
         criarInputsRanking();
-      });
 
-      document.addEventListener("DOMContentLoaded", function () {
+        // Verificar dark mode
         const isDarkMode = localStorage.getItem("darkMode") === "true";
         if (isDarkMode) document.body.classList.add("dark-mode");
       });
