@@ -626,7 +626,6 @@ TABLE OF CONTENTS:
         justify-content: center;
         align-items: center;
         gap: var(--space-sm);
-        margin: var(--space-sm) 0;
         font-family: "Kanit", Arial, sans-serif;
         font-size: 1.5rem;
         font-weight: 600;
@@ -2393,17 +2392,7 @@ TABLE OF CONTENTS:
               <div class="time-abrev">${timeCasaInfo.abrev}</div>
               <div class="time-nome">${timeCasaInfo.nome}</div>
             </div>
-            <div class="versus">X</div>
-            <div class="time">
-              <img src="${timeForaInfo.escudo}" alt="${
-              timeForaInfo.nome
-            }" class="time-escudo" onerror="handleImageError(this)">
-              <div class="time-abrev">${timeForaInfo.abrev}</div>
-              <div class="time-nome">${timeForaInfo.nome}</div>
-            </div>
-          </div>
-          
-          ${
+            ${
             temPlacar
               ? `
             <div class="placar">
@@ -2412,9 +2401,18 @@ TABLE OF CONTENTS:
               <span>${partida.score.fullTime.away}</span>
             </div>
           `
-              : ""
+              : '<div class="versus">X</div>'
           }
-          
+            
+            <div class="time">
+              <img src="${timeForaInfo.escudo}" alt="${
+              timeForaInfo.nome
+            }" class="time-escudo" onerror="handleImageError(this)">
+              <div class="time-abrev">${timeForaInfo.abrev}</div>
+              <div class="time-nome">${timeForaInfo.nome}</div>
+            </div>
+          </div>
+                             
           <div class="jogo-footer">
             <div class="status ${statusClasse}">${statusTexto}</div>
             <div class="horario">${formatarHora(partida.utcDate)}</div>
