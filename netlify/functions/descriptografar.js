@@ -11,6 +11,14 @@ exports.handler = async (event) => {
 
   try {
     const { textoCriptografado } = JSON.parse(event.body);
+
+    if (!textoCriptografado || textoCriptografado.trim() === "") {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "textoCriptografado is required" }),
+      };
+    }
+
     const chave = process.env.CRYPTO_KEY;
 
     if (!chave) {

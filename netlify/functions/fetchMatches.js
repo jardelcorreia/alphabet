@@ -1,6 +1,6 @@
 exports.handler = async () => {
   const url = "https://api.football-data.org/v4/competitions/BSA/matches";
-  const apiKey = "5f121390e2cc480d8d0f8dba3b37a435"; // Sua API Key
+  const apiKey = process.env.FOOTBALL_DATA_API_KEY; // Sua API Key
 
   console.log("Iniciando a busca dos dados da API Football...");
 
