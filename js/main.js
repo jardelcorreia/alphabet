@@ -551,16 +551,28 @@ function verificarApostasCompletas() {
 
   if (!jogadorClass) return false;
 
+  const inputsJogos = document.querySelectorAll('.input-jogo');
   const apostasUsuario = document.querySelectorAll(
     `.aposta.${jogadorClass}`
   );
-  let todasPreenchidas = true;
+  
+  let todasApostasAplicaveisPreenchidas = true;
 
-  apostasUsuario.forEach((aposta) => {
-    if (aposta.value === "") todasPreenchidas = false;
-  });
+  for (let i = 0; i < 10; i++) {
+    const currentGameInput = inputsJogos[i];
+    const gameName = currentGameInput.value.trim();
+    const gamePattern = /\S+\s*x\s*\S+/i;
+    const isGameApplicable = gameName !== "" && !gameName.toLowerCase().includes("sem jogo") && gamePattern.test(gameName);
 
-  return todasPreenchidas;
+    if (isGameApplicable) {
+      if (apostasUsuario[i * 2].value === "" || apostasUsuario[i * 2 + 1].value === "") {
+        todasApostasAplicaveisPreenchidas = false;
+        break; 
+      }
+    }
+  }
+
+  return todasApostasAplicaveisPreenchidas;
 }
 
 function mostrarFeedbackApostasCompletas() {
