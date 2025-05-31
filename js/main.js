@@ -848,25 +848,81 @@ async function buscarCalendario() {
       partidasPorRodada[rodada].push(partida);
     });
 
-    const todosOsNumerosDeRodadas = Object.keys(partidasPorRodada)
-                                          .map(Number)
-                                          .sort((a, b) => b - a); // Sort descending
+    const rodadasComInfo = Object.keys(partidasPorRodada).map(numRodadaStr => {
+      const numeroRodada = Number(numRodadaStr);
+      const jogosDaRodada = partidasPorRodada[numeroRodada];
 
-    let rodadaParaExibir = todosOsNumerosDeRodadas.length > 0 ? todosOsNumerosDeRodadas[0] : 1;
+      let dataInicio = null;
+      if (jogosDaRodada.length > 0) {
+        dataInicio = new Date(jogosDaRodada[0].utcDate);
+        for (let i = 1; i < jogosDaRodada.length; i++) {
+          const dataJogoAtual = new Date(jogosDaRodada[i].utcDate);
+          if (dataJogoAtual < dataInicio) {
+            dataInicio = dataJogoAtual;
+          }
+        }
+      } else {
+        dataInicio = new Date('2999-12-31T23:59:59Z');
+      }
 
-    if (todosOsNumerosDeRodadas.length > 0) {
-      for (const numeroRodada of todosOsNumerosDeRodadas) {
-        const jogosDaRodada = partidasPorRodada[numeroRodada];
-        const temJogoNaoFinalizado = jogosDaRodada.some(jogo => jogo.status !== "FINISHED");
-        if (temJogoNaoFinalizado) {
-          rodadaParaExibir = numeroRodada;
+      const todosJogosFinalizados = jogosDaRodada.every(jogo => jogo.status === "FINISHED");
+
+      return { numeroRodada, dataInicio, todosJogosFinalizados };
+    });
+
+    rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
+
+    let rodadaParaExibir = 0;
+    const dataAtual = new Date();
+
+    const rodadasCandidatas = rodadasComInfo.filter(r => {
+      const dataInicioRodada = r.dataInicio;
+      const hoje = new Date();
+
+      const ryy = dataInicioRodada.getUTCFullYear();
+      const rmm = dataInicioRodada.getUTCMonth();
+      const rdd = dataInicioRodada.getUTCDate();
+
+      const hyy = hoje.getUTCFullYear();
+      const hmm = hoje.getUTCMonth();
+      const hdd = hoje.getUTCDate();
+
+      const rodadaJaIniciou = (ryy < hyy) ||
+                              (ryy === hyy && rmm < hmm) ||
+                              (ryy === hyy && rmm === hmm && rdd <= hdd);
+
+      return rodadaJaIniciou && !r.todosJogosFinalizados;
+    });
+
+    if (rodadasCandidatas.length > 0) {
+      rodadasCandidatas.sort((a, b) => b.numeroRodada - a.numeroRodada);
+      rodadaParaExibir = rodadasCandidatas[0].numeroRodada;
+    } else {
+      let proximaRodadaIncompleta = null;
+      for (const r of rodadasComInfo) {
+        if (!r.todosJogosFinalizados) {
+          proximaRodadaIncompleta = r.numeroRodada;
           break;
+        }
+      }
+
+      if (proximaRodadaIncompleta !== null) {
+        rodadaParaExibir = proximaRodadaIncompleta;
+      } else {
+        if (rodadasComInfo.length > 0) {
+          rodadaParaExibir = rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+        } else {
+          rodadaParaExibir = 1;
         }
       }
     }
 
-    totalRodadas = todosOsNumerosDeRodadas.length > 0 ? todosOsNumerosDeRodadas[0] : 0;
     rodadaAtual = rodadaParaExibir;
+    if (rodadasComInfo.length > 0) {
+      totalRodadas = rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+    } else {
+      totalRodadas = 0;
+    }
 
     // Atualiza a tabela imediatamente após carregar o calendário
     await atualizarTabela();
