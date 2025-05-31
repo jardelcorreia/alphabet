@@ -917,6 +917,32 @@ async function buscarCalendario() {
       }
     }
 
+    // Lookahead Logic: Check if the next matchday starts tomorrow
+    const rodadaInicialmenteSelecionada = rodadaParaExibir;
+    const indiceRodadaAtualNoArray = rodadasComInfo.findIndex(r => r.numeroRodada === rodadaInicialmenteSelecionada);
+
+    if (indiceRodadaAtualNoArray !== -1 && (indiceRodadaAtualNoArray + 1) < rodadasComInfo.length) {
+      const rodadaSeguinteInfo = rodadasComInfo[indiceRodadaAtualNoArray + 1];
+      const dataInicioRodadaSeguinte = new Date(rodadaSeguinteInfo.dataInicio);
+
+      const hoje = new Date();
+      const amanha = new Date(hoje);
+      amanha.setDate(hoje.getDate() + 1);
+
+      const ds_yy = dataInicioRodadaSeguinte.getUTCFullYear();
+      const ds_mm = dataInicioRodadaSeguinte.getUTCMonth();
+      const ds_dd = dataInicioRodadaSeguinte.getUTCDate();
+
+      const am_yy = amanha.getUTCFullYear();
+      const am_mm = amanha.getUTCMonth();
+      const am_dd = amanha.getUTCDate();
+
+      if (ds_yy === am_yy && ds_mm === am_mm && ds_dd === am_dd) {
+        rodadaParaExibir = rodadaSeguinteInfo.numeroRodada;
+      }
+    }
+    // End of Lookahead Logic
+
     rodadaAtual = rodadaParaExibir;
     if (rodadasComInfo.length > 0) {
       totalRodadas = rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
