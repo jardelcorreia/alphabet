@@ -2278,60 +2278,122 @@ TABLE OF CONTENTS:
               partidasPorRodada[rodada].push(partida);
             });
 
-            const rodadasOrdenadas = Object.keys(partidasPorRodada)
-              .map((rodada) => ({
-                rodada: parseInt(rodada),
-                dataInicio: new Date(partidasPorRodada[rodada][0].utcDate),
-                dataFim: new Date(
-                  partidasPorRodada[rodada][
-                    partidasPorRodada[rodada].length - 1
-                  ].utcDate
-                ),
-              }))
-              .sort((a, b) => a.dataInicio - b.dataInicio);
+            const rodadasComInfo = Object.keys(partidasPorRodada).map(
+              (numRodadaStr) => {
+                const numeroRodada = Number(numRodadaStr);
+                const jogosDaRodada = partidasPorRodada[numeroRodada];
 
-            const dataAtual = new Date();
-            let rodadaParaExibir = 1;
-            let rodadaAtualTemJogosPendentes = false;
-
-            for (const rodada of rodadasOrdenadas) {
-              if (
-                dataAtual >= rodada.dataInicio &&
-                dataAtual <= rodada.dataFim
-              ) {
-                rodadaParaExibir = rodada.rodada;
-                const jogosPendentes = partidasPorRodada[rodada.rodada].filter(
-                  (jogo) => {
-                    const dataJogo = new Date(jogo.utcDate);
-                    return (
-                      dataJogo > dataAtual ||
-                      ["SCHEDULED", "TIMED"].includes(jogo.status)
-                    );
+                let dataInicio = null;
+                if (jogosDaRodada.length > 0) {
+                  dataInicio = new Date(jogosDaRodada[0].utcDate);
+                  for (let i = 1; i < jogosDaRodada.length; i++) {
+                    const dataJogoAtual = new Date(jogosDaRodada[i].utcDate);
+                    if (dataJogoAtual < dataInicio) {
+                      dataInicio = dataJogoAtual;
+                    }
                   }
-                );
-                rodadaAtualTemJogosPendentes = jogosPendentes.length > 0;
-                break;
-              } else if (dataAtual > rodada.dataFim) {
-                rodadaParaExibir = rodada.rodada;
-              }
-            }
+                } else {
+                  dataInicio = new Date("2999-12-31T23:59:59Z");
+                }
 
-            if (!rodadaAtualTemJogosPendentes) {
-              const proximaRodada = rodadasOrdenadas.find(
-                (r) => r.rodada === rodadaParaExibir + 1
-              );
-              if (proximaRodada) {
-                const diaAnterior = new Date(proximaRodada.dataInicio);
-                diaAnterior.setDate(diaAnterior.getDate() - 1);
-                diaAnterior.setHours(0, 0, 0, 0);
-                if (dataAtual >= diaAnterior) {
-                  rodadaParaExibir = proximaRodada.rodada;
+                const todosJogosFinalizados = jogosDaRodada.every(
+                  (jogo) => jogo.status === "FINISHED"
+                );
+
+                return { numeroRodada, dataInicio, todosJogosFinalizados };
+              }
+            );
+
+            rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
+
+            let rodadaParaExibir = 0;
+            const dataAtual = new Date();
+
+            const rodadasCandidatas = rodadasComInfo.filter((r) => {
+              const dataInicioRodada = r.dataInicio;
+              const hoje = new Date();
+
+              const ryy = dataInicioRodada.getUTCFullYear();
+              const rmm = dataInicioRodada.getUTCMonth();
+              const rdd = dataInicioRodada.getUTCDate();
+
+              const hyy = hoje.getUTCFullYear();
+              const hmm = hoje.getUTCMonth();
+              const hdd = hoje.getUTCDate();
+
+              const rodadaJaIniciou =
+                ryy < hyy ||
+                (ryy === hyy && rmm < hmm) ||
+                (ryy === hyy && rmm === hmm && rdd <= hdd);
+
+              return rodadaJaIniciou && !r.todosJogosFinalizados;
+            });
+
+            if (rodadasCandidatas.length > 0) {
+              rodadasCandidatas.sort((a, b) => b.numeroRodada - a.numeroRodada);
+              rodadaParaExibir = rodadasCandidatas[0].numeroRodada;
+            } else {
+              let proximaRodadaIncompleta = null;
+              for (const r of rodadasComInfo) {
+                if (!r.todosJogosFinalizados) {
+                  proximaRodadaIncompleta = r.numeroRodada;
+                  break;
+                }
+              }
+
+              if (proximaRodadaIncompleta !== null) {
+                rodadaParaExibir = proximaRodadaIncompleta;
+              } else {
+                if (rodadasComInfo.length > 0) {
+                  rodadaParaExibir =
+                    rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+                } else {
+                  rodadaParaExibir = 1;
                 }
               }
             }
 
-            totalRodadas = rodadasOrdenadas.length;
+            // Lookahead Logic: Check if the next matchday starts tomorrow
+            const rodadaInicialmenteSelecionada = rodadaParaExibir;
+            const indiceRodadaAtualNoArray = rodadasComInfo.findIndex(
+              (r) => r.numeroRodada === rodadaInicialmenteSelecionada
+            );
+
+            if (
+              indiceRodadaAtualNoArray !== -1 &&
+              indiceRodadaAtualNoArray + 1 < rodadasComInfo.length
+            ) {
+              const rodadaSeguinteInfo =
+                rodadasComInfo[indiceRodadaAtualNoArray + 1];
+              const dataInicioRodadaSeguinte = new Date(
+                rodadaSeguinteInfo.dataInicio
+              );
+
+              const hoje = new Date();
+              const amanha = new Date(hoje);
+              amanha.setDate(hoje.getDate() + 1);
+
+              const ds_yy = dataInicioRodadaSeguinte.getUTCFullYear();
+              const ds_mm = dataInicioRodadaSeguinte.getUTCMonth();
+              const ds_dd = dataInicioRodadaSeguinte.getUTCDate();
+
+              const am_yy = amanha.getUTCFullYear();
+              const am_mm = amanha.getUTCMonth();
+              const am_dd = amanha.getUTCDate();
+
+              if (ds_yy === am_yy && ds_mm === am_mm && ds_dd === am_dd) {
+                rodadaParaExibir = rodadaSeguinteInfo.numeroRodada;
+              }
+            }
+            // End of Lookahead Logic
+
             rodadaAtual = rodadaParaExibir;
+            if (rodadasComInfo.length > 0) {
+              totalRodadas =
+                rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+            } else {
+              totalRodadas = 0;
+            }
 
             // Atualiza a tabela imediatamente após carregar o calendário
             await atualizarTabela();
@@ -2341,10 +2403,10 @@ TABLE OF CONTENTS:
           } catch (error) {
             console.error("Erro ao buscar dados:", error);
             document.getElementById("calendario-jogos").innerHTML = `
-        <div class="error">
-          <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
-        </div>
-      `;
+<div class="error">
+  <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
+</div>
+`;
           }
         }
 
@@ -2393,16 +2455,16 @@ TABLE OF CONTENTS:
               <div class="time-nome">${timeCasaInfo.nome}</div>
             </div>
             ${
-            temPlacar
-              ? `
+              temPlacar
+                ? `
             <div class="placar">
               <span>${partida.score.fullTime.home}</span>
               <span class="placar-separator">:</span>
               <span>${partida.score.fullTime.away}</span>
             </div>
           `
-              : '<div class="versus">X</div>'
-          }
+                : '<div class="versus">X</div>'
+            }
             
             <div class="time">
               <img src="${timeForaInfo.escudo}" alt="${
