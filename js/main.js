@@ -555,7 +555,7 @@ function verificarApostasCompletas() {
   const apostasUsuario = document.querySelectorAll(
     `.aposta.${jogadorClass}`
   );
-  
+
   let todasApostasAplicaveisPreenchidas = true;
 
   for (let i = 0; i < 10; i++) {
@@ -567,7 +567,7 @@ function verificarApostasCompletas() {
     if (isGameApplicable) {
       if (apostasUsuario[i * 2].value === "" || apostasUsuario[i * 2 + 1].value === "") {
         todasApostasAplicaveisPreenchidas = false;
-        break; 
+        break;
       }
     }
   }
@@ -848,59 +848,24 @@ async function buscarCalendario() {
       partidasPorRodada[rodada].push(partida);
     });
 
-    const rodadasOrdenadas = Object.keys(partidasPorRodada)
-      .map((rodada) => ({
-        rodada: parseInt(rodada),
-        dataInicio: new Date(partidasPorRodada[rodada][0].utcDate),
-        dataFim: new Date(
-          partidasPorRodada[rodada][
-            partidasPorRodada[rodada].length - 1
-          ].utcDate
-        ),
-      }))
-      .sort((a, b) => a.dataInicio - b.dataInicio);
+    const todosOsNumerosDeRodadas = Object.keys(partidasPorRodada)
+                                          .map(Number)
+                                          .sort((a, b) => b - a); // Sort descending
 
-    const dataAtual = new Date();
-    let rodadaParaExibir = 1;
-    let rodadaAtualTemJogosPendentes = false;
+    let rodadaParaExibir = todosOsNumerosDeRodadas.length > 0 ? todosOsNumerosDeRodadas[0] : 1;
 
-    for (const rodada of rodadasOrdenadas) {
-      if (
-        dataAtual >= rodada.dataInicio &&
-        dataAtual <= rodada.dataFim
-      ) {
-        rodadaParaExibir = rodada.rodada;
-        const jogosPendentes = partidasPorRodada[rodada.rodada].filter(
-          (jogo) => {
-            const dataJogo = new Date(jogo.utcDate);
-            return (
-              dataJogo > dataAtual ||
-              ["SCHEDULED", "TIMED"].includes(jogo.status)
-            );
-          }
-        );
-        rodadaAtualTemJogosPendentes = jogosPendentes.length > 0;
-        break;
-      } else if (dataAtual > rodada.dataFim) {
-        rodadaParaExibir = rodada.rodada;
-      }
-    }
-
-    if (!rodadaAtualTemJogosPendentes) {
-      const proximaRodada = rodadasOrdenadas.find(
-        (r) => r.rodada === rodadaParaExibir + 1
-      );
-      if (proximaRodada) {
-        const diaAnterior = new Date(proximaRodada.dataInicio);
-        diaAnterior.setDate(diaAnterior.getDate() - 1);
-        diaAnterior.setHours(0, 0, 0, 0);
-        if (dataAtual >= diaAnterior) {
-          rodadaParaExibir = proximaRodada.rodada;
+    if (todosOsNumerosDeRodadas.length > 0) {
+      for (const numeroRodada of todosOsNumerosDeRodadas) {
+        const jogosDaRodada = partidasPorRodada[numeroRodada];
+        const temJogoNaoFinalizado = jogosDaRodada.some(jogo => jogo.status !== "FINISHED");
+        if (temJogoNaoFinalizado) {
+          rodadaParaExibir = numeroRodada;
+          break;
         }
       }
     }
 
-    totalRodadas = rodadasOrdenadas.length;
+    totalRodadas = todosOsNumerosDeRodadas.length > 0 ? todosOsNumerosDeRodadas[0] : 0;
     rodadaAtual = rodadaParaExibir;
 
     // Atualiza a tabela imediatamente após carregar o calendário
@@ -953,7 +918,7 @@ function exibirRodada(rodada, partidas) {
   <div class="jogo-header">
     <div class="jogo-data">${formatarData(partida.utcDate)}</div>
   </div>
-  
+
   <div class="jogo-times">
     <div class="time">
       <img src="${timeCasaInfo.escudo}" alt="${
@@ -973,7 +938,7 @@ function exibirRodada(rodada, partidas) {
   `
       : '<div class="versus">X</div>'
   }
-    
+
     <div class="time">
       <img src="${timeForaInfo.escudo}" alt="${
       timeForaInfo.nome
@@ -982,7 +947,7 @@ function exibirRodada(rodada, partidas) {
       <div class="time-nome">${timeForaInfo.nome}</div>
     </div>
   </div>
-                     
+
   <div class="jogo-footer">
     <div class="status ${statusClasse}">${statusTexto}</div>
     <div class="horario">${formatarHora(partida.utcDate)}</div>
