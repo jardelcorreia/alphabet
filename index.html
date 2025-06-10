@@ -1979,7 +1979,7 @@ TABLE OF CONTENTS:
         function verificarApostasCompletas() {
           const loggedInUser = localStorage.getItem("loggedInUser");
           if (!loggedInUser) return false;
-
+        
           const jogadorClass =
             loggedInUser === "Jardel"
               ? "jogador0"
@@ -1990,19 +1990,31 @@ TABLE OF CONTENTS:
               : loggedInUser === "Phillipe"
               ? "jogador3"
               : null;
-
+        
           if (!jogadorClass) return false;
-
+        
+          const inputsJogos = document.querySelectorAll('.input-jogo');
           const apostasUsuario = document.querySelectorAll(
             `.aposta.${jogadorClass}`
           );
-          let todasPreenchidas = true;
-
-          apostasUsuario.forEach((aposta) => {
-            if (aposta.value === "") todasPreenchidas = false;
-          });
-
-          return todasPreenchidas;
+        
+          let todasApostasAplicaveisPreenchidas = true;
+        
+          for (let i = 0; i < 10; i++) {
+            const currentGameInput = inputsJogos[i];
+            const gameName = currentGameInput.value.trim();
+            const gamePattern = /\S+\s*x\s*\S+/i;
+            const isGameApplicable = gameName !== "" && !gameName.toLowerCase().includes("sem jogo") && gamePattern.test(gameName);
+        
+            if (isGameApplicable) {
+              if (apostasUsuario[i * 2].value === "" || apostasUsuario[i * 2 + 1].value === "") {
+                todasApostasAplicaveisPreenchidas = false;
+                break;
+              }
+            }
+          }
+        
+          return todasApostasAplicaveisPreenchidas;
         }
 
         function mostrarFeedbackApostasCompletas() {
