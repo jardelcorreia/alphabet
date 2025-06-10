@@ -1249,6 +1249,11 @@ async function atualizarTabela() {
     } else {
       console.log("Nenhum resultado novo para atualizar.");
     }
+    
+    // Atualiza o calendário também, para refletir os novos placares
+    partidasPorRodada[rodadaExibida] = jogosRodada; // atualiza o cache
+    exibirRodada(rodadaExibida, jogosRodada); // força atualização do calendário
+    
   } catch (error) {
     console.error("Erro ao atualizar tabela:", error);
   }
