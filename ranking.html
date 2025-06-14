@@ -15,7 +15,6 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
 
-      /* ===== VARIÁVEIS ===== */
       :root {
         --primary: #2563eb;
         --primary-dark: #1d4ed8;
@@ -32,31 +31,12 @@
         --gray-light: #f3f4f6;
       }
 
-      /* ===== BASE ===== */
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
       }
 
-      body {
-        font-family: "Kanit", sans-serif;
-        background: linear-gradient(135deg, #dbeafe, #bfdbfe, #c7d2fe);
-        color: var(--dark);
-        min-height: 100vh;
-        padding: 2rem 1rem;
-        overflow-x: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      body.dark-mode {
-        background: linear-gradient(135deg, #1e293b, #334155, #475569);
-        color: var(--light);
-      }
-
-      /* ===== TIPOGRAFIA ===== */
       input,
       input::placeholder,
       textarea,
@@ -84,15 +64,32 @@
         opacity: 0.7;
       }
 
-      /* ===== LAYOUT ===== */
+      body {
+        font-family: "Kanit", sans-serif;
+        background: linear-gradient(135deg, #dbeafe, #bfdbfe, #c7d2fe);
+        color: var(--dark);
+        min-height: 100vh;
+        padding: 1rem;
+        overflow-x: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      body.dark-mode {
+        background: linear-gradient(135deg, #1e293b, #334155, #475569);
+        color: var(--light);
+      }
+
       .header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         width: 100%;
+        padding: 0 0.5rem;
       }
 
       .header h1 {
-        font-size: 2.5rem;
+        font-size: 1.8rem;
         font-weight: 700;
         color: var(--primary-dark);
         margin-bottom: 0.5rem;
@@ -106,7 +103,7 @@
       }
 
       .header p {
-        font-size: 1.1rem;
+        font-size: 1rem;
         color: var(--dark);
         opacity: 0.8;
       }
@@ -117,19 +114,18 @@
 
       .main-container {
         display: flex;
-        gap: 2rem;
+        flex-direction: column;
+        gap: 1.5rem;
         width: 100%;
-        max-width: 1400px;
+        max-width: 1200px;
         margin: 0 auto;
-        align-items: flex-start;
       }
 
-      /* ===== COMPONENTES ===== */
       .card {
-        flex: 1;
+        width: 100%;
         background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border-radius: 16px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
         overflow: hidden;
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.2);
@@ -144,13 +140,13 @@
       .card-header {
         background: var(--primary);
         color: white;
-        padding: 1.5rem;
+        padding: 1rem;
         text-align: center;
         position: relative;
       }
 
       .card-header h2 {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 600;
         margin: 0;
         text-transform: uppercase;
@@ -173,13 +169,13 @@
       }
 
       .card-body {
-        padding: 2rem;
-        max-height: 70vh;
+        padding: 1rem;
+        max-height: 60vh;
         overflow-y: auto;
       }
 
       .card-body::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
       }
 
       .card-body::-webkit-scrollbar-track {
@@ -192,19 +188,18 @@
         border-radius: 4px;
       }
 
-      /* ===== FORMULÁRIOS ===== */
       .input-container {
-        display: flex;
-        align-items: center;
+        display: grid;
+        grid-template-columns: 30px 70px 1fr;
         gap: 8px;
-        margin-bottom: 12px;
-        padding: 6px 8px;
-        border-radius: 10px;
-        transition: all 0.3s ease;
+        align-items: center;
+        margin-bottom: 8px;
+        padding: 5px;
       }
 
       .input-container:hover {
         background: var(--primary-bg);
+        border-radius: 8px;
       }
 
       body.dark-mode .input-container:hover {
@@ -212,28 +207,25 @@
       }
 
       .rodada-label {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         font-weight: 700;
         color: var(--primary);
-        min-width: 30px;
         text-align: center;
-        padding: 6px;
+        padding: 4px;
         background: var(--primary-bg);
         border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
 
       .valor-container {
         display: flex;
         align-items: center;
-        margin: 0 5px;
       }
 
       .currency-prefix {
         margin-right: 3px;
         font-weight: 600;
         color: var(--primary-dark);
-        font-size: 0.8rem;
+        font-size: 0.7rem;
       }
 
       body.dark-mode .currency-prefix {
@@ -241,15 +233,14 @@
       }
 
       .valor-rodada-input {
-        width: 42px;
-        padding: 3px;
+        width: 100%;
+        padding: 4px;
         border: 2px solid var(--primary-light);
         border-radius: 6px;
         background: rgba(255, 255, 255, 0.95);
         font-family: "Kanit", sans-serif;
         font-size: 0.8rem;
         color: var(--primary-dark);
-        transition: all 0.3s ease;
       }
 
       body.dark-mode .valor-rodada-input {
@@ -259,13 +250,12 @@
       }
 
       .winner-input {
-        flex: 1;
-        padding: 8px;
+        width: 100%;
+        padding: 6px;
         border: 2px solid rgba(0, 0, 0, 0.1);
         border-radius: 6px;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         background: white;
-        transition: all 0.3s;
       }
 
       body.dark-mode .winner-input {
@@ -280,17 +270,17 @@
         outline: none;
       }
 
-      /* ===== CARDS DE JOGADORES ===== */
+      /* Score cards - ORIGINAL LAYOUT RESTORED */
       .score-cards {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
         gap: 1rem;
       }
 
       .player-card {
         background: white;
-        border-radius: 14px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         padding: 1rem;
         position: relative;
         overflow: hidden;
@@ -304,15 +294,15 @@
       }
 
       .player-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
       }
 
       .player-name {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 700;
         color: var(--primary-dark);
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
         text-align: center;
       }
 
@@ -342,7 +332,7 @@
       }
 
       .stat-value {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         font-weight: 700;
         color: var(--dark);
       }
@@ -352,7 +342,7 @@
       }
 
       .stat-label {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         color: var(--gray);
@@ -366,15 +356,15 @@
         position: absolute;
         top: 0;
         right: 0;
-        width: 32px;
-        height: 32px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
         background: var(--primary);
         color: white;
         font-weight: 700;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         border-bottom-left-radius: 8px;
       }
 
@@ -383,7 +373,6 @@
         color: var(--dark);
       }
 
-      /* ===== ANIMAÇÕES ===== */
       .pulse {
         animation: pulse 2s infinite;
       }
@@ -393,7 +382,7 @@
           transform: scale(1);
         }
         50% {
-          transform: scale(1.05);
+          transform: scale(1.03);
         }
         100% {
           transform: scale(1);
@@ -402,20 +391,21 @@
 
       .saved-indicator {
         position: fixed;
-        bottom: 20px;
-        right: 20px;
+        bottom: 15px;
+        right: 15px;
         background: var(--success);
         color: white;
-        padding: 12px 24px;
+        padding: 10px 20px;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         opacity: 0;
         transform: translateY(20px);
         transition: all 0.3s ease;
         z-index: 100;
+        font-size: 0.9rem;
       }
 
       .saved-indicator.show {
@@ -424,7 +414,7 @@
       }
 
       .saved-indicator i {
-        font-size: 1.2rem;
+        font-size: 1rem;
       }
 
       .text-success {
@@ -435,183 +425,418 @@
         color: var(--danger);
       }
 
-      /* ===== RESPONSIVIDADE ===== */
-      @media (max-width: 992px) {
-        .main-container {
-          flex-direction: column;
-        }
-        .card {
-          width: 100%;
-        }
-        .score-cards {
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        }
+      /* Estilos para o histórico */
+      .historico-section {
+        width: 100%;
+        max-width: 1200px;
+        margin: 1.5rem auto;
+        padding: 0 0.5rem;
       }
 
-      @media (max-width: 576px) {
-        /* Compact winner input row */
-        .input-container {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 8px;
-          padding: 5px;
-          margin-bottom: 8px;
-        }
+      .historico-section h2 {
+        font-size: 1.4rem;
+        color: var(--primary-dark);
+        margin-bottom: 1rem;
+        text-align: center;
+        position: relative;
+        padding-bottom: 0.5rem;
+      }
 
-        .rodada-label {
-          min-width: 40px;
-          padding: 4px;
-          text-align: center;
-          font-size: 0.8rem;
-          flex-shrink: 0;
-        }
+      body.dark-mode .historico-section h2 {
+        color: var(--primary-light);
+      }
 
-        .valor-container {
-          display: flex;
-          align-items: center;
-          margin: 0 5px 0 0;
-        }
+      .historico-section h2::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: var(--primary);
+      }
 
-        .currency-prefix {
-          font-size: 0.7rem;
-          margin-right: 2px;
-        }
+      .historico-table-container {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background: white;
+        margin-bottom: 1.5rem;
+        -webkit-overflow-scrolling: touch;
+      }
 
-        .valor-rodada-input {
-          width: 50px;
-          padding: 3px;
-          font-size: 0.8rem;
-        }
+      body.dark-mode .historico-table-container {
+        background: rgba(30, 41, 59, 0.95);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-        .winner-input {
-          flex: 1;
-          padding: 6px;
-          font-size: 0.75rem;
-        }
+      .tabela-historico {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+        white-space: nowrap;
+      }
 
-        /* Score cards layout */
-        .score-cards {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
+      .tabela-historico th,
+      .tabela-historico td {
+        padding: 8px 6px;
+        text-align: center;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        font-size: 0.8rem;
+      }
 
-        .player-card {
-          width: 100%;
-          max-width: 320px;
-          margin: 0 auto;
-          min-height: 180px;
-        }
+      body.dark-mode .tabela-historico th,
+      body.dark-mode .tabela-historico td {
+        border-color: rgba(255, 255, 255, 0.1);
+      }
 
-        .player-name {
-          font-size: 1.2rem;
-          margin-bottom: 0.75rem;
-        }
+      .tabela-historico th {
+        background-color: var(--primary);
+        color: white;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
 
-        .stats-container {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
+      .tabela-historico tr:nth-child(even) {
+        background-color: rgba(0, 0, 0, 0.03);
+      }
 
-        .stat-value {
-          font-size: 1.4rem;
-        }
+      body.dark-mode .tabela-historico tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
 
-        .stat-label {
-          font-size: 0.7rem;
-        }
+      .tabela-historico tr:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
 
-        /* General mobile adjustments */
-        body {
-          padding: 1rem 0.5rem;
-        }
+      body.dark-mode .tabela-historico tr:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
 
+      .pontuacao-cell {
+        font-weight: 600;
+      }
+
+      .maior-pontuacao {
+        background-color: rgba(16, 185, 129, 0.2);
+        font-weight: 700;
+      }
+
+      body.dark-mode .maior-pontuacao {
+        background-color: rgba(16, 185, 129, 0.3);
+      }
+
+      .historico-table-container::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .historico-table-container::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 0 0 8px 8px;
+      }
+
+      .historico-table-container::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 0 0 8px 8px;
+      }
+
+      body.dark-mode .historico-table-container::-webkit-scrollbar-thumb {
+        background: var(--primary-light);
+      }
+
+      .totais-pontuacao {
+        background: white;
+        border-radius: 10px;
+        padding: 1rem;
+        margin: 1.5rem auto;
+        max-width: 600px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-mode .totais-pontuacao {
+        background: #334155;
+      }
+
+      .totais-pontuacao h3 {
+        text-align: center;
+        margin-bottom: 1rem;
+        color: var(--primary-dark);
+        font-size: 1.2rem;
+      }
+
+      body.dark-mode .totais-pontuacao h3 {
+        color: var(--primary-light);
+      }
+
+      .totais-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 0.8rem;
+      }
+
+      .jogador-total {
+        background: var(--primary-bg);
+        padding: 0.8rem;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.3s;
+      }
+
+      body.dark-mode .jogador-total {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .jogador-total.destaque {
+        background: linear-gradient(135deg, #fef3c7, #fcd34d);
+        transform: scale(1.02);
+      }
+
+      body.dark-mode .jogador-total.destaque {
+        background: linear-gradient(135deg, #78350f, #f59e0b);
+      }
+
+      .posicao {
+        font-weight: bold;
+        color: var(--primary-dark);
+        min-width: 25px;
+        font-size: 0.8rem;
+      }
+
+      .nome {
+        flex-grow: 1;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .pontos {
+        font-weight: bold;
+        color: var(--primary);
+        min-width: 60px;
+        text-align: right;
+        font-size: 0.9rem;
+      }
+
+      @media (min-width: 768px) {
         .header h1 {
-          font-size: 1.8rem;
-          margin-bottom: 0.3rem;
+          font-size: 2rem;
         }
 
         .header p {
-          font-size: 1rem;
-        }
-
-        .main-container {
-          gap: 1rem;
-        }
-
-        .card {
-          border-radius: 16px;
-        }
-
-        .card-header {
-          padding: 1rem;
-        }
-
-        .card-header h2 {
-          font-size: 1.2rem;
-        }
-
-        .card-body {
-          padding: 1rem;
-          max-height: 60vh;
-        }
-      }
-
-      /* Additional adjustments for very small screens */
-      @media (max-width: 375px) {
-        .input-container {
-          flex-wrap: nowrap;
-          gap: 5px;
-        }
-
-        .rodada-label {
-          min-width: 30px;
-          padding: 3px;
-          font-size: 0.7rem;
-        }
-
-        .valor-rodada-input {
-          width: 45px;
-          font-size: 0.7rem;
-        }
-
-        .winner-input {
-          font-size: 0.7rem;
-        }
-
-        .player-card {
-          max-width: 280px;
-          min-height: 160px;
-        }
-
-        .player-name {
           font-size: 1.1rem;
         }
 
-        .stat-value {
-          font-size: 1.2rem;
+        .main-container {
+          flex-direction: row;
+          gap: 2rem;
         }
-      }
 
-      /* Landscape mode adjustments */
-      @media (max-height: 500px) and (orientation: landscape) {
-        .score-cards {
-          grid-template-columns: repeat(3, 1fr);
+        .card {
+          border-radius: 18px;
+        }
+
+        .card-header {
+          padding: 1.2rem;
+        }
+
+        .card-header h2 {
+          font-size: 1.3rem;
         }
 
         .card-body {
-          max-height: 60vh;
+          padding: 1.5rem;
         }
 
         .input-container {
-          display: grid;
-          grid-template-columns: 30px 70px 1fr;
-          gap: 5px;
-          align-items: center;
-          margin-bottom: 8px;
+          grid-template-columns: 40px 80px 1fr;
+          margin-bottom: 10px;
+          padding: 8px;
+        }
+
+        .rodada-label {
+          font-size: 0.9rem;
           padding: 5px;
         }
+
+        .valor-rodada-input {
+          font-size: 0.85rem;
+          padding: 5px;
+        }
+
+        .winner-input {
+          font-size: 0.85rem;
+          padding: 7px;
+        }
+
+        .score-cards {
+          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+
+        .player-card {
+          padding: 1.2rem;
+        }
+
+        .player-name {
+          font-size: 1.2rem;
+        }
+
+        .stat-value {
+          font-size: 1.3rem;
+        }
+
+        .stat-label {
+          font-size: 0.75rem;
+        }
+
+        .historico-section h2 {
+          font-size: 1.6rem;
+        }
+
+        .tabela-historico th,
+        .tabela-historico td {
+          padding: 10px 8px;
+          font-size: 0.85rem;
+        }
+      }
+
+      @media (min-width: 992px) {
+        body {
+          padding: 2rem;
+        }
+
+        .header h1 {
+          font-size: 2.2rem;
+        }
+
+        .card-header h2 {
+          font-size: 1.5rem;
+        }
+
+        .score-cards {
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        }
+
+        .player-card {
+          min-height: 200px;
+        }
+
+        .player-name {
+          font-size: 1.3rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .stat-value {
+          font-size: 1.5rem;
+        }
+
+        .stat-label {
+          font-size: 0.8rem;
+        }
+
+        .historico-section {
+          margin: 2rem auto;
+        }
+
+        .historico-section h2 {
+          font-size: 1.8rem;
+        }
+      }
+
+      /* MOBILE ADJUSTMENTS - Only for historical table */
+      @media (max-width: 767px) {
+        .historico-table-container {
+          position: relative;
+          overflow: auto;
+          -webkit-overflow-scrolling: touch;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tabela-historico {
+          min-width: auto;
+          width: 100%;
+        }
+
+        /* Fixed first column */
+        .tabela-historico th:first-child,
+        .tabela-historico td:first-child {
+          position: sticky;
+          left: 0;
+          z-index: 2;
+          background: white;
+          border-right: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .tabela-historico th:first-child,
+        body.dark-mode .tabela-historico td:first-child {
+          background: #334155;
+          border-right-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Fixed header */
+        .tabela-historico th {
+          position: sticky;
+          top: 0;
+          z-index: 3;
+        }
+
+        .tabela-historico th:first-child {
+          z-index: 4;
+        }
+
+        .tabela-historico th,
+        .tabela-historico td {
+          padding: 6px 4px;
+          font-size: 0.7rem;
+          min-width: 60px;
+        }
+
+        .tabela-historico th:first-child,
+        .tabela-historico td:first-child {
+          min-width: 80px;
+          max-width: 80px;
+          width: 80px;
+        }
+
+        /* Totais adjustments */
+        .totais-grid {
+          grid-template-columns: 1fr;
+          gap: 0.5rem;
+        }
+
+        .jogador-total {
+          padding: 0.6rem;
+        }
+
+        .posicao,
+        .nome,
+        .pontos {
+          font-size: 0.8rem;
+        }
+      }
+
+      @media (max-height: 500px) and (orientation: landscape) {
+        .card-body {
+          max-height: 50vh;
+        }
+      }
+
+      .sem-dados {
+        color: var(--gray);
+        font-style: italic;
+        text-align: center;
+        padding: 1.5rem;
+        font-size: 0.9rem;
+      }
+
+      body.dark-mode .sem-dados {
+        color: var(--gray-light);
       }
     </style>
   </head>
@@ -648,12 +873,555 @@
       </div>
     </div>
 
+    <div id="historico-container"></div>
+
     <div class="saved-indicator" id="saved-indicator">
       <i class="fas fa-check-circle"></i>
       <span>Dados salvos com sucesso!</span>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/ranking.js"></script>
+    <script>
+      // Configuração do Supabase
+      const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4";
+
+      // Inicialização do cliente Supabase
+      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      const configCampeonato = {
+        valorRodadaAtual: 6,
+        valoresRodada: {},
+      };
+      const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+
+      // Função debounce para otimizar chamadas
+      function debounce(func, wait) {
+        let timeout;
+        return function () {
+          const context = this;
+          const args = arguments;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            func.apply(context, args);
+          }, wait);
+        };
+      }
+
+      function criarInputsRanking() {
+        const inputsRanking = document.getElementById("inputs-ranking");
+
+        for (let i = 1; i <= 38; i++) {
+          const container = document.createElement("div");
+          container.className = "input-container";
+          container.dataset.rodada = i;
+
+          // Rótulo da rodada
+          const label = document.createElement("div");
+          label.textContent = `${i}`;
+          label.className = "rodada-label";
+
+          // Valor da rodada
+          const valorDiv = document.createElement("div");
+          valorDiv.className = "valor-container";
+
+          const valorInput = document.createElement("input");
+          valorInput.type = "number";
+          valorInput.className = "valor-rodada-input";
+          valorInput.min = "1";
+          valorInput.step = "1";
+          valorInput.value =
+            configCampeonato.valoresRodada[i] ||
+            configCampeonato.valorRodadaAtual ||
+            6;
+          valorInput.id = `valor-rodada-${i}`;
+
+          valorDiv.innerHTML = `<span class="currency-prefix">R$</span>`;
+          valorDiv.appendChild(valorInput);
+
+          // Campo do vencedor
+          const winnerInput = document.createElement("input");
+          winnerInput.type = "text";
+          winnerInput.placeholder = `Vencedor da Rodada ${i}`;
+          winnerInput.id = `rodada-${i}`;
+          winnerInput.className = "winner-input";
+
+          // Montagem
+          container.appendChild(label);
+          container.appendChild(valorDiv);
+          container.appendChild(winnerInput);
+          inputsRanking.appendChild(container);
+
+          // Event listeners com debounce
+          winnerInput.addEventListener(
+            "input",
+            debounce(() => {
+              if (validarInput(winnerInput.value, i)) {
+                salvarRanking();
+              }
+            }, 1000)
+          );
+
+          valorInput.addEventListener(
+            "input",
+            debounce(() => {
+              const novoValor = parseFloat(valorInput.value);
+              if (!isNaN(novoValor) && novoValor > 0) {
+                configCampeonato.valoresRodada[i] = novoValor;
+                salvarRanking();
+              }
+            }, 1000)
+          );
+        }
+      }
+
+      function validarInput(valor, rodada) {
+        if (valor.includes(",") && !valor.includes(", ")) {
+          alert(
+            `Rodada ${rodada}: Utilize vírgula + espaço entre os nomes no empate. Ex: Jardel, Werbet`
+          );
+          return false;
+        }
+
+        const nomes = valor
+          .split(",")
+          .map((n) => n.trim())
+          .filter((n) => n !== "");
+
+        for (let nome of nomes) {
+          if (!jogadores.includes(nome)) {
+            alert(
+              `Rodada ${rodada}: Nome "${nome}" inválido! Use apenas: ${jogadores.join(
+                ", "
+              )}`
+            );
+            return false;
+          }
+          if (nome[0] !== nome[0]?.toUpperCase()) {
+            alert(
+              `Rodada ${rodada}: Nome "${nome}" deve começar com letra maiúscula!`
+            );
+            return false;
+          }
+        }
+        return true;
+      }
+
+      async function carregarRanking() {
+        try {
+          const { data, error } = await supabaseClient
+            .from("alphabet_table")
+            .select("*")
+            .order("id", { ascending: false })
+            .limit(1);
+
+          if (error) throw error;
+
+          if (!data || data.length === 0) return;
+
+          const dadosAtuais = data[0];
+
+          if (dadosAtuais.configuracao) {
+            configCampeonato.valorRodadaAtual =
+              dadosAtuais.configuracao.valorRodadaAtual || 6;
+            configCampeonato.valoresRodada =
+              dadosAtuais.configuracao.valoresRodada || {};
+          }
+
+          if (dadosAtuais.ranking) {
+            dadosAtuais.ranking.forEach((vencedores, index) => {
+              const input = document.getElementById(`rodada-${index + 1}`);
+              if (input) input.value = vencedores || "";
+
+              const valorInput = document.getElementById(
+                `valor-rodada-${index + 1}`
+              );
+              if (valorInput) {
+                valorInput.value =
+                  configCampeonato.valoresRodada[index + 1] ||
+                  configCampeonato.valorRodadaAtual ||
+                  6;
+              }
+            });
+          }
+
+          exibirVitorias(
+            dadosAtuais.vitorias_empates ||
+              calcularVitoriasEmpatesSaldo(dadosAtuais.ranking || [])
+          );
+        } catch (error) {
+          console.error("Erro ao carregar ranking:", error);
+        }
+      }
+
+      async function exibirHistoricoPontuacao() {
+        try {
+          const { data, error } = await supabaseClient
+            .from("alphabet_table")
+            .select("historico_pontuacao")
+            .order("id", { ascending: false })
+            .limit(1);
+
+          if (error) throw error;
+
+          if (!data || data.length === 0 || !data[0].historico_pontuacao) {
+            console.log("Nenhum histórico de pontuação encontrado");
+            document.getElementById("historico-container").innerHTML = `
+        <p class="sem-dados">Nenhum histórico de pontuações disponível ainda.</p>
+      `;
+            return;
+          }
+
+          const historico = data[0].historico_pontuacao;
+
+          // Exibe a tabela de histórico
+          exibirTabelaHistorico(historico);
+
+          // Exibe os totais
+          exibirTotaisPontuacao(historico);
+        } catch (error) {
+          console.error("Erro ao carregar histórico:", error);
+          document.getElementById("historico-container").innerHTML = `
+      <p class="sem-dados">Erro ao carregar histórico de pontuações. Tente recarregar a página.</p>
+    `;
+        }
+      }
+
+      function exibirTabelaHistorico(historico) {
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
+        const container = document.getElementById("historico-container");
+
+        // Ordena as rodadas por número
+        const rodadasOrdenadas = Object.keys(historico).sort((a, b) => {
+          const numA = parseInt(a.replace(/\D/g, ""));
+          const numB = parseInt(b.replace(/\D/g, ""));
+          return numA - numB;
+        });
+
+        let html = `
+    <div class="historico-section">
+      <h2>Histórico Completo de Pontuações</h2>
+      <div class="historico-table-container">
+        <table class="tabela-historico">
+          <thead>
+            <tr>
+              <th>Rodada</th>
+              ${jogadores.map((jogador) => `<th>${jogador}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+  `;
+
+        rodadasOrdenadas.forEach((rodada) => {
+          const pontuacoes = jogadores.map((j) => historico[rodada][j] || 0);
+          const maiorPontuacao = Math.max(...pontuacoes);
+
+          html += `
+      <tr>
+        <td>${rodada}</td>
+        ${jogadores
+          .map((jogador) => {
+            const pontuacao = historico[rodada][jogador] || 0;
+            const classeMaior =
+              pontuacao === maiorPontuacao && maiorPontuacao > 0
+                ? "maior-pontuacao"
+                : "";
+            return `<td class="${classeMaior}">${pontuacao}</td>`;
+          })
+          .join("")}
+      </tr>
+    `;
+        });
+
+        html += `
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div id="totais-container"></div>
+  `;
+
+        container.innerHTML = html;
+      }
+
+      function calcularTotalPontos(historico) {
+        const totais = {
+          Jardel: 0,
+          Werbet: 0,
+          Nailton: 0,
+          Phillipe: 0,
+        };
+
+        // Soma os pontos de todas as rodadas
+        for (const rodada in historico) {
+          for (const jogador in historico[rodada]) {
+            if (totais.hasOwnProperty(jogador)) {
+              totais[jogador] += historico[rodada][jogador] || 0;
+            }
+          }
+        }
+
+        return totais;
+      }
+
+      function exibirTotaisPontuacao(historico) {
+        const totais = calcularTotalPontos(historico);
+        const container = document.getElementById("totais-container");
+
+        if (!container) {
+          console.error("Elemento 'totais-container' não encontrado");
+          return;
+        }
+
+        // Ordena os jogadores por pontuação (do maior para o menor)
+        const jogadoresOrdenados = Object.entries(totais).sort(
+          (a, b) => b[1] - a[1]
+        );
+
+        let html = `
+    <div class="totais-pontuacao">
+      <h3>Total de Pontos</h3>
+      <div class="totais-grid">
+  `;
+
+        jogadoresOrdenados.forEach(([jogador, pontos], index) => {
+          html += `
+      <div class="jogador-total ${index === 0 ? "destaque" : ""}">
+        <span class="posicao">${index + 1}º</span>
+        <span class="nome">${jogador}</span>
+        <span class="pontos">${pontos} pts</span>
+      </div>
+    `;
+        });
+
+        html += `
+      </div>
+    </div>
+  `;
+
+        container.innerHTML = html;
+      }
+
+      function calcularVitoriasEmpatesSaldo(ranking) {
+        const vitoriasEmpates = {
+          Jardel: { vitorias: 0, empates: 0, saldo: 0 },
+          Werbet: { vitorias: 0, empates: 0, saldo: 0 },
+          Nailton: { vitorias: 0, empates: 0, saldo: 0 },
+          Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
+        };
+
+        const jogadores = Object.keys(vitoriasEmpates);
+
+        ranking.forEach((vencedores, rodadaIndex) => {
+          if (!vencedores.trim()) return;
+
+          const numeroRodada = rodadaIndex + 1;
+          const valorRodada =
+            configCampeonato.valoresRodada[numeroRodada] ||
+            configCampeonato.valorRodadaAtual;
+
+          const listaVencedores = vencedores
+            .split(",")
+            .map((nome) => nome.trim())
+            .filter((nome) => nome !== "");
+
+          if (listaVencedores.length === 0) return;
+
+          if (listaVencedores.length === 1) {
+            const vencedor = listaVencedores[0];
+            if (vitoriasEmpates[vencedor]) {
+              vitoriasEmpates[vencedor].vitorias++;
+              vitoriasEmpates[vencedor].saldo +=
+                valorRodada * (jogadores.length - 1);
+
+              jogadores.forEach((jogador) => {
+                if (jogador !== vencedor) {
+                  vitoriasEmpates[jogador].saldo -= valorRodada;
+                }
+              });
+            }
+          } else {
+            listaVencedores.forEach((vencedor) => {
+              if (vitoriasEmpates[vencedor]) {
+                vitoriasEmpates[vencedor].empates++;
+              }
+            });
+
+            const perdedores = jogadores.filter(
+              (j) => !listaVencedores.includes(j)
+            );
+
+            if (listaVencedores.length === 2) {
+              const valorPorPerdedor = valorRodada / 2;
+              listaVencedores.forEach((vencedor) => {
+                vitoriasEmpates[vencedor].saldo +=
+                  valorPorPerdedor * perdedores.length;
+              });
+              perdedores.forEach((perdedor) => {
+                vitoriasEmpates[perdedor].saldo -= valorRodada;
+              });
+            } else if (listaVencedores.length === 3) {
+              const valorPorPerdedor = valorRodada / 3;
+              listaVencedores.forEach((vencedor) => {
+                vitoriasEmpates[vencedor].saldo +=
+                  valorPorPerdedor * perdedores.length;
+              });
+              perdedores.forEach((perdedor) => {
+                vitoriasEmpates[perdedor].saldo -= valorRodada;
+              });
+            }
+          }
+        });
+
+        return vitoriasEmpates;
+      }
+
+      async function salvarRanking() {
+        const ranking = [];
+        const valoresRodadas = configCampeonato.valoresRodada || {};
+
+        for (let i = 1; i <= 38; i++) {
+          const input = document.getElementById(`rodada-${i}`);
+          ranking.push(input ? input.value.trim() : "");
+
+          const valorInput = document.getElementById(`valor-rodada-${i}`);
+          if (valorInput && valorInput.value) {
+            valoresRodadas[i] = parseFloat(valorInput.value);
+          }
+        }
+
+        try {
+          const { data: ultimoRegistro, error: fetchError } =
+            await supabaseClient
+              .from("alphabet_table")
+              .select("id")
+              .order("id", { ascending: false })
+              .limit(1)
+              .single();
+
+          if (fetchError && fetchError.code !== "PGRST116") throw fetchError;
+
+          const dadosParaSalvar = {
+            ranking: ranking,
+            vitorias_empates: calcularVitoriasEmpatesSaldo(ranking),
+            configuracao: {
+              valoresRodada: valoresRodadas,
+              valorRodadaAtual: configCampeonato.valorRodadaAtual,
+            },
+          };
+
+          if (ultimoRegistro) {
+            const { error: updateError } = await supabaseClient
+              .from("alphabet_table")
+              .update(dadosParaSalvar)
+              .eq("id", ultimoRegistro.id);
+
+            if (updateError) throw updateError;
+          } else {
+            const { error: insertError } = await supabaseClient
+              .from("alphabet_table")
+              .insert(dadosParaSalvar);
+
+            if (insertError) throw insertError;
+          }
+
+          mostrarIndicadorSalvo();
+          exibirVitorias(calcularVitoriasEmpatesSaldo(ranking));
+        } catch (error) {
+          console.error("Erro ao salvar ranking:", error);
+          alert("Erro ao salvar. Verifique sua conexão.");
+        }
+      }
+
+      function mostrarIndicadorSalvo() {
+        const indicador = document.getElementById("saved-indicator");
+        indicador.classList.add("show");
+        setTimeout(() => indicador.classList.remove("show"), 3000);
+      }
+
+      function exibirVitorias(resultados) {
+        const vitoriasContainer = document.getElementById("vitorias");
+        vitoriasContainer.innerHTML = "";
+
+        const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
+          const pontosA = a[1].vitorias * 3 + a[1].empates;
+          const pontosB = b[1].vitorias * 3 + b[1].empates;
+          if (pontosB !== pontosA) return pontosB - pontosA;
+          if (b[1].vitorias !== a[1].vitorias)
+            return b[1].vitorias - a[1].vitorias;
+          return a[0].localeCompare(b[0]);
+        });
+
+        resultadosOrdenados.forEach(
+          ([jogador, { vitorias, empates, saldo }], index) => {
+            const pontos = vitorias * 3 + empates;
+            const card = document.createElement("div");
+            card.className = "player-card";
+            if (index < 3) card.classList.add(`position-${index + 1}`);
+            if (index === 0) card.classList.add("pulse");
+
+            const posicao = document.createElement("div");
+            posicao.className = `player-position ${
+              index < 3 ? "position-" + (index + 1) : ""
+            }`;
+            posicao.textContent = index + 1;
+
+            const nome = document.createElement("h3");
+            nome.className = "player-name";
+            nome.textContent = jogador;
+
+            const statsContainer = document.createElement("div");
+            statsContainer.className = "stats-container";
+
+            const statVitorias = document.createElement("div");
+            statVitorias.className = "stat";
+            statVitorias.innerHTML = `<span class="stat-value">${vitorias}</span><span class="stat-label">Vitórias</span>`;
+
+            const statEmpates = document.createElement("div");
+            statEmpates.className = "stat";
+            statEmpates.innerHTML = `<span class="stat-value">${empates}</span><span class="stat-label">Empates</span>`;
+
+            const statPontos = document.createElement("div");
+            statPontos.className = "stat";
+            statPontos.innerHTML = `<span class="stat-value">${pontos}</span><span class="stat-label">Pontos</span>`;
+
+            const statSaldo = document.createElement("div");
+            statSaldo.className = "stat";
+            statSaldo.innerHTML = `<span class="stat-value ${
+              saldo >= 0 ? "text-success" : "text-danger"
+            }">R$${saldo.toFixed(
+              2
+            )}</span><span class="stat-label">Saldo</span>`;
+
+            statsContainer.appendChild(statVitorias);
+            statsContainer.appendChild(statEmpates);
+            statsContainer.appendChild(statPontos);
+            statsContainer.appendChild(statSaldo);
+
+            card.appendChild(posicao);
+            card.appendChild(nome);
+            card.appendChild(statsContainer);
+            vitoriasContainer.appendChild(card);
+
+            setTimeout(() => {
+              card.style.opacity = "1";
+              card.style.transform = "translateY(0)";
+            }, index * 150);
+          }
+        );
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        carregarRanking();
+        criarInputsRanking();
+        exibirHistoricoPontuacao();
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const isDarkMode = localStorage.getItem("darkMode") === "true";
+        if (isDarkMode) document.body.classList.add("dark-mode");
+      });
+    </script>
   </body>
 </html>

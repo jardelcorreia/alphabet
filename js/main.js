@@ -2,10 +2,7 @@
 const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co";
 const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4";
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Variáveis globais
 let todasPartidas = [];
@@ -15,31 +12,45 @@ let rodadaExibida = null;
 let partidasPorRodada = {};
 let intervaloAtualizacao = null;
 
+// Variáveis globais de competição
+const COMPETITION_IDS = {
+  brasileirao: "BSA",
+  club_wc: "CLUB_WC",
+};
+
+const SUPABASE_TABLES = {
+  brasileirao: "alphabet_table",
+  club_wc: "alphabet_table_club_wc",
+};
+
+let currentCompetition = "brasileirao"; // Padrão para Brasileirão
+
+// Função para obter a tabela Supabase correta
+function getCurrentSupabaseTable() {
+  return SUPABASE_TABLES[currentCompetition] || SUPABASE_TABLES.brasileirao;
+}
+
 // Mapeamento de times
 const timesInfo = {
   "SE Palmeiras": {
     abrev: "PAL",
     nome: "Palmeiras",
-    escudo:
-      "https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png",
+    escudo: "https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png",
   },
   "Botafogo FR": {
     abrev: "BOT",
     nome: "Botafogo",
-    escudo:
-      "https://logodetimes.com/times/botafogo/logo-botafogo-256.png",
+    escudo: "https://logodetimes.com/times/botafogo/logo-botafogo-256.png",
   },
   "CR Flamengo": {
     abrev: "FLA",
     nome: "Flamengo",
-    escudo:
-      "https://logodetimes.com/times/flamengo/logo-flamengo-256.png",
+    escudo: "https://logodetimes.com/times/flamengo/logo-flamengo-256.png",
   },
   "Fluminense FC": {
     abrev: "FLU",
     nome: "Fluminense",
-    escudo:
-      "https://logodetimes.com/times/fluminense/logo-fluminense-256.png",
+    escudo: "https://logodetimes.com/times/fluminense/logo-fluminense-256.png",
   },
   "Grêmio FBPA": {
     abrev: "GRE",
@@ -49,8 +60,7 @@ const timesInfo = {
   "São Paulo FC": {
     abrev: "SAO",
     nome: "São Paulo",
-    escudo:
-      "https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png",
+    escudo: "https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png",
   },
   "CA Mineiro": {
     abrev: "CAM",
@@ -73,8 +83,7 @@ const timesInfo = {
   "Cruzeiro EC": {
     abrev: "CRU",
     nome: "Cruzeiro",
-    escudo:
-      "https://logodetimes.com/times/cruzeiro/logo-cruzeiro-256.png",
+    escudo: "https://logodetimes.com/times/cruzeiro/logo-cruzeiro-256.png",
   },
   "SC Corinthians Paulista": {
     abrev: "COR",
@@ -101,14 +110,12 @@ const timesInfo = {
   "Mirassol FC": {
     abrev: "MIR",
     nome: "Mirassol",
-    escudo:
-      "https://logodetimes.com/times/mirassol/logo-mirassol-256.png",
+    escudo: "https://logodetimes.com/times/mirassol/logo-mirassol-256.png",
   },
   "EC Juventude": {
     abrev: "JUV",
     nome: "Juventude",
-    escudo:
-      "https://logodetimes.com/times/juventude/logo-juventude-256.png",
+    escudo: "https://logodetimes.com/times/juventude/logo-juventude-256.png",
   },
   "Ceará SC": {
     abrev: "CEA",
@@ -118,8 +125,7 @@ const timesInfo = {
   "Fortaleza EC": {
     abrev: "FOR",
     nome: "Fortaleza",
-    escudo:
-      "https://logodetimes.com/times/fortaleza/logo-fortaleza-256.png",
+    escudo: "https://logodetimes.com/times/fortaleza/logo-fortaleza-256.png",
   },
   "RB Bragantino": {
     abrev: "RBB",
@@ -130,8 +136,7 @@ const timesInfo = {
   "EC Vitória": {
     abrev: "VIT",
     nome: "Vitória",
-    escudo:
-      "https://logodetimes.com/times/vitoria/logo-vitoria-256.png",
+    escudo: "https://logodetimes.com/times/vitoria/logo-vitoria-256.png",
   },
 };
 
@@ -142,15 +147,46 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById("login-container").classList.add("hidden");
     document.getElementById("main-content").classList.remove("hidden");
     initializeDarkMode();
-    createAdvancedTitle();
+    updateDynamicTitles(); // Chamada inicial para definir títulos com base na competição padrão/localStorage
     criarLinhasTabela();
     adicionarEventos();
-    // Inicia a atualização automática imediatamente
-    iniciarAtualizacaoAutomatica();
+
+    // Adiciona event listeners para os botões de rádio da competição
+    const competitionRadios = document.querySelectorAll(
+      'input[name="competition"]'
+    );
+    competitionRadios.forEach((radio) => {
+      radio.addEventListener("change", (event) => {
+        setCompetition(event.target.value);
+      });
+    });
+
+    // Recupera a competição do localStorage ou usa o padrão
+    const savedCompetition =
+      localStorage.getItem("currentCompetition") || "brasileirao";
+    currentCompetition = savedCompetition;
+    // Marca o radio button correto
+    document.querySelector(
+      `input[name="competition"][value="${currentCompetition}"]`
+    ).checked = true;
+
+    // Atualiza títulos e UI com base na competição carregada
+    updateDynamicTitles(); // Garante que os títulos reflitam a competição carregada
+
+    // Lógica condicional para UI e chamadas de API baseadas na competição
+    const calendarioContainer = document.querySelector(".container");
+    if (currentCompetition === "club_wc") {
+      if (calendarioContainer) calendarioContainer.classList.add("hidden");
+      pararAtualizacaoAutomatica();
+    } else {
+      if (calendarioContainer) calendarioContainer.classList.remove("hidden");
+      await buscarCalendario(); // Só busca calendário se for Brasileirão
+      iniciarAtualizacaoAutomatica(); // Só inicia atualização se for Brasileirão
+    }
+
     await verificarEstadoPlacares();
-    await verificarPermissoesUsuario();
-    await carregarApostas();
-    await buscarCalendario();
+    await verificarPermissoesUsuario(); // As permissões podem depender da competição
+    await carregarApostas(); // Carrega as apostas depois de definir a competição
   }
 });
 
@@ -180,26 +216,39 @@ async function login() {
         }
       );
 
-      if (!descriptResponse.ok)
-        throw new Error("Erro ao descriptografar");
+      if (!descriptResponse.ok) throw new Error("Erro ao descriptografar");
       const { textoDescriptografado } = await descriptResponse.json();
 
       if (textoDescriptografado === password) {
         localStorage.setItem("loggedInUser", username);
-        document
-          .getElementById("login-container")
-          .classList.add("hidden");
-        document
-          .getElementById("main-content")
-          .classList.remove("hidden");
+        document.getElementById("login-container").classList.add("hidden");
+        document.getElementById("main-content").classList.remove("hidden");
         initializeDarkMode();
-        createAdvancedTitle();
-        criarLinhasTabela();
-        adicionarEventos();
-        await verificarEstadoPlacares();
-        await verificarPermissoesUsuario();
-        await carregarApostas();
-        await buscarCalendario();
+        updateDynamicTitles(); // Atualiza títulos com base na competição atual
+        criarLinhasTabela(); // Prepara a estrutura da tabela de apostas
+        adicionarEventos(); // Adiciona todos os event listeners necessários para a UI
+
+        // Lógica condicional para UI e chamadas de API baseadas na competição
+        const calendarioContainer = document.querySelector(".container");
+        if (currentCompetition === "club_wc") {
+          if (calendarioContainer) calendarioContainer.classList.add("hidden");
+          pararAtualizacaoAutomatica(); // Para atualizações se for Club WC
+        } else {
+          if (calendarioContainer)
+            calendarioContainer.classList.remove("hidden");
+          await buscarCalendario(); // Busca calendário apenas para Brasileirão
+          // iniciarAtualizacaoAutomatica() é chamado dentro de buscarCalendario->atualizarTabela
+          // ou por preencherTabelaPrincipalComRodadaAtual.
+          // Se nenhuma dessas garantir, e for Brasileirão, chamar aqui.
+          if (!intervaloAtualizacao) {
+            // Garante que não haja duplicatas de intervalo
+            iniciarAtualizacaoAutomatica();
+          }
+        }
+
+        await verificarEstadoPlacares(); // Verifica e aplica o estado de visibilidade dos placares
+        await verificarPermissoesUsuario(); // Verifica e aplica permissões do usuário (ex: botão preencher)
+        await carregarApostas(); // Carrega as apostas da competição atual
       } else {
         alert("Nome de usuário ou senha incorretos!");
       }
@@ -220,30 +269,91 @@ function logout() {
 }
 
 // Funções de UI
-function createAdvancedTitle() {
-  const titulo = "Brasileirão AlphaBet 2025";
+function updateDynamicTitles() {
+  const competitionName =
+    currentCompetition === "brasileirao"
+      ? "Brasileirão AlphaBet 2025"
+      : "Club World Cup AlphaBet";
+  const calendarTitle =
+    currentCompetition === "brasileirao"
+      ? "Brasileirão Série A"
+      : "Club World Cup";
+  const calendarSubtitle =
+    currentCompetition === "brasileirao"
+      ? "Acompanhe todos os jogos do campeonato"
+      : "Acompanhe todos os jogos do Club World Cup";
+
+  // Atualiza o título principal (AlphaBet)
   const containerTitulo = document.querySelector(".container-titulo");
-  containerTitulo.innerHTML = "";
+  if (containerTitulo) {
+    containerTitulo.innerHTML = ""; // Limpa o título existente
+    const palavras = competitionName.split(" ");
+    palavras.forEach((palavra, wordIndex) => {
+      const wordWrapper = document.createElement("div");
+      wordWrapper.style.display = "inline-flex";
+      wordWrapper.style.margin = "0 0.25rem";
 
-  const palavras = titulo.split(" ");
-  palavras.forEach((palavra, wordIndex) => {
-    const wordWrapper = document.createElement("div");
-    wordWrapper.style.display = "inline-flex";
-    wordWrapper.style.margin = "0 0.25rem";
-
-    palavra.split("").forEach((letra, letterIndex) => {
-      const span = document.createElement("span");
-      span.textContent = letra;
-      span.classList.add("letra");
-      span.style.animationDelay = `${
-        (wordIndex * palavra.length + letterIndex) * 0.1
-      }s`;
-      span.style.animationDuration = `${0.8 + Math.random() * 0.2}s`;
-      wordWrapper.appendChild(span);
+      palavra.split("").forEach((letra, letterIndex) => {
+        const span = document.createElement("span");
+        span.textContent = letra;
+        span.classList.add("letra");
+        span.style.animationDelay = `${
+          (wordIndex * palavra.length + letterIndex) * 0.1
+        }s`;
+        span.style.animationDuration = `${0.8 + Math.random() * 0.2}s`;
+        wordWrapper.appendChild(span);
+      });
+      containerTitulo.appendChild(wordWrapper);
     });
+  }
 
-    containerTitulo.appendChild(wordWrapper);
-  });
+  // Atualiza o título e subtitulo do calendário de jogos
+  const calendarioHeader = document.querySelector(".container header");
+  if (calendarioHeader) {
+    const h1 = calendarioHeader.querySelector("h1");
+    if (h1) h1.textContent = calendarTitle;
+    const subtituloDiv = calendarioHeader.querySelector(".subtitulo");
+    if (subtituloDiv) subtituloDiv.textContent = calendarSubtitle;
+  }
+}
+
+async function setCompetition(competition) {
+  if (currentCompetition === competition) return; // Evita recarregar se já for a atual
+
+  currentCompetition = competition;
+  localStorage.setItem("currentCompetition", currentCompetition);
+
+  // Limpar dados da tabela e UI específica da competição anterior
+  document.getElementById("tabela-apostas").innerHTML = ""; // Limpa a tabela de apostas
+  criarLinhasTabela(); // Recria as linhas da tabela, mas vazias
+  document.getElementById("nome-rodada").value = "";
+  document.getElementById("pontuacao").innerHTML = "";
+  document.getElementById("calendario-jogos").innerHTML =
+    '<div class="loading">Carregando jogos</div>'; // Mostrar loading
+
+  updateDynamicTitles(); // Atualiza os títulos (AlphaBet, Calendário)
+  await carregarApostas(); // Carrega as apostas da nova competição (do Supabase)
+
+  // Lógica para mostrar/ocultar elementos da UI com base na competição
+  const calendarioContainer = document.querySelector(".container"); // Container do calendário
+  const preencherTabelaButton = document.getElementById(
+    "preencher-tabela-principal"
+  );
+
+  if (currentCompetition === "club_wc") {
+    if (calendarioContainer) calendarioContainer.classList.add("hidden");
+    // O botão de preencher tabela já é tratado em verificarPermissoesUsuario
+    pararAtualizacaoAutomatica(); // Para a atualização automática se for Club WC
+  } else {
+    if (calendarioContainer) calendarioContainer.classList.remove("hidden");
+    await buscarCalendario(); // Busca o calendário apenas para o Brasileirão
+    iniciarAtualizacaoAutomatica(); // Reinicia a atualização para o Brasileirão
+  }
+
+  // Reavalia as permissões (pode depender da competição, ex: botão preencher)
+  await verificarPermissoesUsuario();
+  // Força a verificação do estado dos placares (pode ter sido alterado)
+  await verificarEstadoPlacares();
 }
 
 function initializeDarkMode() {
@@ -366,8 +476,7 @@ function adicionarNavegacao() {
     input.addEventListener("input", (event) => {
       if (event.target.value.length === 1) {
         let nextIndex = index + 1;
-        if (nextIndex < placarReal.length)
-          placarReal[nextIndex].focus();
+        if (nextIndex < placarReal.length) placarReal[nextIndex].focus();
       }
     });
 
@@ -392,8 +501,7 @@ function adicionarNavegacaoJogos() {
       if (event.key === "Enter" || event.key === "Tab") {
         event.preventDefault();
         const nextIndex = index + 1;
-        if (nextIndex < inputsJogos.length)
-          inputsJogos[nextIndex].focus();
+        if (nextIndex < inputsJogos.length) inputsJogos[nextIndex].focus();
       }
 
       if (event.key === "Delete" || event.key === "Backspace") {
@@ -423,7 +531,7 @@ function debounce(func, wait) {
 async function salvarApostas() {
   try {
     const { data, error: fetchError } = await supabaseClient
-      .from("alphabet_table")
+      .from(getCurrentSupabaseTable())
       .select("*")
       .order("id", { ascending: false })
       .limit(1);
@@ -442,12 +550,12 @@ async function salvarApostas() {
       novosDados.ranking = {};
       novosDados.vitorias_empates = {};
       const { error: insertError } = await supabaseClient
-        .from("alphabet_table")
+        .from(getCurrentSupabaseTable())
         .insert(novosDados);
       if (insertError) throw insertError;
     } else {
       const { error: updateError } = await supabaseClient
-        .from("alphabet_table")
+        .from(getCurrentSupabaseTable())
         .update(novosDados)
         .eq("id", data[0].id);
       if (updateError) throw updateError;
@@ -551,23 +659,27 @@ function verificarApostasCompletas() {
 
   if (!jogadorClass) return false;
 
-  const inputsJogos = document.querySelectorAll('.input-jogo');
-  const apostasUsuario = document.querySelectorAll(
-    `.aposta.${jogadorClass}`
-  );
-  
+  const inputsJogos = document.querySelectorAll(".input-jogo");
+  const apostasUsuario = document.querySelectorAll(`.aposta.${jogadorClass}`);
+
   let todasApostasAplicaveisPreenchidas = true;
 
   for (let i = 0; i < 10; i++) {
     const currentGameInput = inputsJogos[i];
     const gameName = currentGameInput.value.trim();
     const gamePattern = /\S+\s*x\s*\S+/i;
-    const isGameApplicable = gameName !== "" && !gameName.toLowerCase().includes("sem jogo") && gamePattern.test(gameName);
+    const isGameApplicable =
+      gameName !== "" &&
+      !gameName.toLowerCase().includes("sem jogo") &&
+      gamePattern.test(gameName);
 
     if (isGameApplicable) {
-      if (apostasUsuario[i * 2].value === "" || apostasUsuario[i * 2 + 1].value === "") {
+      if (
+        apostasUsuario[i * 2].value === "" ||
+        apostasUsuario[i * 2 + 1].value === ""
+      ) {
         todasApostasAplicaveisPreenchidas = false;
-        break; 
+        break;
       }
     }
   }
@@ -623,7 +735,7 @@ function ocultarPlacares() {
 async function salvarEstadoVisibilidade(estado) {
   try {
     const { data, error: fetchError } = await supabaseClient
-      .from("alphabet_table")
+      .from(getCurrentSupabaseTable())
       .select("*")
       .order("id", { ascending: false })
       .limit(1);
@@ -632,12 +744,12 @@ async function salvarEstadoVisibilidade(estado) {
 
     if (!data || data.length === 0) {
       const { error: insertError } = await supabaseClient
-        .from("alphabet_table")
+        .from(getCurrentSupabaseTable())
         .insert({ placares_ocultos: estado });
       if (insertError) throw insertError;
     } else {
       const { error: updateError } = await supabaseClient
-        .from("alphabet_table")
+        .from(getCurrentSupabaseTable())
         .update({ placares_ocultos: estado })
         .eq("id", data[0].id);
       if (updateError) throw updateError;
@@ -650,7 +762,7 @@ async function salvarEstadoVisibilidade(estado) {
 async function carregarEstadoVisibilidade() {
   try {
     const { data, error } = await supabaseClient
-      .from("alphabet_table")
+      .from(getCurrentSupabaseTable())
       .select("placares_ocultos")
       .order("id", { ascending: false })
       .limit(1);
@@ -672,9 +784,7 @@ async function verificarEstadoPlacares() {
     const loggedInUser = localStorage.getItem("loggedInUser");
     toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
 
-    toggleText.textContent = isHidden
-      ? "Mostrar Placar"
-      : "Ocultar Placar";
+    toggleText.textContent = isHidden ? "Mostrar Placar" : "Ocultar Placar";
     toggleButton.onclick = toggleVisibility;
 
     if (isHidden) ocultarPlacares();
@@ -695,7 +805,7 @@ async function verificarPermissoesUsuario() {
     toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
     preencherTabelaButton.classList.toggle(
       "hidden",
-      loggedInUser !== "Jardel"
+      loggedInUser !== "Jardel" || currentCompetition === "club_wc"
     );
   } catch (error) {
     console.error("Erro ao verificar permissões do usuário:", error);
@@ -728,10 +838,7 @@ function calcularPontuacao() {
 
       if (apostaCasa === "" || apostaFora === "") return;
 
-      if (
-        apostaCasa === resultadoCasa &&
-        apostaFora === resultadoFora
-      ) {
+      if (apostaCasa === resultadoCasa && apostaFora === resultadoFora) {
         pontos[jogador] += 3;
         placaresExatos[jogador] += 1;
       } else if (
@@ -765,9 +872,7 @@ function calcularPontuacao() {
 
     // Se houver empate, pega o(s) com mais placares exatos
     const maiorPlacarExato = Math.max(
-      ...jogadoresComMaiorPontuacao.map(
-        ([jogador]) => placaresExatos[jogador]
-      )
+      ...jogadoresComMaiorPontuacao.map(([jogador]) => placaresExatos[jogador])
     );
     vencedores = jogadoresComMaiorPontuacao.filter(
       ([jogador]) => placaresExatos[jogador] === maiorPlacarExato
@@ -777,9 +882,7 @@ function calcularPontuacao() {
   // Gera o HTML da pontuação
   const pontuacaoHTML = jogadoresOrdenados
     .map(([jogador, pontuacao]) => {
-      const isVencedor = vencedores.some(
-        ([vencedor]) => vencedor === jogador
-      );
+      const isVencedor = vencedores.some(([vencedor]) => vencedor === jogador);
       return `
       <div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
         <h3>${jogador}</h3>
@@ -835,8 +938,7 @@ function abrirRanking() {
 async function buscarCalendario() {
   try {
     const response = await fetch("/.netlify/functions/fetchMatches");
-    if (!response.ok)
-      throw new Error(`Erro de rede: ${response.status}`);
+    if (!response.ok) throw new Error(`Erro de rede: ${response.status}`);
 
     const data = await response.json();
     todasPartidas = data.matches;
@@ -848,60 +950,118 @@ async function buscarCalendario() {
       partidasPorRodada[rodada].push(partida);
     });
 
-    const rodadasOrdenadas = Object.keys(partidasPorRodada)
-      .map((rodada) => ({
-        rodada: parseInt(rodada),
-        dataInicio: new Date(partidasPorRodada[rodada][0].utcDate),
-        dataFim: new Date(
-          partidasPorRodada[rodada][
-            partidasPorRodada[rodada].length - 1
-          ].utcDate
-        ),
-      }))
-      .sort((a, b) => a.dataInicio - b.dataInicio);
+    const rodadasComInfo = Object.keys(partidasPorRodada).map(
+      (numRodadaStr) => {
+        const numeroRodada = Number(numRodadaStr);
+        const jogosDaRodada = partidasPorRodada[numeroRodada];
 
-    const dataAtual = new Date();
-    let rodadaParaExibir = 1;
-    let rodadaAtualTemJogosPendentes = false;
-
-    for (const rodada of rodadasOrdenadas) {
-      if (
-        dataAtual >= rodada.dataInicio &&
-        dataAtual <= rodada.dataFim
-      ) {
-        rodadaParaExibir = rodada.rodada;
-        const jogosPendentes = partidasPorRodada[rodada.rodada].filter(
-          (jogo) => {
-            const dataJogo = new Date(jogo.utcDate);
-            return (
-              dataJogo > dataAtual ||
-              ["SCHEDULED", "TIMED"].includes(jogo.status)
-            );
+        let dataInicio = null;
+        if (jogosDaRodada.length > 0) {
+          dataInicio = new Date(jogosDaRodada[0].utcDate);
+          for (let i = 1; i < jogosDaRodada.length; i++) {
+            const dataJogoAtual = new Date(jogosDaRodada[i].utcDate);
+            if (dataJogoAtual < dataInicio) {
+              dataInicio = dataJogoAtual;
+            }
           }
-        );
-        rodadaAtualTemJogosPendentes = jogosPendentes.length > 0;
-        break;
-      } else if (dataAtual > rodada.dataFim) {
-        rodadaParaExibir = rodada.rodada;
-      }
-    }
+        } else {
+          dataInicio = new Date("2999-12-31T23:59:59Z");
+        }
 
-    if (!rodadaAtualTemJogosPendentes) {
-      const proximaRodada = rodadasOrdenadas.find(
-        (r) => r.rodada === rodadaParaExibir + 1
-      );
-      if (proximaRodada) {
-        const diaAnterior = new Date(proximaRodada.dataInicio);
-        diaAnterior.setDate(diaAnterior.getDate() - 1);
-        diaAnterior.setHours(0, 0, 0, 0);
-        if (dataAtual >= diaAnterior) {
-          rodadaParaExibir = proximaRodada.rodada;
+        const todosJogosFinalizados = jogosDaRodada.every(
+          (jogo) => jogo.status === "FINISHED"
+        );
+
+        return { numeroRodada, dataInicio, todosJogosFinalizados };
+      }
+    );
+
+    rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
+
+    let rodadaParaExibir = 0;
+    const dataAtual = new Date();
+
+    const rodadasCandidatas = rodadasComInfo.filter((r) => {
+      const dataInicioRodada = r.dataInicio;
+      const hoje = new Date();
+
+      const ryy = dataInicioRodada.getUTCFullYear();
+      const rmm = dataInicioRodada.getUTCMonth();
+      const rdd = dataInicioRodada.getUTCDate();
+
+      const hyy = hoje.getUTCFullYear();
+      const hmm = hoje.getUTCMonth();
+      const hdd = hoje.getUTCDate();
+
+      const rodadaJaIniciou =
+        ryy < hyy ||
+        (ryy === hyy && rmm < hmm) ||
+        (ryy === hyy && rmm === hmm && rdd <= hdd);
+
+      return rodadaJaIniciou && !r.todosJogosFinalizados;
+    });
+
+    if (rodadasCandidatas.length > 0) {
+      rodadasCandidatas.sort((a, b) => b.numeroRodada - a.numeroRodada);
+      rodadaParaExibir = rodadasCandidatas[0].numeroRodada;
+    } else {
+      let proximaRodadaIncompleta = null;
+      for (const r of rodadasComInfo) {
+        if (!r.todosJogosFinalizados) {
+          proximaRodadaIncompleta = r.numeroRodada;
+          break;
+        }
+      }
+
+      if (proximaRodadaIncompleta !== null) {
+        rodadaParaExibir = proximaRodadaIncompleta;
+      } else {
+        if (rodadasComInfo.length > 0) {
+          rodadaParaExibir =
+            rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+        } else {
+          rodadaParaExibir = 1;
         }
       }
     }
 
-    totalRodadas = rodadasOrdenadas.length;
+    // Lookahead Logic: Check if the next matchday starts tomorrow
+    const rodadaInicialmenteSelecionada = rodadaParaExibir;
+    const indiceRodadaAtualNoArray = rodadasComInfo.findIndex(
+      (r) => r.numeroRodada === rodadaInicialmenteSelecionada
+    );
+
+    if (
+      indiceRodadaAtualNoArray !== -1 &&
+      indiceRodadaAtualNoArray + 1 < rodadasComInfo.length
+    ) {
+      const rodadaSeguinteInfo = rodadasComInfo[indiceRodadaAtualNoArray + 1];
+      const dataInicioRodadaSeguinte = new Date(rodadaSeguinteInfo.dataInicio);
+
+      const hoje = new Date();
+      const amanha = new Date(hoje);
+      amanha.setDate(hoje.getDate() + 1);
+
+      const ds_yy = dataInicioRodadaSeguinte.getUTCFullYear();
+      const ds_mm = dataInicioRodadaSeguinte.getUTCMonth();
+      const ds_dd = dataInicioRodadaSeguinte.getUTCDate();
+
+      const am_yy = amanha.getUTCFullYear();
+      const am_mm = amanha.getUTCMonth();
+      const am_dd = amanha.getUTCDate();
+
+      if (ds_yy === am_yy && ds_mm === am_mm && ds_dd === am_dd) {
+        rodadaParaExibir = rodadaSeguinteInfo.numeroRodada;
+      }
+    }
+    // End of Lookahead Logic
+
     rodadaAtual = rodadaParaExibir;
+    if (rodadasComInfo.length > 0) {
+      totalRodadas = rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+    } else {
+      totalRodadas = 0;
+    }
 
     // Atualiza a tabela imediatamente após carregar o calendário
     await atualizarTabela();
@@ -953,7 +1113,7 @@ function exibirRodada(rodada, partidas) {
   <div class="jogo-header">
     <div class="jogo-data">${formatarData(partida.utcDate)}</div>
   </div>
-  
+
   <div class="jogo-times">
     <div class="time">
       <img src="${timeCasaInfo.escudo}" alt="${
@@ -963,17 +1123,17 @@ function exibirRodada(rodada, partidas) {
       <div class="time-nome">${timeCasaInfo.nome}</div>
     </div>
     ${
-    temPlacar
-      ? `
+      temPlacar
+        ? `
     <div class="placar">
       <span>${partida.score.fullTime.home}</span>
       <span class="placar-separator">:</span>
       <span>${partida.score.fullTime.away}</span>
     </div>
   `
-      : '<div class="versus">X</div>'
-  }
-    
+        : '<div class="versus">X</div>'
+    }
+
     <div class="time">
       <img src="${timeForaInfo.escudo}" alt="${
       timeForaInfo.nome
@@ -982,7 +1142,7 @@ function exibirRodada(rodada, partidas) {
       <div class="time-nome">${timeForaInfo.nome}</div>
     </div>
   </div>
-                     
+
   <div class="jogo-footer">
     <div class="status ${statusClasse}">${statusTexto}</div>
     <div class="horario">${formatarHora(partida.utcDate)}</div>
@@ -998,8 +1158,7 @@ function atualizarNavegacao() {
     "rodada-atual"
   ).textContent = `Rodada ${rodadaAtual} de ${totalRodadas}`;
   document.getElementById("anterior").disabled = rodadaAtual === 1;
-  document.getElementById("proxima").disabled =
-    rodadaAtual === totalRodadas;
+  document.getElementById("proxima").disabled = rodadaAtual === totalRodadas;
 }
 
 // Funções auxiliares do calendário
@@ -1059,8 +1218,7 @@ async function preencherTabelaPrincipalComRodadaAtual(rodada) {
 
   try {
     const response = await fetch("/.netlify/functions/fetchMatches");
-    if (!response.ok)
-      throw new Error(`Erro de rede: ${response.status}`);
+    if (!response.ok) throw new Error(`Erro de rede: ${response.status}`);
 
     const data = await response.json();
     const jogosRodadaAtual = data.matches.filter(
@@ -1106,9 +1264,7 @@ async function preencherTabelaPrincipalComRodadaAtual(rodada) {
     }
   } catch (error) {
     console.error("Erro ao buscar dados da tabela principal:", error);
-    alert(
-      "Erro ao carregar os dados da tabela principal. Tente novamente."
-    );
+    alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
   }
 }
 
@@ -1150,9 +1306,7 @@ async function atualizarTabela() {
     );
 
     if (jogosRodada.length === 0) {
-      console.log(
-        `Nenhum jogo encontrado para rodada ${rodadaExibida}`
-      );
+      console.log(`Nenhum jogo encontrado para rodada ${rodadaExibida}`);
       return;
     }
 
@@ -1169,10 +1323,8 @@ async function atualizarTabela() {
           time1: "",
           time2: "",
         };
-        const novoResultadoCasa =
-          partida.score.fullTime.home.toString();
-        const novoResultadoFora =
-          partida.score.fullTime.away.toString();
+        const novoResultadoCasa = partida.score.fullTime.home.toString();
+        const novoResultadoFora = partida.score.fullTime.away.toString();
 
         if (
           resultadoAtual.time1 !== novoResultadoCasa ||
@@ -1184,10 +1336,7 @@ async function atualizarTabela() {
             time2: novoResultadoFora,
           };
 
-          if (
-            inputsResultados[index * 2] &&
-            inputsResultados[index * 2 + 1]
-          ) {
+          if (inputsResultados[index * 2] && inputsResultados[index * 2 + 1]) {
             inputsResultados[index * 2].value = novoResultadoCasa;
             inputsResultados[index * 2 + 1].value = novoResultadoFora;
           }
@@ -1202,6 +1351,10 @@ async function atualizarTabela() {
     } else {
       console.log("Nenhum resultado novo para atualizar.");
     }
+
+    // Atualiza o calendário também, para refletir os novos placares
+    partidasPorRodada[rodadaExibida] = jogosRodada; // atualiza o cache
+    exibirRodada(rodadaExibida, jogosRodada); // força atualização do calendário
   } catch (error) {
     console.error("Erro ao atualizar tabela:", error);
   }
@@ -1210,7 +1363,7 @@ async function atualizarTabela() {
 async function salvarResultadosNoSupabase(resultados) {
   try {
     const { data, error: fetchError } = await supabaseClient
-      .from("alphabet_table")
+      .from(getCurrentSupabaseTable())
       .select("*")
       .order("id", { ascending: false })
       .limit(1);
@@ -1218,14 +1371,12 @@ async function salvarResultadosNoSupabase(resultados) {
     if (fetchError) throw fetchError;
 
     if (!data || data.length === 0) {
-      console.log(
-        "Nenhum registro encontrado para atualizar os resultados"
-      );
+      console.log("Nenhum registro encontrado para atualizar os resultados");
       return;
     }
 
     const { error: updateError } = await supabaseClient
-      .from("alphabet_table")
+      .from(getCurrentSupabaseTable())
       .update({ resultados })
       .eq("id", data[0].id);
 
@@ -1252,7 +1403,7 @@ function pararAtualizacaoAutomatica() {
 async function carregarApostas() {
   try {
     const { data, error } = await supabaseClient
-      .from("alphabet_table")
+      .from(getCurrentSupabaseTable())
       .select("*")
       .order("id", { ascending: false })
       .limit(1);
@@ -1264,13 +1415,8 @@ async function carregarApostas() {
       return;
     }
 
-    const {
-      nome_rodada,
-      jogos,
-      apostas,
-      resultados,
-      placares_ocultos,
-    } = data[0];
+    const { nome_rodada, jogos, apostas, resultados, placares_ocultos } =
+      data[0];
 
     if (nome_rodada) {
       const match = nome_rodada.match(/\d+/); // Extrai qualquer número do nome
@@ -1298,10 +1444,8 @@ async function carregarApostas() {
       for (let i = 0; i < 10; i++) {
         const indexCasa = i * 8 + jogadorIndex * 2;
         const indexFora = indexCasa + 1;
-        inputsApostas[indexCasa].value =
-          apostas[jogador][i].time1 || "";
-        inputsApostas[indexFora].value =
-          apostas[jogador][i].time2 || "";
+        inputsApostas[indexCasa].value = apostas[jogador][i].time1 || "";
+        inputsApostas[indexFora].value = apostas[jogador][i].time2 || "";
       }
     });
 
