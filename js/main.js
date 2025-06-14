@@ -659,15 +659,8 @@ function verificarApostasCompletas() {
 
   if (!jogadorClass) return false;
 
-<<<<<<< HEAD
   const inputsJogos = document.querySelectorAll(".input-jogo");
   const apostasUsuario = document.querySelectorAll(`.aposta.${jogadorClass}`);
-=======
-  const inputsJogos = document.querySelectorAll('.input-jogo');
-  const apostasUsuario = document.querySelectorAll(
-    `.aposta.${jogadorClass}`
-  );
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
 
   let todasApostasAplicaveisPreenchidas = true;
 
@@ -957,7 +950,6 @@ async function buscarCalendario() {
       partidasPorRodada[rodada].push(partida);
     });
 
-<<<<<<< HEAD
     const rodadasComInfo = Object.keys(partidasPorRodada).map(
       (numRodadaStr) => {
         const numeroRodada = Number(numRodadaStr);
@@ -983,40 +975,13 @@ async function buscarCalendario() {
         return { numeroRodada, dataInicio, todosJogosFinalizados };
       }
     );
-=======
-    const rodadasComInfo = Object.keys(partidasPorRodada).map(numRodadaStr => {
-      const numeroRodada = Number(numRodadaStr);
-      const jogosDaRodada = partidasPorRodada[numeroRodada];
-
-      let dataInicio = null;
-      if (jogosDaRodada.length > 0) {
-        dataInicio = new Date(jogosDaRodada[0].utcDate);
-        for (let i = 1; i < jogosDaRodada.length; i++) {
-          const dataJogoAtual = new Date(jogosDaRodada[i].utcDate);
-          if (dataJogoAtual < dataInicio) {
-            dataInicio = dataJogoAtual;
-          }
-        }
-      } else {
-        dataInicio = new Date('2999-12-31T23:59:59Z');
-      }
-
-      const todosJogosFinalizados = jogosDaRodada.every(jogo => jogo.status === "FINISHED");
-
-      return { numeroRodada, dataInicio, todosJogosFinalizados };
-    });
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
 
     rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
 
     let rodadaParaExibir = 0;
     const dataAtual = new Date();
 
-<<<<<<< HEAD
     const rodadasCandidatas = rodadasComInfo.filter((r) => {
-=======
-    const rodadasCandidatas = rodadasComInfo.filter(r => {
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
       const dataInicioRodada = r.dataInicio;
       const hoje = new Date();
 
@@ -1028,16 +993,10 @@ async function buscarCalendario() {
       const hmm = hoje.getUTCMonth();
       const hdd = hoje.getUTCDate();
 
-<<<<<<< HEAD
       const rodadaJaIniciou =
         ryy < hyy ||
         (ryy === hyy && rmm < hmm) ||
         (ryy === hyy && rmm === hmm && rdd <= hdd);
-=======
-      const rodadaJaIniciou = (ryy < hyy) ||
-                              (ryy === hyy && rmm < hmm) ||
-                              (ryy === hyy && rmm === hmm && rdd <= hdd);
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
 
       return rodadaJaIniciou && !r.todosJogosFinalizados;
     });
@@ -1058,12 +1017,8 @@ async function buscarCalendario() {
         rodadaParaExibir = proximaRodadaIncompleta;
       } else {
         if (rodadasComInfo.length > 0) {
-<<<<<<< HEAD
           rodadaParaExibir =
             rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
-=======
-          rodadaParaExibir = rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
         } else {
           rodadaParaExibir = 1;
         }
@@ -1072,7 +1027,6 @@ async function buscarCalendario() {
 
     // Lookahead Logic: Check if the next matchday starts tomorrow
     const rodadaInicialmenteSelecionada = rodadaParaExibir;
-<<<<<<< HEAD
     const indiceRodadaAtualNoArray = rodadasComInfo.findIndex(
       (r) => r.numeroRodada === rodadaInicialmenteSelecionada
     );
@@ -1081,11 +1035,6 @@ async function buscarCalendario() {
       indiceRodadaAtualNoArray !== -1 &&
       indiceRodadaAtualNoArray + 1 < rodadasComInfo.length
     ) {
-=======
-    const indiceRodadaAtualNoArray = rodadasComInfo.findIndex(r => r.numeroRodada === rodadaInicialmenteSelecionada);
-
-    if (indiceRodadaAtualNoArray !== -1 && (indiceRodadaAtualNoArray + 1) < rodadasComInfo.length) {
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
       const rodadaSeguinteInfo = rodadasComInfo[indiceRodadaAtualNoArray + 1];
       const dataInicioRodadaSeguinte = new Date(rodadaSeguinteInfo.dataInicio);
 
@@ -1182,13 +1131,8 @@ function exibirRodada(rodada, partidas) {
       <span>${partida.score.fullTime.away}</span>
     </div>
   `
-<<<<<<< HEAD
         : '<div class="versus">X</div>'
     }
-=======
-      : '<div class="versus">X</div>'
-  }
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
 
     <div class="time">
       <img src="${timeForaInfo.escudo}" alt="${
@@ -1407,18 +1351,10 @@ async function atualizarTabela() {
     } else {
       console.log("Nenhum resultado novo para atualizar.");
     }
-<<<<<<< HEAD
 
     // Atualiza o calendário também, para refletir os novos placares
     partidasPorRodada[rodadaExibida] = jogosRodada; // atualiza o cache
     exibirRodada(rodadaExibida, jogosRodada); // força atualização do calendário
-=======
-    
-    // Atualiza o calendário também, para refletir os novos placares
-    partidasPorRodada[rodadaExibida] = jogosRodada; // atualiza o cache
-    exibirRodada(rodadaExibida, jogosRodada); // força atualização do calendário
-    
->>>>>>> 6a467d799018b1837745d4b2e864169b8e9afa42
   } catch (error) {
     console.error("Erro ao atualizar tabela:", error);
   }
