@@ -11,6 +11,7 @@ let totalRodadas = 0;
 let rodadaExibida = null;
 let partidasPorRodada = {};
 let intervaloAtualizacao = null;
+let isSwitchingCompetition = false;
 
 // Variáveis globais de competição
 const COMPETITION_IDS = {
@@ -160,6 +161,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         setCompetition(event.target.value);
       });
     });
+    console.log("Competition radio event listeners attached.");
 
     // Recupera a competição do localStorage ou usa o padrão
     const savedCompetition =
@@ -318,42 +320,57 @@ function updateDynamicTitles() {
 }
 
 async function setCompetition(competition) {
-  if (currentCompetition === competition) return; // Evita recarregar se já for a atual
-
-  currentCompetition = competition;
-  localStorage.setItem("currentCompetition", currentCompetition);
-
-  // Limpar dados da tabela e UI específica da competição anterior
-  document.getElementById("tabela-apostas").innerHTML = ""; // Limpa a tabela de apostas
-  criarLinhasTabela(); // Recria as linhas da tabela, mas vazias
-  document.getElementById("nome-rodada").value = "";
-  document.getElementById("pontuacao").innerHTML = "";
-  document.getElementById("calendario-jogos").innerHTML =
-    '<div class="loading">Carregando jogos</div>'; // Mostrar loading
-
-  updateDynamicTitles(); // Atualiza os títulos (AlphaBet, Calendário)
-  await carregarApostas(); // Carrega as apostas da nova competição (do Supabase)
-
-  // Lógica para mostrar/ocultar elementos da UI com base na competição
-  const calendarioContainer = document.querySelector(".container"); // Container do calendário
-  const preencherTabelaButton = document.getElementById(
-    "preencher-tabela-principal"
-  );
-
-  if (currentCompetition === "club_wc") {
-    if (calendarioContainer) calendarioContainer.classList.add("hidden");
-    // O botão de preencher tabela já é tratado em verificarPermissoesUsuario
-    pararAtualizacaoAutomatica(); // Para a atualização automática se for Club WC
-  } else {
-    if (calendarioContainer) calendarioContainer.classList.remove("hidden");
-    await buscarCalendario(); // Busca o calendário apenas para o Brasileirão
-    iniciarAtualizacaoAutomatica(); // Reinicia a atualização para o Brasileirão
+  console.log("setCompetition called with:", competition, "isSwitchingCompetition flag current value:", isSwitchingCompetition);
+  if (isSwitchingCompetition) {
+    console.warn("setCompetition called while already switching. Aborting.");
+    return;
   }
+  isSwitchingCompetition = true;
 
-  // Reavalia as permissões (pode depender da competição, ex: botão preencher)
-  await verificarPermissoesUsuario();
-  // Força a verificação do estado dos placares (pode ter sido alterado)
-  await verificarEstadoPlacares();
+  try {
+    if (currentCompetition === competition) return; // Evita recarregar se já for a atual
+
+    currentCompetition = competition;
+    localStorage.setItem("currentCompetition", currentCompetition);
+
+    // Explicitly set radio button states
+    // document.querySelector('input[name="competition"][value="brasileirao"]').checked = (currentCompetition === "brasileirao");
+    // document.querySelector('input[name="competition"][value="club_wc"]').checked = (currentCompetition === "club_wc");
+
+    // Limpar dados da tabela e UI específica da competição anterior
+    document.getElementById("tabela-apostas").innerHTML = ""; // Limpa a tabela de apostas
+    criarLinhasTabela(); // Recria as linhas da tabela, mas vazias
+    document.getElementById("nome-rodada").value = "";
+    document.getElementById("pontuacao").innerHTML = "";
+    document.getElementById("calendario-jogos").innerHTML =
+      '<div class="loading">Carregando jogos</div>'; // Mostrar loading
+
+    updateDynamicTitles(); // Atualiza os títulos (AlphaBet, Calendário)
+    await carregarApostas(); // Carrega as apostas da nova competição (do Supabase)
+
+    // Lógica para mostrar/ocultar elementos da UI com base na competição
+    const calendarioContainer = document.querySelector(".container"); // Container do calendário
+    // const preencherTabelaButton = document.getElementById("preencher-tabela-principal"); // Already handled by verificarPermissoesUsuario
+    console.log(`Before calendar visibility check: currentCompetition is "${currentCompetition}", calendarioContainer exists: ${!!calendarioContainer}`);
+    if (currentCompetition === "club_wc") {
+      if (calendarioContainer) calendarioContainer.classList.add("hidden");
+      // O botão de preencher tabela já é tratado em verificarPermissoesUsuario
+      pararAtualizacaoAutomatica(); // Para a atualização automática se for Club WC
+    } else { // Brasileirao
+      if (calendarioContainer) calendarioContainer.classList.remove("hidden");
+      // verificarPermissoesUsuario will handle preencherTabelaButton
+      await buscarCalendario(); // Busca o calendário apenas para o Brasileirão
+      iniciarAtualizacaoAutomatica(); // Reinicia a atualização para o Brasileirão
+    }
+
+    // Reavalia as permissões (pode depender da competição, ex: botão preencher)
+    await verificarPermissoesUsuario();
+    // Força a verificação do estado dos placares (pode ter sido alterado)
+    await verificarEstadoPlacares();
+  } finally {
+    console.log("setCompetition finally block. Setting isSwitchingCompetition to false. Current competition var is:", currentCompetition);
+    isSwitchingCompetition = false;
+  }
 }
 
 function initializeDarkMode() {
