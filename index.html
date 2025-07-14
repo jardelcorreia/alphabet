@@ -2548,61 +2548,57 @@ TABLE OF CONTENTS:
 
         // Funções de preenchimento da tabela principal
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
-          // Se a rodada solicitada for a mesma que já está exibida
           if (rodadaExibida === rodada) {
-            // Apenas atualiza os resultados sem pedir confirmação
             await atualizarTabela();
             return;
           }
-
-          // Se for uma rodada diferente, pede confirmação
-          const confirmacao = confirm(
-            `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`
-          );
+        
+          const confirmacao = confirm(`Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`);
           if (!confirmacao) return;
-
+        
           try {
             const response = await fetch("/.netlify/functions/fetchMatches");
-            if (!response.ok)
-              throw new Error(`Erro de rede: ${response.status}`);
-
+            if (!response.ok) throw new Error(`Erro de rede: ${response.status}`);
+        
             const data = await response.json();
-            const jogosRodadaAtual = data.matches.filter(
-              (partida) => partida.matchday === rodada
-            );
-
+            const jogosRodadaAtual = data.matches.filter(partida => partida.matchday === rodada);
+        
             if (jogosRodadaAtual.length === 0) {
               console.log(`Nenhum jogo encontrado para a rodada ${rodada}.`);
               return;
             }
-
-            // Limpa todos os dados existentes
+        
+            // Limpar todos os dados existentes
             const inputsApostas = document.querySelectorAll(".aposta");
             const inputsResultados = document.querySelectorAll(".resultado");
-
-            inputsApostas.forEach((input) => (input.value = ""));
-            inputsResultados.forEach((input) => (input.value = ""));
-
-            // Preenche o nome da rodada
-            document.getElementById("nome-rodada").value = `Rodada ${rodada}`;
-
-            // Preenche os jogos
             const inputsJogos = document.querySelectorAll(".input-jogo");
+        
+            inputsApostas.forEach(input => input.value = "");
+            inputsResultados.forEach(input => input.value = "");
+            inputsJogos.forEach(input => input.value = "");
+        
+            // Preencher o nome da rodada
+            document.getElementById("nome-rodada").value = `Rodada ${rodada}`;
+        
+            // Ordenar os jogos por data/hora para garantir consistência
+            jogosRodadaAtual.sort((a, b) => new Date(a.utcDate) - new Date(b.utcDate));
+        
+            // Mapear os jogos para a tabela mantendo a ordem
             jogosRodadaAtual.forEach((partida, index) => {
-              const timeCasaAbrev =
-                timesInfo[partida.homeTeam.name]?.abrev ||
-                partida.homeTeam.name.substring(0, 3).toUpperCase();
-              const timeForaAbrev =
-                timesInfo[partida.awayTeam.name]?.abrev ||
-                partida.awayTeam.name.substring(0, 3).toUpperCase();
+              const timeCasaAbrev = timesInfo[partida.homeTeam.name]?.abrev || 
+                                   partida.homeTeam.name.substring(0, 3).toUpperCase();
+              const timeForaAbrev = timesInfo[partida.awayTeam.name]?.abrev || 
+                                   partida.awayTeam.name.substring(0, 3).toUpperCase();
+              
+              // Armazenar o ID da partida ou nome completo dos times no campo de jogo
               inputsJogos[index].value = `${timeCasaAbrev} x ${timeForaAbrev}`;
+              inputsJogos[index].dataset.timeCasa = partida.homeTeam.name;
+              inputsJogos[index].dataset.timeFora = partida.awayTeam.name;
             });
-
-            // Atualiza a rodada exibida
+        
             rodadaExibida = rodada;
-
             await salvarApostas();
-            // Reinicia a atualização automática apenas se for a rodada atual
+            
             if (rodada === rodadaAtual) {
               iniciarAtualizacaoAutomatica();
             } else {
@@ -2610,101 +2606,76 @@ TABLE OF CONTENTS:
             }
           } catch (error) {
             console.error("Erro ao buscar dados da tabela principal:", error);
-            alert(
-              "Erro ao carregar os dados da tabela principal. Tente novamente."
-            );
+            alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
           }
         }
 
         // Funções de atualização automática
         async function atualizarTabela() {
-          console.log("Atualizando tabela...", {
-            rodadaExibida,
-            rodadaAtual,
-            nomeRodada: document.getElementById("nome-rodada").value,
-          });
           try {
-            // Verifica se há uma rodada exibida definida
             if (!rodadaExibida) {
-              // Tenta obter a rodada do nome_rodada como fallback
               const nomeRodada = document.getElementById("nome-rodada").value;
               const match = nomeRodada.match(/\d+/);
               rodadaExibida = match ? parseInt(match[0]) : null;
-
+        
               if (!rodadaExibida) {
                 console.log("Nenhuma rodada definida na tabela principal.");
                 return;
               }
             }
-
-            // Verifica se a rodada exibida na tabela principal é a mesma do calendário
-            if (rodadaExibida !== rodadaAtual) {
-              console.log(
-                `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando resultados.`
-              );
-              return;
-            }
-
+        
             const response = await fetch("/.netlify/functions/fetchMatches");
             if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
-
+        
             const data = await response.json();
-            const jogosRodada = data.matches.filter(
-              (m) => m.matchday === rodadaExibida // Usa rodadaExibida em vez de rodadaAtual
-            );
-
+            const jogosRodada = data.matches.filter(m => m.matchday === rodadaExibida);
+        
             if (jogosRodada.length === 0) {
-              console.log(
-                `Nenhum jogo encontrado para rodada ${rodadaExibida}`
-              );
+              console.log(`Nenhum jogo encontrado para rodada ${rodadaExibida}`);
               return;
             }
-
-            const resultadosAtuais = obterResultadosDaTabela();
+        
+            const inputsJogos = document.querySelectorAll(".input-jogo");
             const inputsResultados = document.querySelectorAll(".resultado");
             let resultadosModificados = false;
-
-            jogosRodada.forEach((partida, index) => {
-              if (
-                partida.score.fullTime.home !== null &&
-                partida.score.fullTime.away !== null
-              ) {
-                const resultadoAtual = resultadosAtuais[index] || {
-                  time1: "",
-                  time2: "",
-                };
-                const novoResultadoCasa =
-                  partida.score.fullTime.home.toString();
-                const novoResultadoFora =
-                  partida.score.fullTime.away.toString();
-
-                if (
-                  resultadoAtual.time1 !== novoResultadoCasa ||
-                  resultadoAtual.time2 !== novoResultadoFora
-                ) {
+        
+            // Criar um mapa dos jogos da rodada para acesso rápido
+            const jogosMap = {};
+            jogosRodada.forEach(jogo => {
+              const key = `${jogo.homeTeam.name}-${jogo.awayTeam.name}`;
+              jogosMap[key] = jogo;
+            });
+        
+            // Percorrer os jogos na tabela e atualizar conforme correspondência
+            inputsJogos.forEach((inputJogo, index) => {
+              const timeCasa = inputJogo.dataset.timeCasa;
+              const timeFora = inputJogo.dataset.timeFora;
+              
+              if (!timeCasa || !timeFora) return;
+        
+              const key = `${timeCasa}-${timeFora}`;
+              const partida = jogosMap[key];
+              
+              if (partida && partida.score.fullTime.home !== null && 
+                  partida.score.fullTime.away !== null) {
+                const inputCasa = inputsResultados[index * 2];
+                const inputFora = inputsResultados[index * 2 + 1];
+                
+                const novoCasa = partida.score.fullTime.home.toString();
+                const novoFora = partida.score.fullTime.away.toString();
+                
+                if (inputCasa.value !== novoCasa || inputFora.value !== novoFora) {
                   resultadosModificados = true;
-                  resultadosAtuais[index] = {
-                    time1: novoResultadoCasa,
-                    time2: novoResultadoFora,
-                  };
-
-                  if (
-                    inputsResultados[index * 2] &&
-                    inputsResultados[index * 2 + 1]
-                  ) {
-                    inputsResultados[index * 2].value = novoResultadoCasa;
-                    inputsResultados[index * 2 + 1].value = novoResultadoFora;
-                  }
+                  inputCasa.value = novoCasa;
+                  inputFora.value = novoFora;
                 }
               }
             });
-
+        
             if (resultadosModificados) {
-              await salvarResultadosNoSupabase(resultadosAtuais);
+              await salvarResultadosNoSupabase(obterResultadosDaTabela());
               console.log("Resultados atualizados e salvos no Supabase!");
               calcularPontuacao();
-            } else {
-              console.log("Nenhum resultado novo para atualizar.");
             }
           } catch (error) {
             console.error("Erro ao atualizar tabela:", error);
