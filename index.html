@@ -2546,11 +2546,11 @@ TABLE OF CONTENTS:
           return "status-SCHEDULED";
         }
 
-        // Funções de preenchimento da tabela principal
+        // Versão aprimorada da função preencherTabelaPrincipalComRodadaAtual
+        // que também armazena os identificadores dos jogos
         async function preencherTabelaPrincipalComRodadaAtual(rodada) {
           // Se a rodada solicitada for a mesma que já está exibida
           if (rodadaExibida === rodada) {
-            // Apenas atualiza os resultados sem pedir confirmação
             await atualizarTabela();
             return;
           }
@@ -2563,8 +2563,7 @@ TABLE OF CONTENTS:
 
           try {
             const response = await fetch("/.netlify/functions/fetchMatches");
-            if (!response.ok)
-              throw new Error(`Erro de rede: ${response.status}`);
+            if (!response.ok) throw new Error(`Erro de rede: ${response.status}`);
 
             const data = await response.json();
             const jogosRodadaAtual = data.matches.filter(
@@ -2589,12 +2588,11 @@ TABLE OF CONTENTS:
             // Preenche os jogos
             const inputsJogos = document.querySelectorAll(".input-jogo");
             jogosRodadaAtual.forEach((partida, index) => {
-              const timeCasaAbrev =
-                timesInfo[partida.homeTeam.name]?.abrev ||
+              const timeCasaAbrev = timesInfo[partida.homeTeam.name]?.abrev ||
                 partida.homeTeam.name.substring(0, 3).toUpperCase();
-              const timeForaAbrev =
-                timesInfo[partida.awayTeam.name]?.abrev ||
+              const timeForaAbrev = timesInfo[partida.awayTeam.name]?.abrev ||
                 partida.awayTeam.name.substring(0, 3).toUpperCase();
+              
               inputsJogos[index].value = `${timeCasaAbrev} x ${timeForaAbrev}`;
             });
 
@@ -2602,6 +2600,7 @@ TABLE OF CONTENTS:
             rodadaExibida = rodada;
 
             await salvarApostas();
+            
             // Reinicia a atualização automática apenas se for a rodada atual
             if (rodada === rodadaAtual) {
               iniciarAtualizacaoAutomatica();
@@ -2610,23 +2609,22 @@ TABLE OF CONTENTS:
             }
           } catch (error) {
             console.error("Erro ao buscar dados da tabela principal:", error);
-            alert(
-              "Erro ao carregar os dados da tabela principal. Tente novamente."
-            );
+            alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
           }
         }
 
-        // Funções de atualização automática
+        // Substitua a função atualizarTabela() existente por esta versão corrigida:
+
         async function atualizarTabela() {
           console.log("Atualizando tabela...", {
             rodadaExibida,
             rodadaAtual,
             nomeRodada: document.getElementById("nome-rodada").value,
           });
+          
           try {
             // Verifica se há uma rodada exibida definida
             if (!rodadaExibida) {
-              // Tenta obter a rodada do nome_rodada como fallback
               const nomeRodada = document.getElementById("nome-rodada").value;
               const match = nomeRodada.match(/\d+/);
               rodadaExibida = match ? parseInt(match[0]) : null;
@@ -2650,50 +2648,66 @@ TABLE OF CONTENTS:
 
             const data = await response.json();
             const jogosRodada = data.matches.filter(
-              (m) => m.matchday === rodadaExibida // Usa rodadaExibida em vez de rodadaAtual
+              (m) => m.matchday === rodadaExibida
             );
 
             if (jogosRodada.length === 0) {
-              console.log(
-                `Nenhum jogo encontrado para rodada ${rodadaExibida}`
-              );
+              console.log(`Nenhum jogo encontrado para rodada ${rodadaExibida}`);
               return;
             }
+
+            // Obter jogos atuais da tabela
+            const inputsJogos = document.querySelectorAll(".input-jogo");
+            const jogosNaTabela = Array.from(inputsJogos).map(input => input.value.trim());
 
             const resultadosAtuais = obterResultadosDaTabela();
             const inputsResultados = document.querySelectorAll(".resultado");
             let resultadosModificados = false;
 
-            jogosRodada.forEach((partida, index) => {
-              if (
-                partida.score.fullTime.home !== null &&
-                partida.score.fullTime.away !== null
-              ) {
-                const resultadoAtual = resultadosAtuais[index] || {
-                  time1: "",
-                  time2: "",
-                };
-                const novoResultadoCasa =
-                  partida.score.fullTime.home.toString();
-                const novoResultadoFora =
-                  partida.score.fullTime.away.toString();
+            // Para cada jogo na tabela, encontrar o jogo correspondente na API
+            jogosNaTabela.forEach((jogoNaTabela, indexTabela) => {
+              if (!jogoNaTabela) return;
 
-                if (
-                  resultadoAtual.time1 !== novoResultadoCasa ||
-                  resultadoAtual.time2 !== novoResultadoFora
-                ) {
+              // Extrair times do jogo na tabela (formato: "PAL x BOT")
+              const timesTabela = extrairTimesDoJogo(jogoNaTabela);
+              if (!timesTabela) return;
+
+              // Encontrar o jogo correspondente na API
+              const jogoCorrespondente = jogosRodada.find(partida => {
+                const timeCasaAbrev = timesInfo[partida.homeTeam.name]?.abrev ||
+                  partida.homeTeam.name.substring(0, 3).toUpperCase();
+                const timeForaAbrev = timesInfo[partida.awayTeam.name]?.abrev ||
+                  partida.awayTeam.name.substring(0, 3).toUpperCase();
+
+                return (timesTabela.casa === timeCasaAbrev && timesTabela.fora === timeForaAbrev);
+              });
+
+              if (!jogoCorrespondente) {
+                console.log(`Jogo não encontrado na API: ${jogoNaTabela}`);
+                return;
+              }
+
+              // Verificar se há resultado disponível
+              if (jogoCorrespondente.score.fullTime.home !== null &&
+                  jogoCorrespondente.score.fullTime.away !== null) {
+                
+                const resultadoAtual = resultadosAtuais[indexTabela] || { time1: "", time2: "" };
+                const novoResultadoCasa = jogoCorrespondente.score.fullTime.home.toString();
+                const novoResultadoFora = jogoCorrespondente.score.fullTime.away.toString();
+
+                if (resultadoAtual.time1 !== novoResultadoCasa ||
+                    resultadoAtual.time2 !== novoResultadoFora) {
+                  
                   resultadosModificados = true;
-                  resultadosAtuais[index] = {
+                  resultadosAtuais[indexTabela] = {
                     time1: novoResultadoCasa,
                     time2: novoResultadoFora,
                   };
 
-                  if (
-                    inputsResultados[index * 2] &&
-                    inputsResultados[index * 2 + 1]
-                  ) {
-                    inputsResultados[index * 2].value = novoResultadoCasa;
-                    inputsResultados[index * 2 + 1].value = novoResultadoFora;
+                  if (inputsResultados[indexTabela * 2] &&
+                      inputsResultados[indexTabela * 2 + 1]) {
+                    inputsResultados[indexTabela * 2].value = novoResultadoCasa;
+                    inputsResultados[indexTabela * 2 + 1].value = novoResultadoFora;
                   }
                 }
               }
@@ -2710,7 +2724,27 @@ TABLE OF CONTENTS:
             console.error("Erro ao atualizar tabela:", error);
           }
         }
-        
+
+        // Função auxiliar para extrair times de um jogo no formato "PAL x BOT"
+          function extrairTimesDoJogo(jogoTexto) {
+            const regex = /\s*(\w+)\s*x\s*(\w+)\s*/i;
+            const match = jogoTexto.match(regex);
+            
+            if (match) {
+              return {
+                casa: match[1].toUpperCase(),
+                fora: match[2].toUpperCase()
+              };
+            }
+            
+            return null;
+          }
+
+          // Função auxiliar para criar um identificador único do jogo
+          function criarIdentificadorJogo(timeCasa, timeFora) {
+            return `${timeCasa.toUpperCase()}_vs_${timeFora.toUpperCase()}`;
+          }
+
         async function salvarResultadosNoSupabase(resultados) {
           try {
             const { data, error: fetchError } = await supabaseClient
