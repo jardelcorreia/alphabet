@@ -805,7 +805,9 @@
           if (dadosAtuais.ranking) {
             dadosAtuais.ranking.forEach((vencedores, index) => {
               const input = document.getElementById(`rodada-${index + 1}`);
-              if (input) input.value = vencedores || "";
+              if (input) {
+                input.value = vencedores || "";
+              }
 
               const valorInput = document.getElementById(
                 `valor-rodada-${index + 1}`

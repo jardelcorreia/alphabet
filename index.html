@@ -2235,6 +2235,14 @@ TABLE OF CONTENTS:
             .join("");
 
           document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+
+          // Salva o vencedor da rodada no Supabase
+          if (vencedores.length > 0) {
+            const nomesVencedores = vencedores
+              .map(([jogador]) => jogador)
+              .join(", ");
+            salvarVencedorDaRodada(rodadaExibida, nomesVencedores);
+          }
         }
 
         function adicionarEventosCalculoPontuacao() {
@@ -2267,6 +2275,35 @@ TABLE OF CONTENTS:
               }
             });
           });
+        }
+
+        async function salvarVencedorDaRodada(rodada, vencedor) {
+          if (!rodada) return;
+
+          try {
+            const { data, error } = await supabaseClient
+              .from("alphabet_table")
+              .select("id, ranking")
+              .order("id", { ascending: false })
+              .limit(1)
+              .single();
+
+            if (error) throw error;
+
+            if (data) {
+              const rankingAtual = data.ranking || [];
+              rankingAtual[rodada - 1] = vencedor;
+
+              const { error: updateError } = await supabaseClient
+                .from("alphabet_table")
+                .update({ ranking: rankingAtual })
+                .eq("id", data.id);
+
+              if (updateError) throw updateError;
+            }
+          } catch (error) {
+            console.error("Erro ao salvar vencedor da rodada:", error);
+          }
         }
 
         function abrirRanking() {
