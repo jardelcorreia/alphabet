@@ -821,10 +821,10 @@
             });
           }
 
-          exibirVitorias(
-            dadosAtuais.vitorias_empates ||
-              calcularVitoriasEmpatesSaldo(dadosAtuais.ranking || [])
-          );
+          const ranking = dadosAtuais.ranking || [];
+          const vitoriasEmpates = calcularVitoriasEmpatesSaldo(ranking);
+          exibirVitorias(vitoriasEmpates);
+
         } catch (error) {
           console.error("Erro ao carregar ranking:", error);
         }
