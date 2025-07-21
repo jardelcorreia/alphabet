@@ -2284,7 +2284,7 @@ TABLE OF CONTENTS:
           try {
             const { data, error } = await supabaseClient
               .from("alphabet_table")
-              .select("id, ranking")
+              .select("id, ranking, vitorias_empates")
               .order("id", { ascending: false })
               .limit(1)
               .single();
@@ -2295,9 +2295,15 @@ TABLE OF CONTENTS:
               const rankingAtual = data.ranking || [];
               rankingAtual[rodada - 1] = vencedor;
 
+              const vitoriasEmpatesAtual =
+                data.vitorias_empates || calcularVitoriasEmpatesSaldo(rankingAtual);
+
               const { error: updateError } = await supabaseClient
                 .from("alphabet_table")
-                .update({ ranking: rankingAtual })
+                .update({
+                  ranking: rankingAtual,
+                  vitorias_empates: vitoriasEmpatesAtual,
+                })
                 .eq("id", data.id);
 
               if (updateError) throw updateError;
@@ -2309,6 +2315,78 @@ TABLE OF CONTENTS:
 
         function abrirRanking() {
           window.open("ranking.html", "_blank");
+        }
+
+        function calcularVitoriasEmpatesSaldo(ranking) {
+          const vitoriasEmpates = {
+            Jardel: { vitorias: 0, empates: 0, saldo: 0 },
+            Werbet: { vitorias: 0, empates: 0, saldo: 0 },
+            Nailton: { vitorias: 0, empates: 0, saldo: 0 },
+            Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
+          };
+
+          const jogadores = Object.keys(vitoriasEmpates);
+
+          ranking.forEach((vencedores, rodadaIndex) => {
+            if (!vencedores.trim()) return;
+
+            const numeroRodada = rodadaIndex + 1;
+            const valorRodada = 6;
+
+            const listaVencedores = vencedores
+              .split(",")
+              .map((nome) => nome.trim())
+              .filter((nome) => nome !== "");
+
+            if (listaVencedores.length === 0) return;
+
+            if (listaVencedores.length === 1) {
+              const vencedor = listaVencedores[0];
+              if (vitoriasEmpates[vencedor]) {
+                vitoriasEmpates[vencedor].vitorias++;
+                vitoriasEmpates[vencedor].saldo +=
+                  valorRodada * (jogadores.length - 1);
+
+                jogadores.forEach((jogador) => {
+                  if (jogador !== vencedor) {
+                    vitoriasEmpates[jogador].saldo -= valorRodada;
+                  }
+                });
+              }
+            } else {
+              listaVencedores.forEach((vencedor) => {
+                if (vitoriasEmpates[vencedor]) {
+                  vitoriasEmpates[vencedor].empates++;
+                }
+              });
+
+              const perdedores = jogadores.filter(
+                (j) => !listaVencedores.includes(j)
+              );
+
+              if (listaVencedores.length === 2) {
+                const valorPorPerdedor = valorRodada / 2;
+                listaVencedores.forEach((vencedor) => {
+                  vitoriasEmpates[vencedor].saldo +=
+                    valorPorPerdedor * perdedores.length;
+                });
+                perdedores.forEach((perdedor) => {
+                  vitoriasEmpates[perdedor].saldo -= valorRodada;
+                });
+              } else if (listaVencedores.length === 3) {
+                const valorPorPerdedor = valorRodada / 3;
+                listaVencedores.forEach((vencedor) => {
+                  vitoriasEmpates[vencedor].saldo +=
+                    valorPorPerdedor * perdedores.length;
+                });
+                perdedores.forEach((perdedor) => {
+                  vitoriasEmpates[perdedor].saldo -= valorRodada;
+                });
+              }
+            }
+          });
+
+          return vitoriasEmpates;
         }
 
         // Funções do calendário de jogos
