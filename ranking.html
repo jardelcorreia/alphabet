@@ -955,6 +955,7 @@
 
           mostrarIndicadorSalvo();
           exibirVitorias(calcularVitoriasEmpatesSaldo(ranking));
+          carregarRanking();
         } catch (error) {
           console.error("Erro ao salvar ranking:", error);
           alert("Erro ao salvar. Verifique sua conexão.");
