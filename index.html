@@ -2278,116 +2278,134 @@ TABLE OF CONTENTS:
           });
         }
 
-        async function salvarVencedorDaRodada(rodada, vencedor) {
-          if (!rodada) return;
+async function salvarVencedorDaRodada(rodada, vencedor) {
+  if (!rodada) return;
 
-          try {
-            const { data, error } = await supabaseClient
-              .from("alphabet_table")
-              .select("id, ranking, vitorias_empates")
-              .order("id", { ascending: false })
-              .limit(1)
-              .single();
+  try {
+    const { data, error } = await supabaseClient
+      .from("alphabet_table")
+      .select("id, ranking, configuracao") // Also select 'configuracao' to get valorRodada settings
+      .order("id", { ascending: false })
+      .limit(1)
+      .single();
 
-            if (error) throw error;
+    if (error) {
+      if (error.code === "PGRST116") { // Handle case where no record exists
+        console.warn("No existing record found, creating a new one for ranking.");
+        const newRanking = [];
+        newRanking[rodada - 1] = vencedor;
+        const newConfig = { valoresRodada: {}, valorRodadaAtual: 6 }; // Default config
+        newConfig.valoresRodada[rodada] = newConfig.valorRodadaAtual; // Set initial round value for the new record
 
-            if (data) {
-              const rankingAtual = data.ranking || [];
-              rankingAtual[rodada - 1] = vencedor;
+        const { error: insertError } = await supabaseClient
+          .from("alphabet_table")
+          .insert({
+            ranking: newRanking,
+            vitorias_empates: calcularVitoriasEmpatesSaldo(newRanking, newConfig.valoresRodada, newConfig.valorRodadaAtual),
+            configuracao: newConfig,
+          });
+        if (insertError) throw insertError;
+        return;
+      }
+      throw error;
+    }
 
-              const vitoriasEmpatesAtual =
-                data.vitorias_empates || calcularVitoriasEmpatesSaldo(rankingAtual);
+    let rankingAtual = data.ranking || [];
+    rankingAtual[rodada - 1] = vencedor;
 
-              const { error: updateError } = await supabaseClient
-                .from("alphabet_table")
-                .update({
-                  ranking: rankingAtual,
-                  vitorias_empates: vitoriasEmpatesAtual,
-                })
-                .eq("id", data.id);
+    // Get the current configuration for calculating saldo correctly
+    const currentConfig = data.configuracao || { valoresRodada: {}, valorRodadaAtual: 6 };
 
-              if (updateError) throw updateError;
-            }
-          } catch (error) {
-            console.error("Erro ao salvar vencedor da rodada:", error);
-          }
-        }
+    // RECALCULATE vitorias_empates based on the updated ranking and current configuration
+    const vitoriasEmpatesAtualizadas = calcularVitoriasEmpatesSaldo(
+      rankingAtual,
+      currentConfig.valoresRodada,
+      currentConfig.valorRodadaAtual
+    );
+
+    const { error: updateError } = await supabaseClient
+      .from("alphabet_table")
+      .update({
+        ranking: rankingAtual,
+        vitorias_empates: vitoriasEmpatesAtualizadas, // Use the newly calculated values
+      })
+      .eq("id", data.id);
+
+    if (updateError) throw updateError;
+  } catch (error) {
+    console.error("Erro ao salvar vencedor da rodada:", error);
+  }
+}
 
         function abrirRanking() {
           window.open("ranking.html", "_blank");
         }
 
-        function calcularVitoriasEmpatesSaldo(ranking) {
-          const vitoriasEmpates = {
-            Jardel: { vitorias: 0, empates: 0, saldo: 0 },
-            Werbet: { vitorias: 0, empates: 0, saldo: 0 },
-            Nailton: { vitorias: 0, empates: 0, saldo: 0 },
-            Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
-          };
+function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaAtualConfig) {
+  const vitoriasEmpates = {
+    Jardel: { vitorias: 0, empates: 0, saldo: 0 },
+    Werbet: { vitorias: 0, empates: 0, saldo: 0 },
+    Nailton: { vitorias: 0, empates: 0, saldo: 0 },
+    Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
+  };
 
-          const jogadores = Object.keys(vitoriasEmpates);
+  const jogadores = Object.keys(vitoriasEmpates);
 
-          ranking.forEach((vencedores, rodadaIndex) => {
-            if (!vencedores.trim()) return;
+  ranking.forEach((vencedores, rodadaIndex) => {
+    if (!vencedores || !vencedores.trim()) return; // Added check for null/undefined 'vencedores'
 
-            const numeroRodada = rodadaIndex + 1;
-            const valorRodada = 6;
+    const numeroRodada = rodadaIndex + 1;
+    // Use the specific value for the round if available, otherwise use the default
+    const valorRodada = valoresRodadaConfig[numeroRodada] || valorRodadaAtualConfig;
 
-            const listaVencedores = vencedores
-              .split(",")
-              .map((nome) => nome.trim())
-              .filter((nome) => nome !== "");
+    const listaVencedores = vencedores
+      .split(",")
+      .map((nome) => nome.trim())
+      .filter((nome) => nome !== "");
 
-            if (listaVencedores.length === 0) return;
+    if (listaVencedores.length === 0) return;
 
-            if (listaVencedores.length === 1) {
-              const vencedor = listaVencedores[0];
-              if (vitoriasEmpates[vencedor]) {
-                vitoriasEmpates[vencedor].vitorias++;
-                vitoriasEmpates[vencedor].saldo +=
-                  valorRodada * (jogadores.length - 1);
+    if (listaVencedores.length === 1) {
+      const vencedor = listaVencedores[0];
+      if (vitoriasEmpates[vencedor]) {
+        vitoriasEmpates[vencedor].vitorias++;
+        vitoriasEmpates[vencedor].saldo += valorRodada * (jogadores.length - 1);
 
-                jogadores.forEach((jogador) => {
-                  if (jogador !== vencedor) {
-                    vitoriasEmpates[jogador].saldo -= valorRodada;
-                  }
-                });
-              }
-            } else {
-              listaVencedores.forEach((vencedor) => {
-                if (vitoriasEmpates[vencedor]) {
-                  vitoriasEmpates[vencedor].empates++;
-                }
-              });
-
-              const perdedores = jogadores.filter(
-                (j) => !listaVencedores.includes(j)
-              );
-
-              if (listaVencedores.length === 2) {
-                const valorPorPerdedor = valorRodada / 2;
-                listaVencedores.forEach((vencedor) => {
-                  vitoriasEmpates[vencedor].saldo +=
-                    valorPorPerdedor * perdedores.length;
-                });
-                perdedores.forEach((perdedor) => {
-                  vitoriasEmpates[perdedor].saldo -= valorRodada;
-                });
-              } else if (listaVencedores.length === 3) {
-                const valorPorPerdedor = valorRodada / 3;
-                listaVencedores.forEach((vencedor) => {
-                  vitoriasEmpates[vencedor].saldo +=
-                    valorPorPerdedor * perdedores.length;
-                });
-                perdedores.forEach((perdedor) => {
-                  vitoriasEmpates[perdedor].saldo -= valorRodada;
-                });
-              }
-            }
-          });
-
-          return vitoriasEmpates;
+        jogadores.forEach((jogador) => {
+          if (jogador !== vencedor) {
+            vitoriasEmpates[jogador].saldo -= valorRodada;
+          }
+        });
+      }
+    } else {
+      listaVencedores.forEach((vencedor) => {
+        if (vitoriasEmpates[vencedor]) {
+          vitoriasEmpates[vencedor].empates++;
         }
+      });
+
+      const perdedores = jogadores.filter(
+        (j) => !listaVencedores.includes(j)
+      );
+
+      // Distribute the pot among winners in case of a draw
+      const valuePerWinner = (valorRodada * perdedores.length) / listaVencedores.length;
+
+      listaVencedores.forEach((vencedor) => {
+        if (vitoriasEmpates[vencedor]) {
+          vitoriasEmpates[vencedor].saldo += valuePerWinner;
+        }
+      });
+      perdedores.forEach((perdedor) => {
+        if (vitoriasEmpates[perdedor]) {
+          vitoriasEmpates[perdedor].saldo -= valorRodada;
+        }
+      });
+    }
+  });
+
+  return vitoriasEmpates;
+}
 
         // Funções do calendário de jogos
         async function buscarCalendario() {

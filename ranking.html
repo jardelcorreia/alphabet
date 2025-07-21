@@ -823,7 +823,11 @@
 
           exibirVitorias(
             dadosAtuais.vitorias_empates ||
-              calcularVitoriasEmpatesSaldo(dadosAtuais.ranking || [])
+              calcularVitoriasEmpatesSaldo(
+                dadosAtuais.ranking || [],
+                configCampeonato.valoresRodada,
+                configCampeonato.valorRodadaAtual
+              )
           );
         } catch (error) {
           console.error("Erro ao carregar ranking:", error);
@@ -931,7 +935,11 @@
 
           const dadosParaSalvar = {
             ranking: ranking,
-            vitorias_empates: calcularVitoriasEmpatesSaldo(ranking),
+            vitorias_empates: calcularVitoriasEmpatesSaldo(
+              ranking,
+              valoresRodadas, // This is configCampeonato.valoresRodada
+              configCampeonato.valorRodadaAtual
+            ),
             configuracao: {
               valoresRodada: valoresRodadas,
               valorRodadaAtual: configCampeonato.valorRodadaAtual,
