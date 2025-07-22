@@ -2453,85 +2453,65 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
 
             let rodadaParaExibir = 0;
-            const dataAtual = new Date();
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0); // Normaliza para o início do dia
 
-            const rodadasCandidatas = rodadasComInfo.filter((r) => {
-              const dataInicioRodada = r.dataInicio;
-              const hoje = new Date();
+            // Encontrar a primeira rodada que ainda não foi completamente finalizada
+            let primeiraRodadaNaoFinalizada = rodadasComInfo.find(
+              (r) => !r.todosJogosFinalizados
+            );
 
-              const ryy = dataInicioRodada.getUTCFullYear();
-              const rmm = dataInicioRodada.getUTCMonth();
-              const rdd = dataInicioRodada.getUTCDate();
-
-              const hyy = hoje.getUTCFullYear();
-              const hmm = hoje.getUTCMonth();
-              const hdd = hoje.getUTCDate();
-
-              const rodadaJaIniciou =
-                ryy < hyy ||
-                (ryy === hyy && rmm < hmm) ||
-                (ryy === hyy && rmm === hmm && rdd <= hdd);
-
-              return rodadaJaIniciou && !r.todosJogosFinalizados;
-            });
-
-            if (rodadasCandidatas.length > 0) {
-              rodadasCandidatas.sort((a, b) => b.numeroRodada - a.numeroRodada);
-              rodadaParaExibir = rodadasCandidatas[0].numeroRodada;
+            // Se todas as rodadas estiverem finalizadas, mostrar a última
+            if (!primeiraRodadaNaoFinalizada) {
+              rodadaParaExibir =
+                rodadasComInfo.length > 0
+                  ? rodadasComInfo[rodadasComInfo.length - 1].numeroRodada
+                  : 1;
             } else {
-              let proximaRodadaIncompleta = null;
+              // Verificar se alguma rodada futura começa amanhã ou hoje
+              const amanha = new Date(hoje);
+              amanha.setDate(hoje.getDate() + 1);
+
+              let rodadaQueComecaEmBreve = null;
               for (const r of rodadasComInfo) {
-                if (!r.todosJogosFinalizados) {
-                  proximaRodadaIncompleta = r.numeroRodada;
+                if (r.todosJogosFinalizados) continue;
+
+                const dataInicioRodada = new Date(r.dataInicio);
+                dataInicioRodada.setHours(0, 0, 0, 0); // Normaliza
+
+                // Se a rodada começa amanhã ou hoje, seleciona-a
+                if (
+                  dataInicioRodada.getTime() === amanha.getTime() ||
+                  dataInicioRodada.getTime() === hoje.getTime()
+                ) {
+                  rodadaQueComecaEmBreve = r.numeroRodada;
                   break;
                 }
               }
 
-              if (proximaRodadaIncompleta !== null) {
-                rodadaParaExibir = proximaRodadaIncompleta;
+              if (rodadaQueComecaEmBreve) {
+                rodadaParaExibir = rodadaQueComecaEmBreve;
               } else {
-                if (rodadasComInfo.length > 0) {
-                  rodadaParaExibir =
-                    rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+                // Caso contrário, encontrar a última rodada que já começou
+                let ultimaRodadaIniciada = null;
+                for (const r of rodadasComInfo) {
+                  if (r.todosJogosFinalizados) continue;
+
+                  const dataInicioRodada = new Date(r.dataInicio);
+                  if (dataInicioRodada <= new Date()) {
+                    // new Date() aqui para pegar a hora atual
+                    ultimaRodadaIniciada = r.numeroRodada;
+                  }
+                }
+
+                if (ultimaRodadaIniciada) {
+                  rodadaParaExibir = ultimaRodadaIniciada;
                 } else {
-                  rodadaParaExibir = 1;
+                  // Se nenhuma rodada começou ainda, mostrar a primeira não finalizada
+                  rodadaParaExibir = primeiraRodadaNaoFinalizada.numeroRodada;
                 }
               }
             }
-
-            // Lookahead Logic: Check if the next matchday starts tomorrow
-            const rodadaInicialmenteSelecionada = rodadaParaExibir;
-            const indiceRodadaAtualNoArray = rodadasComInfo.findIndex(
-              (r) => r.numeroRodada === rodadaInicialmenteSelecionada
-            );
-
-            if (
-              indiceRodadaAtualNoArray !== -1 &&
-              indiceRodadaAtualNoArray + 1 < rodadasComInfo.length
-            ) {
-              const rodadaSeguinteInfo =
-                rodadasComInfo[indiceRodadaAtualNoArray + 1];
-              const dataInicioRodadaSeguinte = new Date(
-                rodadaSeguinteInfo.dataInicio
-              );
-
-              const hoje = new Date();
-              const amanha = new Date(hoje);
-              amanha.setDate(hoje.getDate() + 1);
-
-              const ds_yy = dataInicioRodadaSeguinte.getUTCFullYear();
-              const ds_mm = dataInicioRodadaSeguinte.getUTCMonth();
-              const ds_dd = dataInicioRodadaSeguinte.getUTCDate();
-
-              const am_yy = amanha.getUTCFullYear();
-              const am_mm = amanha.getUTCMonth();
-              const am_dd = amanha.getUTCDate();
-
-              if (ds_yy === am_yy && ds_mm === am_mm && ds_dd === am_dd) {
-                rodadaParaExibir = rodadaSeguinteInfo.numeroRodada;
-              }
-            }
-            // End of Lookahead Logic
 
             rodadaAtual = rodadaParaExibir;
             if (rodadasComInfo.length > 0) {
