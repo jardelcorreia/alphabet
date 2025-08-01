@@ -2456,61 +2456,61 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0); // Normaliza para o início do dia
 
-            // Encontrar a primeira rodada que ainda não foi completamente finalizada
-            let primeiraRodadaNaoFinalizada = rodadasComInfo.find(
-              (r) => !r.todosJogosFinalizados
-            );
+            // 1. Primeiro, tentar encontrar uma rodada que começa hoje ou amanhã
+            const amanha = new Date(hoje);
+            amanha.setDate(hoje.getDate() + 1);
 
-            // Se todas as rodadas estiverem finalizadas, mostrar a última
-            if (!primeiraRodadaNaoFinalizada) {
-              rodadaParaExibir =
-                rodadasComInfo.length > 0
-                  ? rodadasComInfo[rodadasComInfo.length - 1].numeroRodada
-                  : 1;
-            } else {
-              // Verificar se alguma rodada futura começa amanhã ou hoje
-              const amanha = new Date(hoje);
-              amanha.setDate(hoje.getDate() + 1);
-
-              let rodadaQueComecaEmBreve = null;
-              for (const r of rodadasComInfo) {
+            let rodadaQueComecaEmBreve = null;
+            for (const r of rodadasComInfo) {
                 if (r.todosJogosFinalizados) continue;
 
                 const dataInicioRodada = new Date(r.dataInicio);
-                dataInicioRodada.setHours(0, 0, 0, 0); // Normaliza
+                dataInicioRodada.setHours(0, 0, 0, 0);
 
-                // Se a rodada começa amanhã ou hoje, seleciona-a
+                // Se a rodada começa hoje ou amanhã, seleciona-a
                 if (
-                  dataInicioRodada.getTime() === amanha.getTime() ||
-                  dataInicioRodada.getTime() === hoje.getTime()
+                    dataInicioRodada.getTime() === hoje.getTime() ||
+                    dataInicioRodada.getTime() === amanha.getTime()
                 ) {
-                  rodadaQueComecaEmBreve = r.numeroRodada;
-                  break;
+                    rodadaQueComecaEmBreve = r.numeroRodada;
+                    break;
                 }
-              }
+            }
 
-              if (rodadaQueComecaEmBreve) {
+            if (rodadaQueComecaEmBreve) {
                 rodadaParaExibir = rodadaQueComecaEmBreve;
-              } else {
-                // Caso contrário, encontrar a última rodada que já começou
-                let ultimaRodadaIniciada = null;
+            } else {
+                // 2. Se não há rodada começando em breve, encontrar a última rodada completamente finalizada
+                let ultimaRodadaFinalizada = null;
                 for (const r of rodadasComInfo) {
-                  if (r.todosJogosFinalizados) continue;
-
-                  const dataInicioRodada = new Date(r.dataInicio);
-                  if (dataInicioRodada <= new Date()) {
-                    // new Date() aqui para pegar a hora atual
-                    ultimaRodadaIniciada = r.numeroRodada;
-                  }
+                    if (r.todosJogosFinalizados) {
+                        ultimaRodadaFinalizada = r.numeroRodada;
+                    }
                 }
 
-                if (ultimaRodadaIniciada) {
-                  rodadaParaExibir = ultimaRodadaIniciada;
+                if (ultimaRodadaFinalizada) {
+                    // 3. Verificar se a próxima rodada (após a última finalizada) já começou
+                    const proximaRodada = rodadasComInfo.find(r => r.numeroRodada === ultimaRodadaFinalizada + 1);
+
+                    if (proximaRodada && !proximaRodada.todosJogosFinalizados) {
+                        const dataInicioProximaRodada = new Date(proximaRodada.dataInicio);
+                        const agora = new Date(); // Hora atual completa
+
+                        // Se a próxima rodada já começou, mostrar ela
+                        if (dataInicioProximaRodada <= agora) {
+                            rodadaParaExibir = proximaRodada.numeroRodada;
+                        } else {
+                            // Se a próxima rodada ainda não começou, mostrar a última finalizada
+                            rodadaParaExibir = ultimaRodadaFinalizada;
+                        }
+                    } else {
+                        // Se não há próxima rodada ou ela está finalizada, mostrar a última finalizada
+                        rodadaParaExibir = ultimaRodadaFinalizada;
+                    }
                 } else {
-                  // Se nenhuma rodada começou ainda, mostrar a primeira não finalizada
-                  rodadaParaExibir = primeiraRodadaNaoFinalizada.numeroRodada;
+                    // 4. Se nenhuma rodada foi finalizada ainda, mostrar a primeira rodada
+                    rodadaParaExibir = rodadasComInfo.length > 0 ? rodadasComInfo[0].numeroRodada : 1;
                 }
-              }
             }
 
             rodadaAtual = rodadaParaExibir;
