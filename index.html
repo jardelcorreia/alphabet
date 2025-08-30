@@ -2158,6 +2158,15 @@ TABLE OF CONTENTS:
             Phillipe: 0,
           };
 
+          let jogosRestantes = 0;
+          for (let i = 0; i < 10; i++) {
+            const resultadoCasa = resultados[i].time1;
+            const resultadoFora = resultados[i].time2;
+            if (resultadoCasa === "" || resultadoFora === "") {
+              jogosRestantes++;
+            }
+          }
+
           // Calcula pontos e placares exatos
           for (let i = 0; i < 10; i++) {
             const resultadoCasa = resultados[i].time1;
@@ -2200,28 +2209,40 @@ TABLE OF CONTENTS:
 
           // Define o(s) vencedor(es) com base nos placares exatos em caso de empate
           let vencedores = [];
-          if (!todosZerados) {
+          if (!todosZerados && jogadoresOrdenados.length > 0) {
             const maiorPontuacao = jogadoresOrdenados[0][1];
-            const jogadoresComMaiorPontuacao = jogadoresOrdenados.filter(
+            const lideresPotenciais = jogadoresOrdenados.filter(
               ([_, pontuacao]) => pontuacao === maiorPontuacao
             );
 
-            // Se houver empate, pega o(s) com mais placares exatos
-            const maiorPlacarExato = Math.max(
-              ...jogadoresComMaiorPontuacao.map(
-                ([jogador]) => placaresExatos[jogador]
-              )
-            );
-            vencedores = jogadoresComMaiorPontuacao.filter(
-              ([jogador]) => placaresExatos[jogador] === maiorPlacarExato
-            );
+            let rodadaDefinida = true;
+            if (jogosRestantes > 0) {
+                const perseguidores = jogadoresOrdenados.filter(j => j[1] < maiorPontuacao);
+                if (perseguidores.length > 0) {
+                    const maiorPontuacaoPerseguidor = perseguidores[0][1];
+                    if (maiorPontuacaoPerseguidor + (3 * jogosRestantes) >= maiorPontuacao) {
+                        rodadaDefinida = false;
+                    }
+                }
+            }
+
+            if (rodadaDefinida) {
+                const maiorPlacarExato = Math.max(
+                    ...lideresPotenciais.map(
+                        ([jogador]) => placaresExatos[jogador]
+                    )
+                );
+                vencedores = lideresPotenciais.filter(
+                    ([jogador]) => placaresExatos[jogador] === maiorPlacarExato
+                );
+            }
           }
 
           // Gera o HTML da pontuação
           const pontuacaoHTML = jogadoresOrdenados
             .map(([jogador, pontuacao]) => {
               const isVencedor = vencedores.some(
-                ([vencedor]) => vencedor === jogador
+                (vencedor) => vencedor[0] === jogador
               );
               return `
       <div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
