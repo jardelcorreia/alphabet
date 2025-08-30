@@ -2207,26 +2207,32 @@ TABLE OF CONTENTS:
             ([_, pontuacao]) => pontuacao === 0
           );
 
-          // Define o(s) vencedor(es) com base nos placares exatos em caso de empate
           let vencedores = [];
           if (!todosZerados && jogadoresOrdenados.length > 0) {
             const maiorPontuacao = jogadoresOrdenados[0][1];
-            const lideresPotenciais = jogadoresOrdenados.filter(
-              ([_, pontuacao]) => pontuacao === maiorPontuacao
-            );
 
             let rodadaDefinida = true;
+
             if (jogosRestantes > 0) {
-                const perseguidores = jogadoresOrdenados.filter(j => j[1] < maiorPontuacao);
-                if (perseguidores.length > 0) {
-                    const maiorPontuacaoPerseguidor = perseguidores[0][1];
-                    if (maiorPontuacaoPerseguidor + (3 * jogosRestantes) >= maiorPontuacao) {
-                        rodadaDefinida = false;
+              const todosEmpatados = jogadoresOrdenados.every(p => p[1] === maiorPontuacao);
+              if (todosEmpatados) {
+                rodadaDefinida = false;
+              } else {
+                for (const [jogador, pontuacao] of jogadoresOrdenados) {
+                  if (pontuacao < maiorPontuacao) {
+                    if (pontuacao + (3 * jogosRestantes) >= maiorPontuacao) {
+                      rodadaDefinida = false;
+                      break;
                     }
+                  }
                 }
+              }
             }
 
             if (rodadaDefinida) {
+                const lideresPotenciais = jogadoresOrdenados.filter(
+                    ([_, pontuacao]) => pontuacao === maiorPontuacao
+                );
                 const maiorPlacarExato = Math.max(
                     ...lideresPotenciais.map(
                         ([jogador]) => placaresExatos[jogador]
@@ -2242,7 +2248,7 @@ TABLE OF CONTENTS:
           const pontuacaoHTML = jogadoresOrdenados
             .map(([jogador, pontuacao]) => {
               const isVencedor = vencedores.some(
-                (vencedor) => vencedor[0] === jogador
+                ([vencedor]) => vencedor === jogador
               );
               return `
       <div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
