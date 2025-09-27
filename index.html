@@ -2139,6 +2139,9 @@ TABLE OF CONTENTS:
 
             if (isHidden) ocultarPlacares();
             else mostrarPlacares();
+
+            // Força a atualização dos cartões de pontuação para exibir o checkmark
+            calcularPontuacao();
           } catch (error) {
             console.error("Erro ao verificar estado dos placares:", error);
           }
@@ -2268,8 +2271,10 @@ TABLE OF CONTENTS:
                 ([vencedor]) => vencedor === jogador
               );
               const apostaCompleta = verificarApostasCompletasPorJogador(jogador);
+              const placaresOcultos = !document.querySelector('.aposta')?.disabled;
+
               const cardClass = `${isVencedor ? "vencedor" : ""} ${
-                apostaCompleta ? "aposta-completa" : ""
+                (apostaCompleta && placaresOcultos) ? "aposta-completa" : ""
               }`;
 
               return `
