@@ -218,6 +218,23 @@ TABLE OF CONTENTS:
         margin: auto;
         backdrop-filter: blur(5px);
         border: 1px solid var(--color-gray-200);
+        position: relative; /* Adicionado para posicionar o checkmark */
+      }
+
+      .pontuacao-card.aposta-completa .aposta-completa-check {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .aposta-completa-check {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.5rem;
+        color: var(--color-secondary-dark);
+        opacity: 0;
+        transform: scale(0.5);
+        transition: opacity var(--transition-normal), transform var(--transition-normal);
       }
 
       .pontuacao-card:hover {
@@ -1977,50 +1994,50 @@ TABLE OF CONTENTS:
           });
         }
 
-        function verificarApostasCompletas() {
-          const loggedInUser = localStorage.getItem("loggedInUser");
-          if (!loggedInUser) return false;
-        
-          const jogadorClass =
-            loggedInUser === "Jardel"
-              ? "jogador0"
-              : loggedInUser === "Werbet"
-              ? "jogador1"
-              : loggedInUser === "Nailton"
-              ? "jogador2"
-              : loggedInUser === "Phillipe"
-              ? "jogador3"
-              : null;
-        
+        function verificarApostasCompletasPorJogador(jogador) {
+          if (!jogador) return false;
+
+          const jogadorClassMap = {
+            Jardel: "jogador0",
+            Werbet: "jogador1",
+            Nailton: "jogador2",
+            Phillipe: "jogador3",
+          };
+
+          const jogadorClass = jogadorClassMap[jogador];
           if (!jogadorClass) return false;
-        
-          const inputsJogos = document.querySelectorAll('.input-jogo');
+
+          const inputsJogos = document.querySelectorAll(".input-jogo");
           const apostasUsuario = document.querySelectorAll(
             `.aposta.${jogadorClass}`
           );
-        
-          let todasApostasAplicaveisPreenchidas = true;
-        
+
           for (let i = 0; i < 10; i++) {
-            const currentGameInput = inputsJogos[i];
-            const gameName = currentGameInput.value.trim();
-            const gamePattern = /\S+\s*x\s*\S+/i;
-            const isGameApplicable = gameName !== "" && !gameName.toLowerCase().includes("sem jogo") && gamePattern.test(gameName);
-        
-            if (isGameApplicable) {
-              if (apostasUsuario[i * 2].value === "" || apostasUsuario[i * 2 + 1].value === "") {
-                todasApostasAplicaveisPreenchidas = false;
-                break;
+            const jogoInput = inputsJogos[i];
+            const nomeJogo = jogoInput.value.trim();
+            const padraoJogo = /\S+\s*x\s*\S+/i;
+            const isJogoValido =
+              nomeJogo !== "" &&
+              !nomeJogo.toLowerCase().includes("sem jogo") &&
+              padraoJogo.test(nomeJogo);
+
+            if (isJogoValido) {
+              if (
+                apostasUsuario[i * 2].value === "" ||
+                apostasUsuario[i * 2 + 1].value === ""
+              ) {
+                return false; // Retorna falso assim que uma aposta faltante é encontrada
               }
             }
           }
-        
-          return todasApostasAplicaveisPreenchidas;
+
+          return true; // Retorna true se todas as apostas válidas estiverem preenchidas
         }
 
         function mostrarFeedbackApostasCompletas() {
+          const loggedInUser = localStorage.getItem("loggedInUser");
           const feedback = document.getElementById("feedback-apostas");
-          if (verificarApostasCompletas()) {
+          if (verificarApostasCompletasPorJogador(loggedInUser)) {
             feedback.classList.add("visible");
             setTimeout(() => feedback.classList.remove("visible"), 3000);
           }
@@ -2250,8 +2267,14 @@ TABLE OF CONTENTS:
               const isVencedor = vencedores.some(
                 ([vencedor]) => vencedor === jogador
               );
+              const apostaCompleta = verificarApostasCompletasPorJogador(jogador);
+              const cardClass = `${isVencedor ? "vencedor" : ""} ${
+                apostaCompleta ? "aposta-completa" : ""
+              }`;
+
               return `
-      <div class="pontuacao-card ${isVencedor ? "vencedor" : ""}">
+      <div class="pontuacao-card ${cardClass}">
+        <i class="fas fa-check-circle aposta-completa-check"></i>
         <h3>${jogador}</h3>
         <span>
           <p>${pontuacao} pontos</p>
