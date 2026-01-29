@@ -509,6 +509,14 @@ TABLE OF CONTENTS:
         cursor: not-allowed;
       }
 
+      .placar-exato {
+        background-color: #d1fae5 !important;
+        border-color: var(--color-secondary-dark) !important;
+        color: var(--color-secondary-dark) !important;
+        font-weight: 700;
+        box-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+      }
+
       /* ===============================================================
 7. TABLES
 =============================================================== */
@@ -1592,12 +1600,12 @@ TABLE OF CONTENTS:
             escudo:
               "https://logodetimes.com/times/vitoria/logo-vitoria-256.png",
           },
-          "Coritiba FBC": {
+          "Coritiba FC": {
             abrev: "CFC",
             nome: "Coritiba",
             escudo: "https://logodetimes.com/times/coritiba/logo-coritiba-256.png",
           },
-          "CA Paranaense": {
+          "Club Athletico Paranaense": {
             abrev: "CAP",
             nome: "Athletico-PR",
             escudo: "https://logodetimes.com/times/atletico-paranaense/logo-atletico-paranaense-256.png",
@@ -1606,11 +1614,6 @@ TABLE OF CONTENTS:
             abrev: "REM",
             nome: "Remo",
             escudo: "https://logodetimes.com/times/remo/logo-remo-256.png",
-          },
-          "Chapecoense AF": {
-            abrev: "CHA",
-            nome: "Chapecoense",
-            escudo: "https://logodetimes.com/times/chapecoense/logo-chapecoense-256.png",
           },
         };
 
@@ -2198,6 +2201,8 @@ TABLE OF CONTENTS:
             Phillipe: 0,
           };
 
+          const inputsApostas = document.querySelectorAll(".aposta");
+
           let jogosRestantes = 0;
           for (let i = 0; i < 10; i++) {
             const resultadoCasa = resultados[i].time1;
@@ -2212,12 +2217,20 @@ TABLE OF CONTENTS:
             const resultadoCasa = resultados[i].time1;
             const resultadoFora = resultados[i].time2;
 
-            if (resultadoCasa === "" || resultadoFora === "") continue;
-
-            jogadores.forEach((jogador) => {
+            jogadores.forEach((jogador, jogadorIndex) => {
               const apostaCasa = apostas[jogador][i].time1;
               const apostaFora = apostas[jogador][i].time2;
 
+              const indexCasa = i * 8 + jogadorIndex * 2;
+              const indexFora = indexCasa + 1;
+
+              // Limpa estilo anterior
+              if (inputsApostas[indexCasa] && inputsApostas[indexFora]) {
+                  inputsApostas[indexCasa].classList.remove("placar-exato");
+                  inputsApostas[indexFora].classList.remove("placar-exato");
+              }
+
+              if (resultadoCasa === "" || resultadoFora === "") return;
               if (apostaCasa === "" || apostaFora === "") return;
 
               if (
@@ -2226,6 +2239,12 @@ TABLE OF CONTENTS:
               ) {
                 pontos[jogador] += 3;
                 placaresExatos[jogador] += 1;
+
+                // Aplica destaque
+                if (inputsApostas[indexCasa] && inputsApostas[indexFora]) {
+                    inputsApostas[indexCasa].classList.add("placar-exato");
+                    inputsApostas[indexFora].classList.add("placar-exato");
+                }
               } else if (
                 (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
                 (apostaCasa < apostaFora && resultadoCasa < resultadoFora) ||
