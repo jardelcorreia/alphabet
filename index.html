@@ -549,25 +549,11 @@ TABLE OF CONTENTS:
         border: 2px solid white;
       }
 
-      .input-container.pontos-3 input {
-        border: 2px solid var(--color-secondary) !important;
-        background-color: rgba(74, 222, 128, 0.05) !important;
-        color: var(--color-secondary-dark) !important;
-        font-weight: 700;
-      }
-
       /* 1 Ponto - Laranja/Amber */
       .input-container.pontos-1::after {
         content: "1";
         background-color: var(--color-accent);
         border: 2px solid white;
-      }
-
-      .input-container.pontos-1 input {
-        border: 2px solid var(--color-accent) !important;
-        background-color: rgba(245, 158, 11, 0.05) !important;
-        color: #b45309 !important;
-        font-weight: 600;
       }
 
       /* ===============================================================
@@ -2284,6 +2270,7 @@ TABLE OF CONTENTS:
 
               // Limpa estilo anterior
               if (inputsApostas[indexCasa] && inputsApostas[indexFora]) {
+                  // Como ambos os inputs estão dentro do mesmo container, limpamos apenas uma vez
                   const container = inputsApostas[indexCasa].parentElement;
                   if (container) {
                     container.classList.remove("pontos-3");
