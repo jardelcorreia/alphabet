@@ -509,6 +509,23 @@ TABLE OF CONTENTS:
         cursor: not-allowed;
       }
 
+      /* Novos estilos de destaque para pontuação */
+      .pontos-3 {
+        border: 2px solid var(--color-secondary) !important;
+        background-color: rgba(74, 222, 128, 0.15) !important;
+        color: var(--color-secondary-dark) !important;
+        font-weight: 700;
+        box-shadow: 0 2px 4px rgba(74, 222, 128, 0.2);
+      }
+
+      .pontos-1 {
+        border: 2px solid var(--color-accent) !important;
+        background-color: rgba(245, 158, 11, 0.1) !important;
+        color: #b45309 !important; /* Amber 700 */
+        font-weight: 600;
+      }
+
+      /* Estilo antigo mantido apenas por precaução, será substituído */
       .placar-exato {
         background-color: #d1fae5 !important;
         border-color: var(--color-secondary-dark) !important;
@@ -2232,7 +2249,12 @@ TABLE OF CONTENTS:
               // Limpa estilo anterior
               if (inputsApostas[indexCasa] && inputsApostas[indexFora]) {
                   inputsApostas[indexCasa].classList.remove("placar-exato");
+                  inputsApostas[indexCasa].classList.remove("pontos-3");
+                  inputsApostas[indexCasa].classList.remove("pontos-1");
+
                   inputsApostas[indexFora].classList.remove("placar-exato");
+                  inputsApostas[indexFora].classList.remove("pontos-3");
+                  inputsApostas[indexFora].classList.remove("pontos-1");
               }
 
               if (resultadoCasa === "" || resultadoFora === "") return;
@@ -2245,10 +2267,10 @@ TABLE OF CONTENTS:
                 pontos[jogador] += 3;
                 placaresExatos[jogador] += 1;
 
-                // Aplica destaque
+                // Aplica destaque de 3 pontos
                 if (inputsApostas[indexCasa] && inputsApostas[indexFora]) {
-                    inputsApostas[indexCasa].classList.add("placar-exato");
-                    inputsApostas[indexFora].classList.add("placar-exato");
+                    inputsApostas[indexCasa].classList.add("pontos-3");
+                    inputsApostas[indexFora].classList.add("pontos-3");
                 }
               } else if (
                 (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
@@ -2256,6 +2278,12 @@ TABLE OF CONTENTS:
                 (apostaCasa === apostaFora && resultadoCasa === resultadoFora)
               ) {
                 pontos[jogador] += 1;
+
+                // Aplica destaque de 1 ponto
+                if (inputsApostas[indexCasa] && inputsApostas[indexFora]) {
+                    inputsApostas[indexCasa].classList.add("pontos-1");
+                    inputsApostas[indexFora].classList.add("pontos-1");
+                }
               }
             });
           }
