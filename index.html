@@ -591,6 +591,19 @@ TABLE OF CONTENTS:
         padding: var(--space-xs);
       }
 
+      /* Fix para cobrir frestas (bordas) na coluna sticky */
+      th:first-child::before,
+      td:first-child::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        background: inherit;
+        z-index: -1;
+      }
+
       th:first-child {
         background-color: var(--color-primary);
       }
