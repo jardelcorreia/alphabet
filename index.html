@@ -2407,7 +2407,7 @@ TABLE OF CONTENTS:
             const nomesVencedores = vencedores
               .map(([jogador]) => jogador)
               .join(", ");
-            salvarVencedorDaRodada(rodadaExibida, nomesVencedores);
+            salvarVencedorDaRodada(rodadaExibida, nomesVencedores, pontos);
           }
         }
 
@@ -2443,13 +2443,13 @@ TABLE OF CONTENTS:
           });
         }
 
-async function salvarVencedorDaRodada(rodada, vencedor) {
+async function salvarVencedorDaRodada(rodada, vencedor, pontosRodada) {
   if (!rodada) return;
 
   try {
     const { data, error } = await supabaseClient
       .from("alphabet_table")
-      .select("id, ranking, configuracao") // Also select 'configuracao' to get valorRodada settings
+      .select("id, ranking, configuracao, historico_pontuacao") // Also select 'configuracao' and 'historico_pontuacao'
       .order("id", { ascending: false })
       .limit(1)
       .single();
@@ -2462,12 +2462,18 @@ async function salvarVencedorDaRodada(rodada, vencedor) {
         const newConfig = { valoresRodada: {}, valorRodadaAtual: 6 }; // Default config
         newConfig.valoresRodada[rodada] = newConfig.valorRodadaAtual; // Set initial round value for the new record
 
+        const historicoPontuacao = {};
+        if (pontosRodada) {
+            historicoPontuacao[`Rodada ${rodada}`] = pontosRodada;
+        }
+
         const { error: insertError } = await supabaseClient
           .from("alphabet_table")
           .insert({
             ranking: newRanking,
             vitorias_empates: calcularVitoriasEmpatesSaldo(newRanking, newConfig.valoresRodada, newConfig.valorRodadaAtual),
             configuracao: newConfig,
+            historico_pontuacao: historicoPontuacao
           });
         if (insertError) throw insertError;
         return;
@@ -2481,6 +2487,12 @@ async function salvarVencedorDaRodada(rodada, vencedor) {
     // Get the current configuration for calculating saldo correctly
     const currentConfig = data.configuracao || { valoresRodada: {}, valorRodadaAtual: 6 };
 
+    // Update history of points
+    const historicoPontuacao = data.historico_pontuacao || {};
+    if (pontosRodada) {
+        historicoPontuacao[`Rodada ${rodada}`] = pontosRodada;
+    }
+
     // RECALCULATE vitorias_empates based on the updated ranking and current configuration
     const vitoriasEmpatesAtualizadas = calcularVitoriasEmpatesSaldo(
       rankingAtual,
@@ -2493,6 +2505,7 @@ async function salvarVencedorDaRodada(rodada, vencedor) {
       .update({
         ranking: rankingAtual,
         vitorias_empates: vitoriasEmpatesAtualizadas, // Use the newly calculated values
+        historico_pontuacao: historicoPontuacao
       })
       .eq("id", data.id);
 

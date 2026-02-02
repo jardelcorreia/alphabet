@@ -821,13 +821,16 @@
             });
           }
 
+          const historicoPontuacao = dadosAtuais.historico_pontuacao || {};
+
           exibirVitorias(
             dadosAtuais.vitorias_empates ||
               calcularVitoriasEmpatesSaldo(
                 dadosAtuais.ranking || [],
                 configCampeonato.valoresRodada,
                 configCampeonato.valorRodadaAtual
-              )
+              ),
+            historicoPontuacao
           );
         } catch (error) {
           console.error("Erro ao carregar ranking:", error);
@@ -976,22 +979,48 @@
         setTimeout(() => indicador.classList.remove("show"), 3000);
       }
 
-      function exibirVitorias(resultados) {
+      function exibirVitorias(resultados, historicoPontuacao) {
         const vitoriasContainer = document.getElementById("vitorias");
         vitoriasContainer.innerHTML = "";
 
+        // Calcula o total de pontos para cada jogador baseado no histórico
+        const pontosTotais = {
+          Jardel: 0,
+          Werbet: 0,
+          Nailton: 0,
+          Phillipe: 0
+        };
+
+        if (historicoPontuacao) {
+          Object.values(historicoPontuacao).forEach(rodada => {
+            Object.entries(rodada).forEach(([jogador, pontos]) => {
+              if (pontosTotais.hasOwnProperty(jogador)) {
+                pontosTotais[jogador] += pontos;
+              }
+            });
+          });
+        }
+
         const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
-          const pontosA = a[1].vitorias * 3 + a[1].empates;
-          const pontosB = b[1].vitorias * 3 + b[1].empates;
-          if (pontosB !== pontosA) return pontosB - pontosA;
-          if (b[1].vitorias !== a[1].vitorias)
-            return b[1].vitorias - a[1].vitorias;
+          // Ordenação principal: Total de Pontos
+          const pontosTotalA = pontosTotais[a[0]] || 0;
+          const pontosTotalB = pontosTotais[b[0]] || 0;
+          if (pontosTotalB !== pontosTotalA) return pontosTotalB - pontosTotalA;
+
+          // Critério de desempate 1: Saldo (R$)
+          if (b[1].saldo !== a[1].saldo) return b[1].saldo - a[1].saldo;
+
+          // Critério de desempate 2: Número de Vitórias
+          if (b[1].vitorias !== a[1].vitorias) return b[1].vitorias - a[1].vitorias;
+
           return a[0].localeCompare(b[0]);
         });
 
         resultadosOrdenados.forEach(
           ([jogador, { vitorias, empates, saldo }], index) => {
-            const pontos = vitorias * 3 + empates;
+            // Usa o total calculado do histórico ou 0 se não houver
+            const pontos = pontosTotais[jogador] || 0;
+
             const card = document.createElement("div");
             card.className = "player-card";
             if (index < 3) card.classList.add(`position-${index + 1}`);
