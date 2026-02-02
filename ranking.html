@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ranking - AlphaBet 2025</title>
+    <title>Ranking - AlphaBet 2026</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -619,7 +619,7 @@
   <body>
     <div class="header">
       <h1 class="animate__animated animate__fadeInDown">
-        Ranking AlphaBet 2025
+        Ranking AlphaBet 2026
       </h1>
       <p class="animate__animated animate__fadeInUp animate__delay-1s">
         Lista de vencedores de cada rodada e placar do campeonato.
@@ -984,19 +984,18 @@
         vitoriasContainer.innerHTML = "";
 
         // Calcula o total de pontos para cada jogador baseado no histórico
-        const pontosTotais = {
-          Jardel: 0,
-          Werbet: 0,
-          Nailton: 0,
-          Phillipe: 0
-        };
+        const pontosTotais = {};
+
+        // Inicializa com os jogadores do ranking atual para garantir que todos apareçam
+        Object.keys(resultados).forEach(jogador => {
+            pontosTotais[jogador] = 0;
+        });
 
         if (historicoPontuacao) {
           Object.values(historicoPontuacao).forEach(rodada => {
             Object.entries(rodada).forEach(([jogador, pontos]) => {
-              if (pontosTotais.hasOwnProperty(jogador)) {
-                pontosTotais[jogador] += pontos;
-              }
+              if (!pontosTotais[jogador]) pontosTotais[jogador] = 0;
+              pontosTotais[jogador] += pontos;
             });
           });
         }
