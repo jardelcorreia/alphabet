@@ -2268,7 +2268,14 @@ TABLE OF CONTENTS:
             const nomeJogo = inputsJogos[i].value.trim();
 
             // Um jogo só é considerado restante se não tiver resultado E tiver um nome de jogo válido
-            if ((resultadoCasa === "" || resultadoFora === "") && nomeJogo !== "") {
+            // Lógica unificada com verificarApostasCompletasPorJogador
+            const padraoJogo = /\S+\s*x\s*\S+/i;
+            const isJogoValido =
+              nomeJogo !== "" &&
+              !nomeJogo.toLowerCase().includes("sem jogo") &&
+              padraoJogo.test(nomeJogo);
+
+            if ((resultadoCasa === "" || resultadoFora === "") && isJogoValido) {
               jogosRestantes++;
             }
           }
