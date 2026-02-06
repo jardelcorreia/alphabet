@@ -2261,10 +2261,14 @@ TABLE OF CONTENTS:
           const inputsApostas = document.querySelectorAll(".aposta");
 
           let jogosRestantes = 0;
+          const inputsJogos = document.querySelectorAll(".input-jogo");
           for (let i = 0; i < 10; i++) {
             const resultadoCasa = resultados[i].time1;
             const resultadoFora = resultados[i].time2;
-            if (resultadoCasa === "" || resultadoFora === "") {
+            const nomeJogo = inputsJogos[i].value.trim();
+
+            // Um jogo só é considerado restante se não tiver resultado E tiver um nome de jogo válido
+            if ((resultadoCasa === "" || resultadoFora === "") && nomeJogo !== "") {
               jogosRestantes++;
             }
           }
