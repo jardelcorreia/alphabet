@@ -1533,6 +1533,7 @@ TABLE OF CONTENTS:
         let rodadaExibida = null;
         let partidasPorRodada = {};
         let intervaloAtualizacao = null;
+        let isSaving = false;
 
         // Mapeamento de times
         const timesInfo = {
@@ -1955,6 +1956,10 @@ TABLE OF CONTENTS:
         function debounce(func, wait) {
           let timeout;
           return function (...args) {
+            // Marca como salvando assim que o usuário digita
+            isSaving = true;
+            atualizarIndicadorSalvamento("Salvando...");
+
             clearTimeout(timeout);
             timeout = setTimeout(() => func.apply(this, args), wait);
           };
@@ -1992,9 +1997,35 @@ TABLE OF CONTENTS:
                 .eq("id", data[0].id);
               if (updateError) throw updateError;
             }
+
+            // Sucesso no salvamento
+            isSaving = false;
+            mostrarFeedbackApostasCompletas(true); // true indica sucesso real do backend
+
           } catch (error) {
             console.error("Erro ao salvar dados:", error);
+            alert("ERRO AO SALVAR! Verifique sua conexão e tente novamente.");
+            atualizarIndicadorSalvamento("Erro ao salvar!");
+            // Não resetamos isSaving para impedir o fechamento da aba sem aviso
           }
+        }
+
+        function atualizarIndicadorSalvamento(texto) {
+            const feedback = document.getElementById("feedback-apostas");
+            const icon = feedback.querySelector("i");
+            const span = feedback.querySelector("span");
+
+            if (texto === "Salvando...") {
+                feedback.classList.add("visible");
+                feedback.style.backgroundColor = "var(--color-primary)"; // Azul para processando
+                icon.className = "fas fa-sync fa-spin";
+                span.textContent = texto;
+            } else if (texto === "Erro ao salvar!") {
+                feedback.classList.add("visible");
+                feedback.style.backgroundColor = "var(--color-danger)"; // Vermelho para erro
+                icon.className = "fas fa-exclamation-triangle";
+                span.textContent = texto;
+            }
         }
 
         function obterJogosDaTabela() {
@@ -2052,23 +2083,19 @@ TABLE OF CONTENTS:
           inputs.forEach((input) => {
             input.addEventListener("input", function () {
               salvarApostasDebounced();
-              mostrarFeedbackApostasCompletas();
             });
 
             input.addEventListener("change", function () {
               salvarApostasDebounced();
-              mostrarFeedbackApostasCompletas();
             });
 
             input.addEventListener("blur", function () {
               salvarApostasDebounced();
-              mostrarFeedbackApostasCompletas();
             });
 
             input.addEventListener("keydown", function (event) {
               if (event.key === "Delete" || event.key === "Backspace") {
                 salvarApostasDebounced();
-                mostrarFeedbackApostasCompletas();
               }
             });
           });
@@ -2114,13 +2141,22 @@ TABLE OF CONTENTS:
           return true; // Retorna true se todas as apostas válidas estiverem preenchidas
         }
 
-        function mostrarFeedbackApostasCompletas() {
+        function mostrarFeedbackApostasCompletas(saveSuccess = false) {
           const loggedInUser = localStorage.getItem("loggedInUser");
           const feedback = document.getElementById("feedback-apostas");
-          if (verificarApostasCompletasPorJogador(loggedInUser)) {
-            feedback.classList.add("visible");
-            setTimeout(() => feedback.classList.remove("visible"), 3000);
+          const icon = feedback.querySelector("i");
+          const span = feedback.querySelector("span");
+
+          if (saveSuccess) {
+              // Sucesso confirmado do backend
+              feedback.style.backgroundColor = ""; // Volta cor original (verde secondary)
+              icon.className = "fas fa-check-circle";
+              span.textContent = "Suas apostas foram salvas!";
+
+              feedback.classList.add("visible");
+              setTimeout(() => feedback.classList.remove("visible"), 3000);
           }
+          // Não mostra nada automaticamente só por completar inputs, espera o backend confirmar
         }
 
         // Funções de visibilidade
@@ -3160,7 +3196,15 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
         }
 
         // Limpar ao sair
-        window.addEventListener("beforeunload", pararAtualizacaoAutomatica);
+        window.addEventListener("beforeunload", function(event) {
+            pararAtualizacaoAutomatica();
+
+            if (isSaving) {
+                const message = "Existem dados sendo salvos. Se você sair agora, as alterações serão perdidas.";
+                event.returnValue = message; // Padrão para navegadores modernos
+                return message;
+            }
+        });
       </script>
     </div>
   </body>
