@@ -603,23 +603,16 @@ TABLE OF CONTENTS:
         padding: var(--space-xs);
       }
 
-      /* Coluna de Resultado Sticky na Direita */
+      /* Coluna de Resultado (não mais sticky) */
       th:last-child,
       td:last-child {
-        position: sticky;
-        right: 0;
-        z-index: 20;
-        background: white;
         outline: none;
         padding: var(--space-xs);
-        border-left: 1px solid var(--color-gray-200); /* Separação visual */
       }
 
-      /* Fix para cobrir frestas (bordas) nas colunas sticky */
+      /* Fix para cobrir frestas (bordas) nas colunas sticky (apenas primeira coluna) */
       th:first-child::before,
-      td:first-child::before,
-      th:last-child::before,
-      td:last-child::before {
+      td:first-child::before {
         content: "";
         position: absolute;
         top: -1px;
@@ -631,10 +624,6 @@ TABLE OF CONTENTS:
       }
 
       th:first-child {
-        background-color: var(--color-primary);
-      }
-
-      th:last-child {
         background-color: var(--color-primary);
       }
 
@@ -1170,14 +1159,9 @@ TABLE OF CONTENTS:
         border-color: var(--color-gray-700);
       }
 
-      body.dark-mode table td:first-child,
-      body.dark-mode table td:last-child {
+      body.dark-mode table td:first-child {
         background-color: #1e293b;
         border-left-color: var(--color-gray-600);
-      }
-
-      body.dark-mode table th:last-child {
-        background-color: var(--color-dark);
       }
 
       body.dark-mode tr:nth-child(even) {
