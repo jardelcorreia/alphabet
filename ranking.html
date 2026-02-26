@@ -1001,16 +1001,18 @@
         }
 
         const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
-          // Ordenação principal: Total de Pontos
           const pontosTotalA = pontosTotais[a[0]] || 0;
           const pontosTotalB = pontosTotais[b[0]] || 0;
+
+          // Critério 1: Número de Vitórias
+          if (b[1].vitorias !== a[1].vitorias)
+            return b[1].vitorias - a[1].vitorias;
+
+          // Critério 2: Número de Empates
+          if (b[1].empates !== a[1].empates) return b[1].empates - a[1].empates;
+
+          // Critério 3: Total de Pontos
           if (pontosTotalB !== pontosTotalA) return pontosTotalB - pontosTotalA;
-
-          // Critério de desempate 1: Saldo (R$)
-          if (b[1].saldo !== a[1].saldo) return b[1].saldo - a[1].saldo;
-
-          // Critério de desempate 2: Número de Vitórias
-          if (b[1].vitorias !== a[1].vitorias) return b[1].vitorias - a[1].vitorias;
 
           return a[0].localeCompare(b[0]);
         });
