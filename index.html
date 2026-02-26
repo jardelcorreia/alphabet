@@ -517,21 +517,55 @@ TABLE OF CONTENTS:
         justify-content: center;
       }
 
-      /* Highlight styles for scores */
-      /* 3 Pontos - Verde Claro */
-      .input-container.pontos-3 .input-placar {
-          background-color: #dcfce7 !important; /* Light Green */
-          border-color: var(--color-secondary-dark) !important;
-          color: #14532d !important; /* Dark Green Text */
-          font-weight: 600;
+      /* Highlight styles for scores - BADGES */
+      @keyframes popIn {
+        0% { transform: scale(0); opacity: 0; }
+        80% { transform: scale(1.1); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
       }
 
-      /* 1 Ponto - Amarelo Claro */
-      .input-container.pontos-1 .input-placar {
-          background-color: #fef9c3 !important; /* Light Yellow */
-          border-color: var(--color-accent) !important;
-          color: #713f12 !important; /* Dark Brown Text */
-          font-weight: 600;
+      /* 3 Pontos - Badge Verde */
+      .input-container.pontos-3::after {
+          content: "3";
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          background-color: var(--color-secondary-dark); /* Green */
+          color: white;
+          font-size: 0.75rem;
+          font-weight: 700;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          z-index: 5;
+          animation: popIn 0.3s ease-out forwards;
+          border: 2px solid white;
+      }
+
+      /* 1 Ponto - Badge Amarelo */
+      .input-container.pontos-1::after {
+          content: "1";
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          background-color: var(--color-accent); /* Amber */
+          color: white;
+          font-size: 0.75rem;
+          font-weight: 700;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          z-index: 5;
+          animation: popIn 0.3s ease-out forwards;
+          border: 2px solid white;
       }
 
       /* ===============================================================
@@ -572,18 +606,20 @@ TABLE OF CONTENTS:
       /* Coluna de Resultado Sticky na Direita */
       th:last-child,
       td:last-child {
-        /* position: sticky;  Removido a pedido para análise */
-        /* right: 0; */
-        z-index: 10;
-        /* background: white; */
+        position: sticky;
+        right: 0;
+        z-index: 20;
+        background: white;
         outline: none;
         padding: var(--space-xs);
-        /* border-left: 1px solid var(--color-gray-200); */
+        border-left: 1px solid var(--color-gray-200); /* Separação visual */
       }
 
       /* Fix para cobrir frestas (bordas) nas colunas sticky */
       th:first-child::before,
-      td:first-child::before {
+      td:first-child::before,
+      th:last-child::before,
+      td:last-child::before {
         content: "";
         position: absolute;
         top: -1px;
@@ -1237,16 +1273,10 @@ TABLE OF CONTENTS:
       }
 
       /* Dark Mode overrides for score highlights */
-      body.dark-mode .input-container.pontos-3 .input-placar {
-          background-color: rgba(22, 163, 74, 0.25) !important; /* Dark Green transclucent */
-          border-color: var(--color-secondary) !important;
-          color: #dcfce7 !important;
-      }
-
-      body.dark-mode .input-container.pontos-1 .input-placar {
-          background-color: rgba(245, 158, 11, 0.25) !important; /* Dark Amber transclucent */
-          border-color: var(--color-accent) !important;
-          color: #fef3c7 !important;
+      body.dark-mode .input-container.pontos-3::after,
+      body.dark-mode .input-container.pontos-1::after {
+          border-color: var(--color-dark);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.4);
       }
 
       body.dark-mode .input-placar:disabled {
