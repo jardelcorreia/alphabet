@@ -676,6 +676,95 @@ TABLE OF CONTENTS:
         font-family: "Kanit", Arial, sans-serif;
       }
 
+      /* Painel "Quem já quilou?" */
+      .status-quila-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        backdrop-filter: blur(5px);
+        border: 1px solid var(--color-gray-200);
+        padding: var(--space-sm) var(--space-md);
+        margin: 0 auto var(--space-lg);
+        max-width: 800px;
+        width: 100%;
+        gap: var(--space-xs);
+      }
+
+      .status-quila-titulo {
+        font-family: "Kanit", Arial, sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        color: var(--color-dark);
+        margin-bottom: var(--space-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .status-quila-badges {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--space-md);
+        width: 100%;
+      }
+
+      .quila-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-xs) var(--space-sm);
+        border-radius: 20px;
+        font-family: "Kanit", Arial, sans-serif;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all var(--transition-normal);
+        gap: var(--space-xs);
+        min-width: 80px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .quila-badge::before {
+        content: '';
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        transition: all var(--transition-normal);
+      }
+
+      .quila-badge.pending {
+        background-color: var(--color-gray-100);
+        color: var(--color-gray-600);
+        border: 1px solid var(--color-gray-300);
+      }
+
+      .quila-badge.pending::before {
+        background-color: var(--color-gray-400);
+      }
+
+      .quila-badge.completed {
+        background-color: #dcfce7; /* Light green */
+        color: var(--color-secondary-dark);
+        border: 1px solid var(--color-secondary);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .quila-badge.completed::before {
+        content: '✓';
+        background-color: transparent;
+        color: var(--color-secondary-dark);
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+      }
+
       .jogo-times {
         display: flex;
         justify-content: space-between;
@@ -1090,6 +1179,36 @@ TABLE OF CONTENTS:
         color: var(--color-light);
       }
 
+      /* Dark mode Quila panel */
+      body.dark-mode .status-quila-container {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: var(--color-gray-700);
+      }
+
+      body.dark-mode .status-quila-titulo {
+        color: var(--color-light);
+      }
+
+      body.dark-mode .quila-badge.pending {
+        background-color: #334155;
+        color: var(--color-gray-400);
+        border-color: var(--color-gray-600);
+      }
+
+      body.dark-mode .quila-badge.pending::before {
+        background-color: var(--color-gray-500);
+      }
+
+      body.dark-mode .quila-badge.completed {
+        background-color: rgba(22, 163, 74, 0.2); /* Darker green */
+        color: var(--color-secondary-light);
+        border-color: var(--color-secondary-dark);
+      }
+
+      body.dark-mode .quila-badge.completed::before {
+        color: var(--color-secondary-light);
+      }
+
       body.dark-mode .navegacao button:disabled {
         background-color: var(--color-gray-700);
         color: var(--color-gray-400);
@@ -1362,6 +1481,20 @@ TABLE OF CONTENTS:
           padding: var(--space-xs) var(--space-sm);
         }
 
+        .status-quila-container {
+          padding: var(--space-sm);
+        }
+
+        .status-quila-badges {
+          gap: var(--space-sm);
+        }
+
+        .quila-badge {
+          min-width: 70px;
+          font-size: 0.75rem;
+          padding: var(--space-xs);
+        }
+
         #preencher-tabela-principal #toggle-visibility,
         #ranking-button {
           font-family: inherit;
@@ -1477,6 +1610,17 @@ TABLE OF CONTENTS:
         </button>
       </div>
       <button id="toggle-dark-mode">🌙 Dark Mode</button>
+
+      <!-- Painel de status "Quem já quilou?" -->
+      <div id="status-quila-container" class="status-quila-container">
+        <div class="status-quila-titulo">Quem já quilou?</div>
+        <div class="status-quila-badges">
+          <div class="quila-badge pending" data-jogador="Jardel">Jardel</div>
+          <div class="quila-badge pending" data-jogador="Werbet">Werbet</div>
+          <div class="quila-badge pending" data-jogador="Nailton">Nailton</div>
+          <div class="quila-badge pending" data-jogador="Phillipe">Phillipe</div>
+        </div>
+      </div>
 
       <button class="logout-button" onclick="logout()">
         <i class="fas fa-sign-out-alt"></i>
@@ -2266,6 +2410,24 @@ TABLE OF CONTENTS:
           }
         }
 
+        function atualizarStatusQuila() {
+          const placaresOcultos = !document.querySelector('.aposta')?.disabled;
+
+          const badges = document.querySelectorAll('.quila-badge');
+          badges.forEach(badge => {
+            const jogador = badge.dataset.jogador;
+            const apostaCompleta = verificarApostasCompletasPorJogador(jogador);
+
+            if (apostaCompleta && placaresOcultos) {
+              badge.classList.remove('pending');
+              badge.classList.add('completed');
+            } else {
+              badge.classList.remove('completed');
+              badge.classList.add('pending');
+            }
+          });
+        }
+
         async function verificarEstadoPlacares() {
           try {
             const isHidden = await carregarEstadoVisibilidade();
@@ -2285,6 +2447,7 @@ TABLE OF CONTENTS:
 
             // Força a atualização dos cartões de pontuação para exibir o checkmark
             calcularPontuacao();
+            atualizarStatusQuila();
           } catch (error) {
             console.error("Erro ao verificar estado dos placares:", error);
           }
@@ -2475,6 +2638,9 @@ TABLE OF CONTENTS:
             .join("");
 
           document.getElementById("pontuacao").innerHTML = pontuacaoHTML;
+
+          // Atualiza status Quila
+          atualizarStatusQuila();
 
           // Salva o vencedor da rodada no Supabase
           if (vencedores.length > 0) {
