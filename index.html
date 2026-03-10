@@ -2412,6 +2412,14 @@ TABLE OF CONTENTS:
 
         function atualizarStatusQuila() {
           const placaresOcultos = !document.querySelector('.aposta')?.disabled;
+          const quilaContainer = document.getElementById('status-quila-container');
+
+          if (!placaresOcultos) {
+            quilaContainer.classList.add('hidden');
+            return;
+          } else {
+            quilaContainer.classList.remove('hidden');
+          }
 
           const badges = document.querySelectorAll('.quila-badge');
           badges.forEach(badge => {
