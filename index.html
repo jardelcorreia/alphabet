@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -68,10 +68,12 @@ TABLE OF CONTENTS:
         --radius-lg: 1rem; /* 16px */
 
         /* Shadow system */
-        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-          0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        --shadow-sm:
+          0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        --shadow-md:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
           0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
         /* Transitions */
@@ -234,7 +236,9 @@ TABLE OF CONTENTS:
         color: var(--color-secondary-dark);
         opacity: 0;
         transform: scale(0.5);
-        transition: opacity var(--transition-normal), transform var(--transition-normal);
+        transition:
+          opacity var(--transition-normal),
+          transform var(--transition-normal);
       }
 
       .pontuacao-card:hover {
@@ -497,7 +501,8 @@ TABLE OF CONTENTS:
 
       /* Input states */
       .input-placar {
-        transition: background-color var(--transition-normal),
+        transition:
+          background-color var(--transition-normal),
           color var(--transition-normal);
         background-color: white;
         color: var(--color-dark);
@@ -519,53 +524,62 @@ TABLE OF CONTENTS:
 
       /* Highlight styles for scores - BADGES */
       @keyframes popIn {
-        0% { transform: scale(0); opacity: 0; }
-        80% { transform: scale(1.1); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        80% {
+          transform: scale(1.1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
       }
 
       /* 3 Pontos - Badge Verde */
       .input-container.pontos-3::after {
-          content: "3";
-          position: absolute;
-          top: -8px;
-          right: -8px;
-          background-color: var(--color-secondary-dark); /* Green */
-          color: white;
-          font-size: 0.75rem;
-          font-weight: 700;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-          z-index: 5;
-          animation: popIn 0.3s ease-out forwards;
-          border: 2px solid white;
+        content: "3";
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--color-secondary-dark); /* Green */
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 5;
+        animation: popIn 0.3s ease-out forwards;
+        border: 2px solid white;
       }
 
       /* 1 Ponto - Badge Amarelo */
       .input-container.pontos-1::after {
-          content: "1";
-          position: absolute;
-          top: -8px;
-          right: -8px;
-          background-color: var(--color-accent); /* Amber */
-          color: white;
-          font-size: 0.75rem;
-          font-weight: 700;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-          z-index: 5;
-          animation: popIn 0.3s ease-out forwards;
-          border: 2px solid white;
+        content: "1";
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background-color: var(--color-accent); /* Amber */
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 5;
+        animation: popIn 0.3s ease-out forwards;
+        border: 2px solid white;
       }
 
       /* ===============================================================
@@ -729,7 +743,7 @@ TABLE OF CONTENTS:
       }
 
       .quila-badge::before {
-        content: '';
+        content: "";
         display: inline-block;
         width: 12px;
         height: 12px;
@@ -755,7 +769,7 @@ TABLE OF CONTENTS:
       }
 
       .quila-badge.completed::before {
-        content: '✓';
+        content: "✓";
         background-color: transparent;
         color: var(--color-secondary-dark);
         font-weight: bold;
@@ -1378,8 +1392,8 @@ TABLE OF CONTENTS:
       /* Dark Mode overrides for score highlights */
       body.dark-mode .input-container.pontos-3::after,
       body.dark-mode .input-container.pontos-1::after {
-          border-color: var(--color-dark);
-          box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        border-color: var(--color-dark);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       }
 
       body.dark-mode .input-placar:disabled {
@@ -1618,7 +1632,9 @@ TABLE OF CONTENTS:
           <div class="quila-badge pending" data-jogador="Jardel">Jardel</div>
           <div class="quila-badge pending" data-jogador="Werbet">Werbet</div>
           <div class="quila-badge pending" data-jogador="Nailton">Nailton</div>
-          <div class="quila-badge pending" data-jogador="Phillipe">Phillipe</div>
+          <div class="quila-badge pending" data-jogador="Phillipe">
+            Phillipe
+          </div>
         </div>
       </div>
 
@@ -1694,7 +1710,7 @@ TABLE OF CONTENTS:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4";
         const supabaseClient = supabase.createClient(
           SUPABASE_URL,
-          SUPABASE_ANON_KEY
+          SUPABASE_ANON_KEY,
         );
 
         // Variáveis globais
@@ -1827,12 +1843,14 @@ TABLE OF CONTENTS:
           "Coritiba FBC": {
             abrev: "CFC",
             nome: "Coritiba",
-            escudo: "https://logodetimes.com/times/coritiba/logo-coritiba-256.png",
+            escudo:
+              "https://logodetimes.com/times/coritiba/logo-coritiba-256.png",
           },
           "CA Paranaense": {
             abrev: "CAP",
             nome: "Athletico-PR",
-            escudo: "https://logodetimes.com/times/atletico-paranaense/logo-atletico-paranaense-256.png",
+            escudo:
+              "https://logodetimes.com/times/atletico-paranaense/logo-atletico-paranaense-256.png",
           },
           "Clube do Remo": {
             abrev: "REM",
@@ -1842,7 +1860,8 @@ TABLE OF CONTENTS:
           "Chapecoense AF": {
             abrev: "CHA",
             nome: "Chapecoense",
-            escudo: "https://logodetimes.com/times/chapecoense/logo-chapecoense-256.png",
+            escudo:
+              "https://logodetimes.com/times/chapecoense/logo-chapecoense-256.png",
           },
         };
 
@@ -1888,7 +1907,7 @@ TABLE OF CONTENTS:
                   body: JSON.stringify({
                     textoCriptografado: senhasCriptografadas[username],
                   }),
-                }
+                },
               );
 
               if (!descriptResponse.ok)
@@ -1994,7 +2013,7 @@ TABLE OF CONTENTS:
               <input type="number" class="aposta input-placar jogador${jogadorIndex}" min="0">
             </div>
           </td>
-        `
+        `,
           )
           .join("")}
         <td>
@@ -2025,7 +2044,7 @@ TABLE OF CONTENTS:
                 preencherTabelaPrincipalComRodadaAtual(rodadaAtual);
               } else {
                 alert(
-                  "Por favor, aguarde até que os dados do calendário sejam carregados."
+                  "Por favor, aguarde até que os dados do calendário sejam carregados.",
                 );
               }
             });
@@ -2172,7 +2191,6 @@ TABLE OF CONTENTS:
             // Sucesso no salvamento
             isSaving = false;
             mostrarFeedbackApostasCompletas(true); // true indica sucesso real do backend
-
           } catch (error) {
             console.error("Erro ao salvar dados:", error);
             alert("ERRO AO SALVAR! Verifique sua conexão e tente novamente.");
@@ -2182,21 +2200,21 @@ TABLE OF CONTENTS:
         }
 
         function atualizarIndicadorSalvamento(texto) {
-            const feedback = document.getElementById("feedback-apostas");
-            const icon = feedback.querySelector("i");
-            const span = feedback.querySelector("span");
+          const feedback = document.getElementById("feedback-apostas");
+          const icon = feedback.querySelector("i");
+          const span = feedback.querySelector("span");
 
-            if (texto === "Salvando...") {
-                feedback.classList.add("visible");
-                feedback.style.backgroundColor = "var(--color-primary)"; // Azul para processando
-                icon.className = "fas fa-sync fa-spin";
-                span.textContent = texto;
-            } else if (texto === "Erro ao salvar!") {
-                feedback.classList.add("visible");
-                feedback.style.backgroundColor = "var(--color-danger)"; // Vermelho para erro
-                icon.className = "fas fa-exclamation-triangle";
-                span.textContent = texto;
-            }
+          if (texto === "Salvando...") {
+            feedback.classList.add("visible");
+            feedback.style.backgroundColor = "var(--color-primary)"; // Azul para processando
+            icon.className = "fas fa-sync fa-spin";
+            span.textContent = texto;
+          } else if (texto === "Erro ao salvar!") {
+            feedback.classList.add("visible");
+            feedback.style.backgroundColor = "var(--color-danger)"; // Vermelho para erro
+            icon.className = "fas fa-exclamation-triangle";
+            span.textContent = texto;
+          }
         }
 
         function obterJogosDaTabela() {
@@ -2249,7 +2267,7 @@ TABLE OF CONTENTS:
 
         function adicionarEventosSalvamento() {
           const inputs = document.querySelectorAll(
-            ".aposta, .resultado, .input-jogo, #nome-rodada"
+            ".aposta, .resultado, .input-jogo, #nome-rodada",
           );
           inputs.forEach((input) => {
             input.addEventListener("input", function () {
@@ -2287,7 +2305,7 @@ TABLE OF CONTENTS:
 
           const inputsJogos = document.querySelectorAll(".input-jogo");
           const apostasUsuario = document.querySelectorAll(
-            `.aposta.${jogadorClass}`
+            `.aposta.${jogadorClass}`,
           );
 
           for (let i = 0; i < 10; i++) {
@@ -2319,13 +2337,13 @@ TABLE OF CONTENTS:
           const span = feedback.querySelector("span");
 
           if (saveSuccess) {
-              // Sucesso confirmado do backend
-              feedback.style.backgroundColor = ""; // Volta cor original (verde secondary)
-              icon.className = "fas fa-check-circle";
-              span.textContent = "Suas apostas foram salvas!";
+            // Sucesso confirmado do backend
+            feedback.style.backgroundColor = ""; // Volta cor original (verde secondary)
+            icon.className = "fas fa-check-circle";
+            span.textContent = "Suas apostas foram salvas!";
 
-              feedback.classList.add("visible");
-              setTimeout(() => feedback.classList.remove("visible"), 3000);
+            feedback.classList.add("visible");
+            setTimeout(() => feedback.classList.remove("visible"), 3000);
           }
           // Não mostra nada automaticamente só por completar inputs, espera o backend confirmar
         }
@@ -2351,12 +2369,12 @@ TABLE OF CONTENTS:
             const jogador = input.classList.contains("jogador0")
               ? "Jardel"
               : input.classList.contains("jogador1")
-              ? "Werbet"
-              : input.classList.contains("jogador2")
-              ? "Nailton"
-              : input.classList.contains("jogador3")
-              ? "Phillipe"
-              : null;
+                ? "Werbet"
+                : input.classList.contains("jogador2")
+                  ? "Nailton"
+                  : input.classList.contains("jogador3")
+                    ? "Phillipe"
+                    : null;
 
             if (jogador && jogador !== loggedInUser) {
               input.style.display = "none";
@@ -2411,27 +2429,29 @@ TABLE OF CONTENTS:
         }
 
         function atualizarStatusQuila() {
-          const placaresOcultos = !document.querySelector('.aposta')?.disabled;
-          const quilaContainer = document.getElementById('status-quila-container');
+          const placaresOcultos = !document.querySelector(".aposta")?.disabled;
+          const quilaContainer = document.getElementById(
+            "status-quila-container",
+          );
 
           if (!placaresOcultos) {
-            quilaContainer.classList.add('hidden');
+            quilaContainer.classList.add("hidden");
             return;
           } else {
-            quilaContainer.classList.remove('hidden');
+            quilaContainer.classList.remove("hidden");
           }
 
-          const badges = document.querySelectorAll('.quila-badge');
-          badges.forEach(badge => {
+          const badges = document.querySelectorAll(".quila-badge");
+          badges.forEach((badge) => {
             const jogador = badge.dataset.jogador;
             const apostaCompleta = verificarApostasCompletasPorJogador(jogador);
 
             if (apostaCompleta && placaresOcultos) {
-              badge.classList.remove('pending');
-              badge.classList.add('completed');
+              badge.classList.remove("pending");
+              badge.classList.add("completed");
             } else {
-              badge.classList.remove('completed');
-              badge.classList.add('pending');
+              badge.classList.remove("completed");
+              badge.classList.add("pending");
             }
           });
         }
@@ -2466,13 +2486,13 @@ TABLE OF CONTENTS:
             const loggedInUser = localStorage.getItem("loggedInUser");
             const toggleButton = document.getElementById("toggle-visibility");
             const preencherTabelaButton = document.getElementById(
-              "preencher-tabela-principal"
+              "preencher-tabela-principal",
             );
 
             toggleButton.classList.toggle("hidden", loggedInUser !== "Jardel");
             preencherTabelaButton.classList.toggle(
               "hidden",
-              loggedInUser !== "Jardel"
+              loggedInUser !== "Jardel",
             );
           } catch (error) {
             console.error("Erro ao verificar permissões do usuário:", error);
@@ -2509,7 +2529,10 @@ TABLE OF CONTENTS:
               !nomeJogo.toLowerCase().includes("sem jogo") &&
               padraoJogo.test(nomeJogo);
 
-            if ((resultadoCasa === "" || resultadoFora === "") && isJogoValido) {
+            if (
+              (resultadoCasa === "" || resultadoFora === "") &&
+              isJogoValido
+            ) {
               jogosRestantes++;
             }
           }
@@ -2528,16 +2551,24 @@ TABLE OF CONTENTS:
 
               // Limpa estilo anterior
               if (inputsApostas[indexCasa] && inputsApostas[indexFora]) {
-                  // Como ambos os inputs estão dentro do mesmo container, limpamos apenas uma vez
-                  const container = inputsApostas[indexCasa].parentElement;
-                  if (container) {
-                    container.classList.remove("pontos-3");
-                    container.classList.remove("pontos-1");
-                  }
+                // Como ambos os inputs estão dentro do mesmo container, limpamos apenas uma vez
+                const container = inputsApostas[indexCasa].parentElement;
+                if (container) {
+                  container.classList.remove("pontos-3");
+                  container.classList.remove("pontos-1");
+                }
 
-                  // Remove classes dos inputs também para garantir (embora agora sejam estilizados via container)
-                  inputsApostas[indexCasa].classList.remove("placar-exato", "pontos-3", "pontos-1");
-                  inputsApostas[indexFora].classList.remove("placar-exato", "pontos-3", "pontos-1");
+                // Remove classes dos inputs também para garantir (embora agora sejam estilizados via container)
+                inputsApostas[indexCasa].classList.remove(
+                  "placar-exato",
+                  "pontos-3",
+                  "pontos-1",
+                );
+                inputsApostas[indexFora].classList.remove(
+                  "placar-exato",
+                  "pontos-3",
+                  "pontos-1",
+                );
               }
 
               if (resultadoCasa === "" || resultadoFora === "") return;
@@ -2552,8 +2583,8 @@ TABLE OF CONTENTS:
 
                 // Aplica destaque de 3 pontos
                 if (inputsApostas[indexCasa]) {
-                    const container = inputsApostas[indexCasa].parentElement;
-                    if (container) container.classList.add("pontos-3");
+                  const container = inputsApostas[indexCasa].parentElement;
+                  if (container) container.classList.add("pontos-3");
                 }
               } else if (
                 (apostaCasa > apostaFora && resultadoCasa > resultadoFora) ||
@@ -2564,8 +2595,8 @@ TABLE OF CONTENTS:
 
                 // Aplica destaque de 1 ponto
                 if (inputsApostas[indexCasa]) {
-                    const container = inputsApostas[indexCasa].parentElement;
-                    if (container) container.classList.add("pontos-1");
+                  const container = inputsApostas[indexCasa].parentElement;
+                  if (container) container.classList.add("pontos-1");
                 }
               }
             });
@@ -2579,7 +2610,7 @@ TABLE OF CONTENTS:
 
           // Verifica se há pontuação maior que zero
           const todosZerados = jogadoresOrdenados.every(
-            ([_, pontuacao]) => pontuacao === 0
+            ([_, pontuacao]) => pontuacao === 0,
           );
 
           let vencedores = [];
@@ -2589,13 +2620,15 @@ TABLE OF CONTENTS:
             let rodadaDefinida = true;
 
             if (jogosRestantes > 0) {
-              const todosEmpatados = jogadoresOrdenados.every(p => p[1] === maiorPontuacao);
+              const todosEmpatados = jogadoresOrdenados.every(
+                (p) => p[1] === maiorPontuacao,
+              );
               if (todosEmpatados) {
                 rodadaDefinida = false;
               } else {
                 for (const [jogador, pontuacao] of jogadoresOrdenados) {
                   if (pontuacao < maiorPontuacao) {
-                    if (pontuacao + (3 * jogosRestantes) >= maiorPontuacao) {
+                    if (pontuacao + 3 * jogosRestantes >= maiorPontuacao) {
                       rodadaDefinida = false;
                       break;
                     }
@@ -2605,17 +2638,17 @@ TABLE OF CONTENTS:
             }
 
             if (rodadaDefinida) {
-                const lideresPotenciais = jogadoresOrdenados.filter(
-                    ([_, pontuacao]) => pontuacao === maiorPontuacao
-                );
-                const maiorPlacarExato = Math.max(
-                    ...lideresPotenciais.map(
-                        ([jogador]) => placaresExatos[jogador]
-                    )
-                );
-                vencedores = lideresPotenciais.filter(
-                    ([jogador]) => placaresExatos[jogador] === maiorPlacarExato
-                );
+              const lideresPotenciais = jogadoresOrdenados.filter(
+                ([_, pontuacao]) => pontuacao === maiorPontuacao,
+              );
+              const maiorPlacarExato = Math.max(
+                ...lideresPotenciais.map(
+                  ([jogador]) => placaresExatos[jogador],
+                ),
+              );
+              vencedores = lideresPotenciais.filter(
+                ([jogador]) => placaresExatos[jogador] === maiorPlacarExato,
+              );
             }
           }
 
@@ -2623,13 +2656,15 @@ TABLE OF CONTENTS:
           const pontuacaoHTML = jogadoresOrdenados
             .map(([jogador, pontuacao]) => {
               const isVencedor = vencedores.some(
-                ([vencedor]) => vencedor === jogador
+                ([vencedor]) => vencedor === jogador,
               );
-              const apostaCompleta = verificarApostasCompletasPorJogador(jogador);
-              const placaresOcultos = !document.querySelector('.aposta')?.disabled;
+              const apostaCompleta =
+                verificarApostasCompletasPorJogador(jogador);
+              const placaresOcultos =
+                !document.querySelector(".aposta")?.disabled;
 
               const cardClass = `${isVencedor ? "vencedor" : ""} ${
-                (apostaCompleta && placaresOcultos) ? "aposta-completa" : ""
+                apostaCompleta && placaresOcultos ? "aposta-completa" : ""
               }`;
 
               return `
@@ -2691,147 +2726,164 @@ TABLE OF CONTENTS:
           });
         }
 
-async function salvarVencedorDaRodada(rodada, vencedor, pontosRodada) {
-  if (!rodada) return;
+        async function salvarVencedorDaRodada(rodada, vencedor, pontosRodada) {
+          if (!rodada) return;
 
-  try {
-    const { data, error } = await supabaseClient
-      .from("alphabet_table")
-      .select("id, ranking, configuracao, historico_pontuacao") // Also select 'configuracao' and 'historico_pontuacao'
-      .order("id", { ascending: false })
-      .limit(1)
-      .single();
+          try {
+            const { data, error } = await supabaseClient
+              .from("alphabet_table")
+              .select("id, ranking, configuracao, historico_pontuacao") // Also select 'configuracao' and 'historico_pontuacao'
+              .order("id", { ascending: false })
+              .limit(1)
+              .single();
 
-    if (error) {
-      if (error.code === "PGRST116") { // Handle case where no record exists
-        console.warn("No existing record found, creating a new one for ranking.");
-        const newRanking = [];
-        newRanking[rodada - 1] = vencedor;
-        const newConfig = { valoresRodada: {}, valorRodadaAtual: 6 }; // Default config
-        newConfig.valoresRodada[rodada] = newConfig.valorRodadaAtual; // Set initial round value for the new record
+            if (error) {
+              if (error.code === "PGRST116") {
+                // Handle case where no record exists
+                console.warn(
+                  "No existing record found, creating a new one for ranking.",
+                );
+                const newRanking = [];
+                newRanking[rodada - 1] = vencedor;
+                const newConfig = { valoresRodada: {}, valorRodadaAtual: 6 }; // Default config
+                newConfig.valoresRodada[rodada] = newConfig.valorRodadaAtual; // Set initial round value for the new record
 
-        const historicoPontuacao = {};
-        if (pontosRodada) {
-            historicoPontuacao[`Rodada ${rodada}`] = pontosRodada;
+                const historicoPontuacao = {};
+                if (pontosRodada) {
+                  historicoPontuacao[`Rodada ${rodada}`] = pontosRodada;
+                }
+
+                const { error: insertError } = await supabaseClient
+                  .from("alphabet_table")
+                  .insert({
+                    ranking: newRanking,
+                    vitorias_empates: calcularVitoriasEmpatesSaldo(
+                      newRanking,
+                      newConfig.valoresRodada,
+                      newConfig.valorRodadaAtual,
+                    ),
+                    configuracao: newConfig,
+                    historico_pontuacao: historicoPontuacao,
+                  });
+                if (insertError) throw insertError;
+                return;
+              }
+              throw error;
+            }
+
+            let rankingAtual = data.ranking || [];
+            rankingAtual[rodada - 1] = vencedor;
+
+            // Get the current configuration for calculating saldo correctly
+            const currentConfig = data.configuracao || {
+              valoresRodada: {},
+              valorRodadaAtual: 6,
+            };
+
+            // Update history of points
+            const historicoPontuacao = data.historico_pontuacao || {};
+            if (pontosRodada) {
+              historicoPontuacao[`Rodada ${rodada}`] = pontosRodada;
+            }
+
+            // RECALCULATE vitorias_empates based on the updated ranking and current configuration
+            const vitoriasEmpatesAtualizadas = calcularVitoriasEmpatesSaldo(
+              rankingAtual,
+              currentConfig.valoresRodada,
+              currentConfig.valorRodadaAtual,
+            );
+
+            const { error: updateError } = await supabaseClient
+              .from("alphabet_table")
+              .update({
+                ranking: rankingAtual,
+                vitorias_empates: vitoriasEmpatesAtualizadas, // Use the newly calculated values
+                historico_pontuacao: historicoPontuacao,
+              })
+              .eq("id", data.id);
+
+            if (updateError) throw updateError;
+          } catch (error) {
+            console.error("Erro ao salvar vencedor da rodada:", error);
+          }
         }
-
-        const { error: insertError } = await supabaseClient
-          .from("alphabet_table")
-          .insert({
-            ranking: newRanking,
-            vitorias_empates: calcularVitoriasEmpatesSaldo(newRanking, newConfig.valoresRodada, newConfig.valorRodadaAtual),
-            configuracao: newConfig,
-            historico_pontuacao: historicoPontuacao
-          });
-        if (insertError) throw insertError;
-        return;
-      }
-      throw error;
-    }
-
-    let rankingAtual = data.ranking || [];
-    rankingAtual[rodada - 1] = vencedor;
-
-    // Get the current configuration for calculating saldo correctly
-    const currentConfig = data.configuracao || { valoresRodada: {}, valorRodadaAtual: 6 };
-
-    // Update history of points
-    const historicoPontuacao = data.historico_pontuacao || {};
-    if (pontosRodada) {
-        historicoPontuacao[`Rodada ${rodada}`] = pontosRodada;
-    }
-
-    // RECALCULATE vitorias_empates based on the updated ranking and current configuration
-    const vitoriasEmpatesAtualizadas = calcularVitoriasEmpatesSaldo(
-      rankingAtual,
-      currentConfig.valoresRodada,
-      currentConfig.valorRodadaAtual
-    );
-
-    const { error: updateError } = await supabaseClient
-      .from("alphabet_table")
-      .update({
-        ranking: rankingAtual,
-        vitorias_empates: vitoriasEmpatesAtualizadas, // Use the newly calculated values
-        historico_pontuacao: historicoPontuacao
-      })
-      .eq("id", data.id);
-
-    if (updateError) throw updateError;
-  } catch (error) {
-    console.error("Erro ao salvar vencedor da rodada:", error);
-  }
-}
 
         function abrirRanking() {
           window.open("ranking.html", "_blank");
         }
 
-function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaAtualConfig) {
-  const vitoriasEmpates = {
-    Jardel: { vitorias: 0, empates: 0, saldo: 0 },
-    Werbet: { vitorias: 0, empates: 0, saldo: 0 },
-    Nailton: { vitorias: 0, empates: 0, saldo: 0 },
-    Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
-  };
+        function calcularVitoriasEmpatesSaldo(
+          ranking,
+          valoresRodadaConfig,
+          valorRodadaAtualConfig,
+        ) {
+          const vitoriasEmpates = {
+            Jardel: { vitorias: 0, empates: 0, saldo: 0 },
+            Werbet: { vitorias: 0, empates: 0, saldo: 0 },
+            Nailton: { vitorias: 0, empates: 0, saldo: 0 },
+            Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
+          };
 
-  const jogadores = Object.keys(vitoriasEmpates);
+          const jogadores = Object.keys(vitoriasEmpates);
 
-  ranking.forEach((vencedores, rodadaIndex) => {
-    if (!vencedores || !vencedores.trim()) return; // Added check for null/undefined 'vencedores'
+          ranking.forEach((vencedores, rodadaIndex) => {
+            if (!vencedores || !vencedores.trim()) return; // Added check for null/undefined 'vencedores'
 
-    const numeroRodada = rodadaIndex + 1;
-    // Use the specific value for the round if available, otherwise use the default
-    const valorRodada = valoresRodadaConfig[numeroRodada] || valorRodadaAtualConfig;
+            const numeroRodada = rodadaIndex + 1;
+            // Use the specific value for the round if available, otherwise use the default
+            const valorRodada =
+              valoresRodadaConfig[numeroRodada] || valorRodadaAtualConfig;
 
-    const listaVencedores = vencedores
-      .split(",")
-      .map((nome) => nome.trim())
-      .filter((nome) => nome !== "");
+            const listaVencedores = vencedores
+              .split(",")
+              .map((nome) => nome.trim())
+              .filter((nome) => nome !== "");
 
-    if (listaVencedores.length === 0) return;
+            if (listaVencedores.length === 0) return;
 
-    if (listaVencedores.length === 1) {
-      const vencedor = listaVencedores[0];
-      if (vitoriasEmpates[vencedor]) {
-        vitoriasEmpates[vencedor].vitorias++;
-        vitoriasEmpates[vencedor].saldo += valorRodada * (jogadores.length - 1);
+            if (listaVencedores.length === 1) {
+              const vencedor = listaVencedores[0];
+              if (vitoriasEmpates[vencedor]) {
+                vitoriasEmpates[vencedor].vitorias++;
+                vitoriasEmpates[vencedor].saldo +=
+                  valorRodada * (jogadores.length - 1);
 
-        jogadores.forEach((jogador) => {
-          if (jogador !== vencedor) {
-            vitoriasEmpates[jogador].saldo -= valorRodada;
-          }
-        });
-      }
-    } else {
-      listaVencedores.forEach((vencedor) => {
-        if (vitoriasEmpates[vencedor]) {
-          vitoriasEmpates[vencedor].empates++;
+                jogadores.forEach((jogador) => {
+                  if (jogador !== vencedor) {
+                    vitoriasEmpates[jogador].saldo -= valorRodada;
+                  }
+                });
+              }
+            } else {
+              listaVencedores.forEach((vencedor) => {
+                if (vitoriasEmpates[vencedor]) {
+                  vitoriasEmpates[vencedor].empates++;
+                }
+              });
+
+              const perdedores = jogadores.filter(
+                (j) => !listaVencedores.includes(j),
+              );
+
+              // Distribute the pot among winners in case of a draw
+              const valuePerWinner =
+                (valorRodada * perdedores.length) / listaVencedores.length;
+
+              listaVencedores.forEach((vencedor) => {
+                if (vitoriasEmpates[vencedor]) {
+                  vitoriasEmpates[vencedor].saldo += valuePerWinner;
+                }
+              });
+              perdedores.forEach((perdedor) => {
+                if (vitoriasEmpates[perdedor]) {
+                  vitoriasEmpates[perdedor].saldo -= valorRodada;
+                }
+              });
+            }
+          });
+
+          return vitoriasEmpates;
         }
-      });
-
-      const perdedores = jogadores.filter(
-        (j) => !listaVencedores.includes(j)
-      );
-
-      // Distribute the pot among winners in case of a draw
-      const valuePerWinner = (valorRodada * perdedores.length) / listaVencedores.length;
-
-      listaVencedores.forEach((vencedor) => {
-        if (vitoriasEmpates[vencedor]) {
-          vitoriasEmpates[vencedor].saldo += valuePerWinner;
-        }
-      });
-      perdedores.forEach((perdedor) => {
-        if (vitoriasEmpates[perdedor]) {
-          vitoriasEmpates[perdedor].saldo -= valorRodada;
-        }
-      });
-    }
-  });
-
-  return vitoriasEmpates;
-}
 
         // Funções do calendário de jogos
         async function buscarCalendario() {
@@ -2855,88 +2907,126 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
                 const numeroRodada = Number(numRodadaStr);
                 const jogosDaRodada = partidasPorRodada[numeroRodada];
 
-                let dataInicio = null;
+                let dataInicio = new Date("2999-12-31T23:59:59Z");
+                let temJogoAtivo = false;
+                let jogosNaoAdiados = 0;
+                let jogosNaoAdiadosFinalizados = 0;
+
                 if (jogosDaRodada.length > 0) {
-                  dataInicio = new Date(jogosDaRodada[0].utcDate);
-                  for (let i = 1; i < jogosDaRodada.length; i++) {
-                    const dataJogoAtual = new Date(jogosDaRodada[i].utcDate);
-                    if (dataJogoAtual < dataInicio) {
-                      dataInicio = dataJogoAtual;
+                  for (const jogo of jogosDaRodada) {
+                    if (jogo.utcDate) {
+                      const dataJogo = new Date(jogo.utcDate);
+                      if (dataJogo < dataInicio) {
+                        dataInicio = dataJogo;
+                      }
+                    }
+
+                    if (
+                      jogo.status === "IN_PLAY" ||
+                      jogo.status === "PAUSED" ||
+                      jogo.status === "LIVE"
+                    ) {
+                      temJogoAtivo = true;
+                    }
+
+                    if (
+                      jogo.status !== "POSTPONED" &&
+                      jogo.status !== "CANCELLED"
+                    ) {
+                      jogosNaoAdiados++;
+                      if (jogo.status === "FINISHED") {
+                        jogosNaoAdiadosFinalizados++;
+                      }
                     }
                   }
-                } else {
-                  dataInicio = new Date("2999-12-31T23:59:59Z");
                 }
 
                 const todosJogosFinalizados = jogosDaRodada.every(
-                  (jogo) => jogo.status === "FINISHED"
+                  (jogo) => jogo.status === "FINISHED",
                 );
 
-                return { numeroRodada, dataInicio, todosJogosFinalizados };
-              }
+                const efetivamenteFinalizada =
+                  jogosNaoAdiados > 0 &&
+                  jogosNaoAdiados === jogosNaoAdiadosFinalizados;
+
+                return {
+                  numeroRodada,
+                  dataInicio,
+                  todosJogosFinalizados,
+                  efetivamenteFinalizada,
+                  temJogoAtivo,
+                };
+              },
             );
 
             rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
 
             let rodadaParaExibir = 0;
-            const hoje = new Date();
+            const agora = new Date();
+            const hoje = new Date(agora);
             hoje.setHours(0, 0, 0, 0); // Normaliza para o início do dia
 
-            // 1. Primeiro, tentar encontrar uma rodada que começa hoje ou amanhã
             const amanha = new Date(hoje);
             amanha.setDate(hoje.getDate() + 1);
 
-            let rodadaQueComecaEmBreve = null;
-            for (const r of rodadasComInfo) {
-                if (r.todosJogosFinalizados) continue;
+            let rodadaAtiva = rodadasComInfo.find((r) => r.temJogoAtivo);
 
-                const dataInicioRodada = new Date(r.dataInicio);
-                dataInicioRodada.setHours(0, 0, 0, 0);
-
-                // Se a rodada começa hoje ou amanhã, seleciona-a
-                if (
-                    dataInicioRodada.getTime() === hoje.getTime() ||
-                    dataInicioRodada.getTime() === amanha.getTime()
-                ) {
-                    rodadaQueComecaEmBreve = r.numeroRodada;
-                    break;
-                }
-            }
-
-            if (rodadaQueComecaEmBreve) {
-                rodadaParaExibir = rodadaQueComecaEmBreve;
+            if (rodadaAtiva) {
+              // 1. Mostrar a rodada que tem jogo acontecendo agora
+              rodadaParaExibir = rodadaAtiva.numeroRodada;
             } else {
-                // 2. Se não há rodada começando em breve, encontrar a última rodada completamente finalizada
-                let ultimaRodadaFinalizada = null;
+              let rodadasComJogoEmBreve = [];
+
+              // Procurar jogos hoje ou amanhã em qualquer rodada
+              for (const rodadaStr in partidasPorRodada) {
+                const jogosDaRodada = partidasPorRodada[rodadaStr];
+                const numeroRodada = parseInt(rodadaStr);
+                let temJogoHojeOuAmanha = false;
+
+                for (const jogo of jogosDaRodada) {
+                  if (jogo.status !== "FINISHED" && jogo.utcDate) {
+                    const dataJogo = new Date(jogo.utcDate);
+                    const diaDoJogo = new Date(dataJogo);
+                    diaDoJogo.setHours(0, 0, 0, 0);
+
+                    if (
+                      diaDoJogo.getTime() === hoje.getTime() ||
+                      diaDoJogo.getTime() === amanha.getTime()
+                    ) {
+                      temJogoHojeOuAmanha = true;
+                      break;
+                    }
+                  }
+                }
+
+                if (temJogoHojeOuAmanha) {
+                  rodadasComJogoEmBreve.push(numeroRodada);
+                }
+              }
+
+              if (rodadasComJogoEmBreve.length > 0) {
+                // 2. Mostrar a rodada mais próxima com jogos hoje ou amanhã
+                rodadaParaExibir = Math.min(...rodadasComJogoEmBreve);
+              } else {
+                // 3. Encontrar a primeira rodada que NÃO está efetivamente finalizada (ignorando jogos adiados)
+                let rodadaPendente = null;
                 for (const r of rodadasComInfo) {
-                    if (r.todosJogosFinalizados) {
-                        ultimaRodadaFinalizada = r.numeroRodada;
-                    }
+                  if (!r.efetivamenteFinalizada && !r.todosJogosFinalizados) {
+                    rodadaPendente = r.numeroRodada;
+                    break;
+                  }
                 }
 
-                if (ultimaRodadaFinalizada) {
-                    // 3. Verificar se a próxima rodada (após a última finalizada) já começou
-                    const proximaRodada = rodadasComInfo.find(r => r.numeroRodada === ultimaRodadaFinalizada + 1);
-
-                    if (proximaRodada && !proximaRodada.todosJogosFinalizados) {
-                        const dataInicioProximaRodada = new Date(proximaRodada.dataInicio);
-                        const agora = new Date(); // Hora atual completa
-
-                        // Se a próxima rodada já começou, mostrar ela
-                        if (dataInicioProximaRodada <= agora) {
-                            rodadaParaExibir = proximaRodada.numeroRodada;
-                        } else {
-                            // Se a próxima rodada ainda não começou, mostrar a última finalizada
-                            rodadaParaExibir = ultimaRodadaFinalizada;
-                        }
-                    } else {
-                        // Se não há próxima rodada ou ela está finalizada, mostrar a última finalizada
-                        rodadaParaExibir = ultimaRodadaFinalizada;
-                    }
+                if (rodadaPendente) {
+                  rodadaParaExibir = rodadaPendente;
                 } else {
-                    // 4. Se nenhuma rodada foi finalizada ainda, mostrar a primeira rodada
-                    rodadaParaExibir = rodadasComInfo.length > 0 ? rodadasComInfo[0].numeroRodada : 1;
+                  // 4. Fallback: Mostrar a última rodada de todas
+                  rodadaParaExibir =
+                    rodadasComInfo.length > 0
+                      ? rodadasComInfo[rodadasComInfo.length - 1].numeroRodada
+                      : 1;
                 }
+              }
             }
 
             rodadaAtual = rodadaParaExibir;
@@ -3001,8 +3091,8 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
           <div class="jogo-times">
             <div class="time">
               <img src="${timeCasaInfo.escudo}" alt="${
-              timeCasaInfo.nome
-            }" class="time-escudo" onerror="handleImageError(this)">
+                timeCasaInfo.nome
+              }" class="time-escudo" onerror="handleImageError(this)">
               <div class="time-abrev">${timeCasaInfo.abrev}</div>
               <div class="time-nome">${timeCasaInfo.nome}</div>
             </div>
@@ -3020,8 +3110,8 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             
             <div class="time">
               <img src="${timeForaInfo.escudo}" alt="${
-              timeForaInfo.nome
-            }" class="time-escudo" onerror="handleImageError(this)">
+                timeForaInfo.nome
+              }" class="time-escudo" onerror="handleImageError(this)">
               <div class="time-abrev">${timeForaInfo.abrev}</div>
               <div class="time-nome">${timeForaInfo.nome}</div>
             </div>
@@ -3038,9 +3128,8 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
         }
 
         function atualizarNavegacao() {
-          document.getElementById(
-            "rodada-atual"
-          ).textContent = `Rodada ${rodadaAtual} de ${totalRodadas}`;
+          document.getElementById("rodada-atual").textContent =
+            `Rodada ${rodadaAtual} de ${totalRodadas}`;
           document.getElementById("anterior").disabled = rodadaAtual === 1;
           document.getElementById("proxima").disabled =
             rodadaAtual === totalRodadas;
@@ -3097,17 +3186,18 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
 
           // Se for uma rodada diferente, pede confirmação
           const confirmacao = confirm(
-            `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`
+            `Deseja preencher a tabela com a Rodada ${rodada}? As apostas e resultados atuais serão limpos.`,
           );
           if (!confirmacao) return;
 
           try {
             const response = await fetch("/.netlify/functions/fetchMatches");
-            if (!response.ok) throw new Error(`Erro de rede: ${response.status}`);
+            if (!response.ok)
+              throw new Error(`Erro de rede: ${response.status}`);
 
             const data = await response.json();
             const jogosRodadaAtual = data.matches.filter(
-              (partida) => partida.matchday === rodada
+              (partida) => partida.matchday === rodada,
             );
 
             if (jogosRodadaAtual.length === 0) {
@@ -3128,11 +3218,13 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             // Preenche os jogos
             const inputsJogos = document.querySelectorAll(".input-jogo");
             jogosRodadaAtual.forEach((partida, index) => {
-              const timeCasaAbrev = timesInfo[partida.homeTeam.name]?.abrev ||
+              const timeCasaAbrev =
+                timesInfo[partida.homeTeam.name]?.abrev ||
                 partida.homeTeam.name.substring(0, 3).toUpperCase();
-              const timeForaAbrev = timesInfo[partida.awayTeam.name]?.abrev ||
+              const timeForaAbrev =
+                timesInfo[partida.awayTeam.name]?.abrev ||
                 partida.awayTeam.name.substring(0, 3).toUpperCase();
-              
+
               inputsJogos[index].value = `${timeCasaAbrev} x ${timeForaAbrev}`;
             });
 
@@ -3140,7 +3232,7 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             rodadaExibida = rodada;
 
             await salvarApostas();
-            
+
             // Reinicia a atualização automática apenas se for a rodada atual
             if (rodada === rodadaAtual) {
               iniciarAtualizacaoAutomatica();
@@ -3149,7 +3241,9 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             }
           } catch (error) {
             console.error("Erro ao buscar dados da tabela principal:", error);
-            alert("Erro ao carregar os dados da tabela principal. Tente novamente.");
+            alert(
+              "Erro ao carregar os dados da tabela principal. Tente novamente.",
+            );
           }
         }
 
@@ -3161,7 +3255,7 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             rodadaAtual,
             nomeRodada: document.getElementById("nome-rodada").value,
           });
-          
+
           try {
             // Verifica se há uma rodada exibida definida
             if (!rodadaExibida) {
@@ -3178,7 +3272,7 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
             // Verifica se a rodada exibida na tabela principal é a mesma do calendário
             if (rodadaExibida !== rodadaAtual) {
               console.log(
-                `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando resultados.`
+                `A tabela principal mostra a Rodada ${rodadaExibida}, mas o calendário está na Rodada ${rodadaAtual}. Não atualizando resultados.`,
               );
               return;
             }
@@ -3188,17 +3282,21 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
 
             const data = await response.json();
             const jogosRodada = data.matches.filter(
-              (m) => m.matchday === rodadaExibida
+              (m) => m.matchday === rodadaExibida,
             );
 
             if (jogosRodada.length === 0) {
-              console.log(`Nenhum jogo encontrado para rodada ${rodadaExibida}`);
+              console.log(
+                `Nenhum jogo encontrado para rodada ${rodadaExibida}`,
+              );
               return;
             }
 
             // Obter jogos atuais da tabela
             const inputsJogos = document.querySelectorAll(".input-jogo");
-            const jogosNaTabela = Array.from(inputsJogos).map(input => input.value.trim());
+            const jogosNaTabela = Array.from(inputsJogos).map((input) =>
+              input.value.trim(),
+            );
 
             const resultadosAtuais = obterResultadosDaTabela();
             const inputsResultados = document.querySelectorAll(".resultado");
@@ -3213,13 +3311,18 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
               if (!timesTabela) return;
 
               // Encontrar o jogo correspondente na API
-              const jogoCorrespondente = jogosRodada.find(partida => {
-                const timeCasaAbrev = timesInfo[partida.homeTeam.name]?.abrev ||
+              const jogoCorrespondente = jogosRodada.find((partida) => {
+                const timeCasaAbrev =
+                  timesInfo[partida.homeTeam.name]?.abrev ||
                   partida.homeTeam.name.substring(0, 3).toUpperCase();
-                const timeForaAbrev = timesInfo[partida.awayTeam.name]?.abrev ||
+                const timeForaAbrev =
+                  timesInfo[partida.awayTeam.name]?.abrev ||
                   partida.awayTeam.name.substring(0, 3).toUpperCase();
 
-                return (timesTabela.casa === timeCasaAbrev && timesTabela.fora === timeForaAbrev);
+                return (
+                  timesTabela.casa === timeCasaAbrev &&
+                  timesTabela.fora === timeForaAbrev
+                );
               });
 
               if (!jogoCorrespondente) {
@@ -3228,26 +3331,36 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
               }
 
               // Verificar se há resultado disponível
-              if (jogoCorrespondente.score.fullTime.home !== null &&
-                  jogoCorrespondente.score.fullTime.away !== null) {
-                
-                const resultadoAtual = resultadosAtuais[indexTabela] || { time1: "", time2: "" };
-                const novoResultadoCasa = jogoCorrespondente.score.fullTime.home.toString();
-                const novoResultadoFora = jogoCorrespondente.score.fullTime.away.toString();
+              if (
+                jogoCorrespondente.score.fullTime.home !== null &&
+                jogoCorrespondente.score.fullTime.away !== null
+              ) {
+                const resultadoAtual = resultadosAtuais[indexTabela] || {
+                  time1: "",
+                  time2: "",
+                };
+                const novoResultadoCasa =
+                  jogoCorrespondente.score.fullTime.home.toString();
+                const novoResultadoFora =
+                  jogoCorrespondente.score.fullTime.away.toString();
 
-                if (resultadoAtual.time1 !== novoResultadoCasa ||
-                    resultadoAtual.time2 !== novoResultadoFora) {
-                  
+                if (
+                  resultadoAtual.time1 !== novoResultadoCasa ||
+                  resultadoAtual.time2 !== novoResultadoFora
+                ) {
                   resultadosModificados = true;
                   resultadosAtuais[indexTabela] = {
                     time1: novoResultadoCasa,
                     time2: novoResultadoFora,
                   };
 
-                  if (inputsResultados[indexTabela * 2] &&
-                      inputsResultados[indexTabela * 2 + 1]) {
+                  if (
+                    inputsResultados[indexTabela * 2] &&
+                    inputsResultados[indexTabela * 2 + 1]
+                  ) {
                     inputsResultados[indexTabela * 2].value = novoResultadoCasa;
-                    inputsResultados[indexTabela * 2 + 1].value = novoResultadoFora;
+                    inputsResultados[indexTabela * 2 + 1].value =
+                      novoResultadoFora;
                   }
                 }
               }
@@ -3266,24 +3379,24 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
         }
 
         // Função auxiliar para extrair times de um jogo no formato "PAL x BOT"
-          function extrairTimesDoJogo(jogoTexto) {
-            const regex = /\s*(\w+)\s*x\s*(\w+)\s*/i;
-            const match = jogoTexto.match(regex);
-            
-            if (match) {
-              return {
-                casa: match[1].toUpperCase(),
-                fora: match[2].toUpperCase()
-              };
-            }
-            
-            return null;
+        function extrairTimesDoJogo(jogoTexto) {
+          const regex = /\s*(\w+)\s*x\s*(\w+)\s*/i;
+          const match = jogoTexto.match(regex);
+
+          if (match) {
+            return {
+              casa: match[1].toUpperCase(),
+              fora: match[2].toUpperCase(),
+            };
           }
 
-          // Função auxiliar para criar um identificador único do jogo
-          function criarIdentificadorJogo(timeCasa, timeFora) {
-            return `${timeCasa.toUpperCase()}_vs_${timeFora.toUpperCase()}`;
-          }
+          return null;
+        }
+
+        // Função auxiliar para criar um identificador único do jogo
+        function criarIdentificadorJogo(timeCasa, timeFora) {
+          return `${timeCasa.toUpperCase()}_vs_${timeFora.toUpperCase()}`;
+        }
 
         async function salvarResultadosNoSupabase(resultados) {
           try {
@@ -3297,7 +3410,7 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
 
             if (!data || data.length === 0) {
               console.log(
-                "Nenhum registro encontrado para atualizar os resultados"
+                "Nenhum registro encontrado para atualizar os resultados",
               );
               return;
             }
@@ -3397,14 +3510,15 @@ function calcularVitoriasEmpatesSaldo(ranking, valoresRodadaConfig, valorRodadaA
         }
 
         // Limpar ao sair
-        window.addEventListener("beforeunload", function(event) {
-            pararAtualizacaoAutomatica();
+        window.addEventListener("beforeunload", function (event) {
+          pararAtualizacaoAutomatica();
 
-            if (isSaving) {
-                const message = "Existem dados sendo salvos. Se você sair agora, as alterações serão perdidas.";
-                event.returnValue = message; // Padrão para navegadores modernos
-                return message;
-            }
+          if (isSaving) {
+            const message =
+              "Existem dados sendo salvos. Se você sair agora, as alterações serão perdidas.";
+            event.returnValue = message; // Padrão para navegadores modernos
+            return message;
+          }
         });
       </script>
     </div>
