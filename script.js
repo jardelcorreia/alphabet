@@ -64,7 +64,7 @@
             abrev: "SPT",
             nome: "Sport",
             escudo:
-              "https://logodetimes.com/times/sport-recife/logo-sport-recife-256.png",
+              "https://logodetimes.com/times/sport-recife/logo-sport-recif-256.png",
           },
           "SC Internacional": {
             abrev: "INT",
@@ -189,13 +189,13 @@
           const password = document.getElementById("password").value;
 
           try {
-            const response = await fetch("netlify/functions/senhas.js");
+            const response = await fetch("/.netlify/functions/senhas");
             if (!response.ok) throw new Error("Erro ao buscar senhas");
             const senhasCriptografadas = await response.json();
 
             if (senhasCriptografadas[username]) {
               const descriptResponse = await fetch(
-                "netlify/functions/descriptografar.js",
+                "/.netlify/functions/descriptografar",
                 {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -1189,6 +1189,7 @@
 
             const data = await response.json();
             todasPartidas = data.matches;
+            rodadaAtual = data.currentRound; // Usar a rodada atual da API
 
             partidasPorRodada = {};
             todasPartidas.forEach((partida) => {
@@ -1197,137 +1198,9 @@
               partidasPorRodada[rodada].push(partida);
             });
 
-            const rodadasComInfo = Object.keys(partidasPorRodada).map(
-              (numRodadaStr) => {
-                const numeroRodada = Number(numRodadaStr);
-                const jogosDaRodada = partidasPorRodada[numeroRodada];
-
-                let dataInicio = new Date("2999-12-31T23:59:59Z");
-                let temJogoAtivo = false;
-                let jogosNaoAdiados = 0;
-                let jogosNaoAdiadosFinalizados = 0;
-
-                if (jogosDaRodada.length > 0) {
-                  for (const jogo of jogosDaRodada) {
-                    if (jogo.utcDate) {
-                      const dataJogo = new Date(jogo.utcDate);
-                      if (dataJogo < dataInicio) {
-                        dataInicio = dataJogo;
-                      }
-                    }
-
-                    if (
-                      jogo.status === "IN_PLAY" ||
-                      jogo.status === "PAUSED" ||
-                      jogo.status === "LIVE"
-                    ) {
-                      temJogoAtivo = true;
-                    }
-
-                    if (
-                      jogo.status !== "POSTPONED" &&
-                      jogo.status !== "CANCELLED"
-                    ) {
-                      jogosNaoAdiados++;
-                      if (jogo.status === "FINISHED") {
-                        jogosNaoAdiadosFinalizados++;
-                      }
-                    }
-                  }
-                }
-
-                const todosJogosFinalizados = jogosDaRodada.every(
-                  (jogo) => jogo.status === "FINISHED",
-                );
-
-                const efetivamenteFinalizada =
-                  jogosNaoAdiados > 0 &&
-                  jogosNaoAdiados === jogosNaoAdiadosFinalizados;
-
-                return {
-                  numeroRodada,
-                  dataInicio,
-                  todosJogosFinalizados,
-                  efetivamenteFinalizada,
-                  temJogoAtivo,
-                };
-              },
-            );
-
-            rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
-
-            let rodadaParaExibir = 0;
-            const agora = new Date();
-            const hoje = new Date(agora);
-            hoje.setHours(0, 0, 0, 0); // Normaliza para o início do dia
-
-            const amanha = new Date(hoje);
-            amanha.setDate(hoje.getDate() + 1);
-
-            let rodadaAtiva = rodadasComInfo.find((r) => r.temJogoAtivo);
-
-            if (rodadaAtiva) {
-              // 1. Mostrar a rodada que tem jogo acontecendo agora
-              rodadaParaExibir = rodadaAtiva.numeroRodada;
-            } else {
-              let rodadasComJogoEmBreve = [];
-
-              // Procurar jogos hoje ou amanhã em qualquer rodada
-              for (const rodadaStr in partidasPorRodada) {
-                const jogosDaRodada = partidasPorRodada[rodadaStr];
-                const numeroRodada = parseInt(rodadaStr);
-                let temJogoHojeOuAmanha = false;
-
-                for (const jogo of jogosDaRodada) {
-                  if (jogo.status !== "FINISHED" && jogo.utcDate) {
-                    const dataJogo = new Date(jogo.utcDate);
-                    const diaDoJogo = new Date(dataJogo);
-                    diaDoJogo.setHours(0, 0, 0, 0);
-
-                    if (
-                      diaDoJogo.getTime() === hoje.getTime() ||
-                      diaDoJogo.getTime() === amanha.getTime()
-                    ) {
-                      temJogoHojeOuAmanha = true;
-                      break;
-                    }
-                  }
-                }
-
-                if (temJogoHojeOuAmanha) {
-                  rodadasComJogoEmBreve.push(numeroRodada);
-                }
-              }
-
-              if (rodadasComJogoEmBreve.length > 0) {
-                // 2. Mostrar a rodada mais próxima com jogos hoje ou amanhã
-                rodadaParaExibir = Math.min(...rodadasComJogoEmBreve);
-              } else {
-                // 3. Encontrar a primeira rodada que NÃO está efetivamente finalizada (ignorando jogos adiados)
-                let rodadaPendente = null;
-                for (const r of rodadasComInfo) {
-                  if (!r.efetivamenteFinalizada && !r.todosJogosFinalizados) {
-                    rodadaPendente = r.numeroRodada;
-                    break;
-                  }
-                }
-
-                if (rodadaPendente) {
-                  rodadaParaExibir = rodadaPendente;
-                } else {
-                  // 4. Fallback: Mostrar a última rodada de todas
-                  rodadaParaExibir =
-                    rodadasComInfo.length > 0
-                      ? rodadasComInfo[rodadasComInfo.length - 1].numeroRodada
-                      : 1;
-                }
-              }
-            }
-
-            rodadaAtual = rodadaParaExibir;
-            if (rodadasComInfo.length > 0) {
-              totalRodadas =
-                rodadasComInfo[rodadasComInfo.length - 1].numeroRodada;
+            const rodadasKeys = Object.keys(partidasPorRodada);
+            if (rodadasKeys.length > 0) {
+              totalRodadas = Math.max(...rodadasKeys.map(Number));
             } else {
               totalRodadas = 0;
             }
@@ -1340,10 +1213,10 @@
           } catch (error) {
             console.error("Erro ao buscar dados:", error);
             document.getElementById("calendario-jogos").innerHTML = `
-<div class="error">
-  <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
-</div>
-`;
+        <div class="error">
+          <p><strong>Erro ao carregar os dados:</strong> ${error.message}</p>
+        </div>
+      `;
           }
         }
 
