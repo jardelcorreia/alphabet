@@ -1184,8 +1184,7 @@
         async function buscarCalendario() {
           try {
             const response = await fetch("/.netlify/functions/fetchMatches");
-            if (!response.ok)
-              throw new Error(`Erro de rede: ${response.status}`);
+            if (!response.ok) throw new Error(`Erro de rede: ${response.status}`);
 
             const data = await response.json();
             todasPartidas = data.matches;

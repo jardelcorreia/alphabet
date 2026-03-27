@@ -1,4 +1,3 @@
-
 // Função Netlify melhorada para buscar dados da Football API
 // Versão com cache, status estável e retry automático
 
@@ -10,18 +9,16 @@ const lastApiCall = new Map();
 const getCacheTTL = (matches) => {
   if (!matches || matches.length === 0) return 5 * 60 * 1000; // 5 minutos se não há jogos
 
-  const hasLiveGames = matches.some(
-    (match) =>
-      ["IN_PLAY", "PAUSED", "HALFTIME"].includes(match.status?.toUpperCase()),
+  const hasLiveGames = matches.some((match) =>
+    ["IN_PLAY", "PAUSED", "HALFTIME"].includes(match.status?.toUpperCase()),
   );
 
   const hasFinishedGames = matches.some(
     (match) => match.status?.toUpperCase() === "FINISHED",
   );
 
-  const hasScheduledGames = matches.some(
-    (match) =>
-      ["SCHEDULED", "TIMED"].includes(match.status?.toUpperCase()),
+  const hasScheduledGames = matches.some((match) =>
+    ["SCHEDULED", "TIMED"].includes(match.status?.toUpperCase()),
   );
 
   // Determinar TTL baseado nos tipos de jogos
@@ -166,146 +163,19 @@ const normalizeMatchStatus = (match) => {
   }
 };
 
-// Processar e normalizar dados da API
-const processApiData = (data) => {
+const processApiData = (data, currentRound) => {
   if (!data || !data.matches) {
-    return data;
+    return {
+      ...data,
+      matches: [],
+      currentRound: currentRound,
+    };
   }
 
   const processedMatches = data.matches.map((match) =>
     normalizeMatchStatus(match),
   );
 
-  // Lógica para determinar a rodada atual
-  const partidasPorRodada = {};
-  processedMatches.forEach((partida) => {
-    const rodada = partida.matchday;
-    if (!partidasPorRodada[rodada]) partidasPorRodada[rodada] = [];
-    partidasPorRodada[rodada].push(partida);
-  });
-
-  const rodadasComInfo = Object.keys(partidasPorRodada).map((numRodadaStr) => {
-    const numeroRodada = Number(numRodadaStr);
-    const jogosDaRodada = partidasPorRodada[numeroRodada];
-
-    let dataInicio = new Date("2999-12-31T23:59:59Z");
-    let temJogoAtivo = false;
-    let jogosNaoAdiados = 0;
-    let jogosNaoAdiadosFinalizados = 0;
-
-    if (jogosDaRodada.length > 0) {
-      for (const jogo of jogosDaRodada) {
-        if (jogo.utcDate) {
-          const dataJogo = new Date(jogo.utcDate);
-          if (dataJogo < dataInicio) {
-            dataInicio = dataJogo;
-          }
-        }
-
-        if (
-          jogo.status === "IN_PLAY" ||
-          jogo.status === "PAUSED" ||
-          jogo.status === "LIVE"
-        ) {
-          temJogoAtivo = true;
-        }
-
-        if (jogo.status !== "POSTPONED" && jogo.status !== "CANCELLED") {
-          jogosNaoAdiados++;
-          if (jogo.status === "FINISHED") {
-            jogosNaoAdiadosFinalizados++;
-          }
-        }
-      }
-    }
-
-    const todosJogosFinalizados = jogosDaRodada.every(
-      (jogo) => jogo.status === "FINISHED",
-    );
-
-    const efetivamenteFinalizada =
-      jogosNaoAdiados > 0 && jogosNaoAdiados === jogosNaoAdiadosFinalizados;
-
-    return {
-      numeroRodada,
-      dataInicio,
-      todosJogosFinalizados,
-      efetivamenteFinalizada,
-      temJogoAtivo,
-    };
-  });
-
-  rodadasComInfo.sort((a, b) => a.numeroRodada - b.numeroRodada);
-
-  let rodadaParaExibir = 0;
-  const agora = new Date();
-  const hoje = new Date(agora);
-  hoje.setHours(0, 0, 0, 0); // Normaliza para o início do dia
-
-  const amanha = new Date(hoje);
-  amanha.setDate(hoje.getDate() + 1);
-
-  let rodadaAtiva = rodadasComInfo.find((r) => r.temJogoAtivo);
-
-  if (rodadaAtiva) {
-    // 1. Mostrar a rodada que tem jogo acontecendo agora
-    rodadaParaExibir = rodadaAtiva.numeroRodada;
-  } else {
-    let rodadasComJogoEmBreve = [];
-
-    // Procurar jogos hoje ou amanhã em qualquer rodada
-    for (const rodadaStr in partidasPorRodada) {
-      const jogosDaRodada = partidasPorRodada[rodadaStr];
-      const numeroRodada = parseInt(rodadaStr);
-      let temJogoHojeOuAmanha = false;
-
-      for (const jogo of jogosDaRodada) {
-        if (jogo.status !== "FINISHED" && jogo.utcDate) {
-          const dataJogo = new Date(jogo.utcDate);
-          const diaDoJogo = new Date(dataJogo);
-          diaDoJogo.setHours(0, 0, 0, 0);
-
-          if (
-            diaDoJogo.getTime() === hoje.getTime() ||
-            diaDoJogo.getTime() === amanha.getTime()
-          ) {
-            temJogoHojeOuAmanha = true;
-            break;
-          }
-        }
-      }
-
-      if (temJogoHojeOuAmanha) {
-        rodadasComJogoEmBreve.push(numeroRodada);
-      }
-    }
-
-    if (rodadasComJogoEmBreve.length > 0) {
-      // 2. Mostrar a rodada mais próxima com jogos hoje ou amanhã
-      rodadaParaExibir = Math.min(...rodadasComJogoEmBreve);
-    } else {
-      // 3. Encontrar a primeira rodada que NÃO está efetivamente finalizada (ignorando jogos adiados)
-      let rodadaPendente = null;
-      for (const r of rodadasComInfo) {
-        if (!r.efetivamenteFinalizada && !r.todosJogosFinalizados) {
-          rodadaPendente = r.numeroRodada;
-          break;
-        }
-      }
-
-      if (rodadaPendente) {
-        rodadaParaExibir = rodadaPendente;
-      } else {
-        // 4. Fallback: Mostrar a última rodada de todas
-        rodadaParaExibir =
-          rodadasComInfo.length > 0
-            ? rodadasComInfo[rodadasComInfo.length - 1].numeroRodada
-            : 1;
-      }
-    }
-  }
-
-  // Estatísticas de processamento
   const statusStats = {};
   processedMatches.forEach((match) => {
     const status = match.status;
@@ -317,7 +187,7 @@ const processApiData = (data) => {
   return {
     ...data,
     matches: processedMatches,
-    currentRound: rodadaParaExibir, // Adiciona a rodada atual na resposta
+    currentRound: currentRound, // Usa a rodada atual passada como argumento
     processing: {
       total: processedMatches.length,
       statusStats,
@@ -328,20 +198,12 @@ const processApiData = (data) => {
 
 // Função principal
 exports.handler = async (event, context) => {
-  const url = "https://api.football-data.org/v4/competitions/BSA/matches";
+  const competitionUrl = "https://api.football-data.org/v4/competitions/BSA";
+  const matchesUrl = "https://api.football-data.org/v4/competitions/BSA/matches";
   const apiKey = "5f121390e2cc480d8d0f8dba3b37a435";
 
-  // Parâmetros opcionais
   const forceRefresh = event.queryStringParameters?.forceRefresh === "true";
-  const round = event.queryStringParameters?.round;
-
-  // Construir URL com parâmetros
-  let finalUrl = url;
-  if (round) {
-    finalUrl += `?matchday=${round}`;
-  }
-
-  const cacheKey = `BSA_${round || "all"}`;
+  const cacheKey = "BSA_all_matches_and_round";
 
   console.log(
     `[FETCH START] Iniciando busca para ${cacheKey}, forceRefresh: ${forceRefresh}`,
@@ -350,7 +212,6 @@ exports.handler = async (event, context) => {
   try {
     let data;
 
-    // Verificar cache primeiro (a menos que forceRefresh)
     if (!forceRefresh && cache.has(cacheKey)) {
       const cachedEntry = cache.get(cacheKey);
       const age = Date.now() - cachedEntry.timestamp;
@@ -373,44 +234,41 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // Buscar da API se não tiver cache válido
     if (!data && (forceRefresh || shouldFetchFromApi(cacheKey))) {
       console.log("Buscando dados da API Football...");
 
-      const rawData = await fetchFromApiWithRetry(finalUrl, {
-        "X-Auth-Token": apiKey,
-        "User-Agent": "netlify-function/1.0",
-      });
+      // Buscar dados da competição e dos jogos em paralelo
+      const [competitionData, rawMatchesData] = await Promise.all([
+        fetchFromApiWithRetry(competitionUrl, { "X-Auth-Token": apiKey }),
+        fetchFromApiWithRetry(matchesUrl, { "X-Auth-Token": apiKey }),
+      ]);
 
-      console.log("Dados recebidos da API com sucesso!");
+      const currentRound =
+        competitionData?.currentSeason?.currentMatchday || 1;
 
-      // Processar e normalizar dados
-      data = processApiData(rawData);
+      data = processApiData(rawMatchesData, currentRound);
 
-      // Armazenar no cache
       cache.set(cacheKey, {
         data: data,
         timestamp: Date.now(),
       });
 
       console.log(`[CACHE STORED] Dados armazenados em cache para ${cacheKey}`);
-    } else if (!data) {
-      // Rate limited ou erro, tentar buscar do cache mesmo expirado
-      if (cache.has(cacheKey)) {
-        const cachedEntry = cache.get(cacheKey);
-        const age = Date.now() - cachedEntry.timestamp;
-        console.log(
-          `[CACHE FALLBACK] Usando cache expirado (${Math.floor(
-            age / 1000,
-          )}s atrás) devido ao rate limiting`,
-        );
-        data = cachedEntry.data;
-      } else {
-        throw new Error("Dados não disponíveis e não há cache de fallback");
-      }
+    } else if (!data && cache.has(cacheKey)) {
+      const cachedEntry = cache.get(cacheKey);
+      const age = Date.now() - cachedEntry.timestamp;
+      console.log(
+        `[CACHE FALLBACK] Usando cache expirado (${Math.floor(
+          age / 1000,
+        )}s atrás) devido ao rate limiting`,
+      );
+      data = cachedEntry.data;
     }
 
-    // Limpar cache antigo (manter apenas os últimos 10 itens)
+    if (!data) {
+      throw new Error("Dados não disponíveis e não há cache de fallback");
+    }
+
     if (cache.size > 10) {
       const oldestKey = cache.keys().next().value;
       cache.delete(oldestKey);
@@ -424,21 +282,20 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({
         ...data,
         meta: {
-          cached: !forceRefresh && cache.has(cacheKey),
+          cached: !data.processing, // Se não foi processado, veio do cache
           cacheKey,
           timestamp: new Date().toISOString(),
         },
       }),
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "public, max-age=30", // Cache do navegador por 30 segundos
+        "Cache-Control": "public, max-age=30",
       },
     };
   } catch (error) {
     console.error("Erro no fetch:", error.message);
     console.error("Stack trace:", error.stack);
 
-    // Tentar fallback do cache mesmo em caso de erro
     if (cache.has(cacheKey)) {
       const cachedEntry = cache.get(cacheKey);
       const age = Date.now() - cachedEntry.timestamp;
