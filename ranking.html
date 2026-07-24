@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ranking - AlphaBet 2025</title>
+    <title>Ranking - AlphaBet 2026</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -621,7 +621,7 @@
   <body>
     <div class="header">
       <h1 class="animate__animated animate__fadeInDown">
-        Ranking AlphaBet 2025
+        Ranking AlphaBet 2026
       </h1>
       <p class="animate__animated animate__fadeInUp animate__delay-1s">
         Lista de vencedores de cada rodada e placar do campeonato.
@@ -807,7 +807,9 @@
           if (dadosAtuais.ranking) {
             dadosAtuais.ranking.forEach((vencedores, index) => {
               const input = document.getElementById(`rodada-${index + 1}`);
-              if (input) input.value = vencedores || "";
+              if (input) {
+                input.value = vencedores || "";
+              }
 
               const valorInput = document.getElementById(
                 `valor-rodada-${index + 1}`
@@ -821,9 +823,16 @@
             });
           }
 
+          const historicoPontuacao = dadosAtuais.historico_pontuacao || {};
+
           exibirVitorias(
             dadosAtuais.vitorias_empates ||
-              calcularVitoriasEmpatesSaldo(dadosAtuais.ranking || [])
+              calcularVitoriasEmpatesSaldo(
+                dadosAtuais.ranking || [],
+                configCampeonato.valoresRodada,
+                configCampeonato.valorRodadaAtual
+              ),
+            historicoPontuacao
           );
         } catch (error) {
           console.error("Erro ao carregar ranking:", error);
@@ -931,7 +940,11 @@
 
           const dadosParaSalvar = {
             ranking: ranking,
-            vitorias_empates: calcularVitoriasEmpatesSaldo(ranking),
+            vitorias_empates: calcularVitoriasEmpatesSaldo(
+              ranking,
+              valoresRodadas, // This is configCampeonato.valoresRodada
+              configCampeonato.valorRodadaAtual
+            ),
             configuracao: {
               valoresRodada: valoresRodadas,
               valorRodadaAtual: configCampeonato.valorRodadaAtual,
@@ -955,6 +968,7 @@
 
           mostrarIndicadorSalvo();
           exibirVitorias(calcularVitoriasEmpatesSaldo(ranking));
+          carregarRanking();
         } catch (error) {
           console.error("Erro ao salvar ranking:", error);
           alert("Erro ao salvar. Verifique sua conexão.");
@@ -967,22 +981,49 @@
         setTimeout(() => indicador.classList.remove("show"), 3000);
       }
 
-      function exibirVitorias(resultados) {
+      function exibirVitorias(resultados, historicoPontuacao) {
         const vitoriasContainer = document.getElementById("vitorias");
         vitoriasContainer.innerHTML = "";
 
+        // Calcula o total de pontos para cada jogador baseado no histórico
+        const pontosTotais = {};
+
+        // Inicializa com os jogadores do ranking atual para garantir que todos apareçam
+        Object.keys(resultados).forEach(jogador => {
+            pontosTotais[jogador] = 0;
+        });
+
+        if (historicoPontuacao) {
+          Object.values(historicoPontuacao).forEach(rodada => {
+            Object.entries(rodada).forEach(([jogador, pontos]) => {
+              if (!pontosTotais[jogador]) pontosTotais[jogador] = 0;
+              pontosTotais[jogador] += pontos;
+            });
+          });
+        }
+
         const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
-          const pontosA = a[1].vitorias * 3 + a[1].empates;
-          const pontosB = b[1].vitorias * 3 + b[1].empates;
-          if (pontosB !== pontosA) return pontosB - pontosA;
+          const pontosTotalA = pontosTotais[a[0]] || 0;
+          const pontosTotalB = pontosTotais[b[0]] || 0;
+
+          // Critério 1: Número de Vitórias
           if (b[1].vitorias !== a[1].vitorias)
             return b[1].vitorias - a[1].vitorias;
+
+          // Critério 2: Número de Empates
+          if (b[1].empates !== a[1].empates) return b[1].empates - a[1].empates;
+
+          // Critério 3: Total de Pontos
+          if (pontosTotalB !== pontosTotalA) return pontosTotalB - pontosTotalA;
+
           return a[0].localeCompare(b[0]);
         });
 
         resultadosOrdenados.forEach(
           ([jogador, { vitorias, empates, saldo }], index) => {
-            const pontos = vitorias * 3 + empates;
+            // Usa o total calculado do histórico ou 0 se não houver
+            const pontos = pontosTotais[jogador] || 0;
+
             const card = document.createElement("div");
             card.className = "player-card";
             if (index < 3) card.classList.add(`position-${index + 1}`);
