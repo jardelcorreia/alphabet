@@ -1324,34 +1324,28 @@
         modalTitle.textContent = `Histórico - ${jogador}`;
         historyList.innerHTML = "";
 
-        if (!historicoPontuacao || Object.keys(historicoPontuacao).length === 0) {
-          historyList.innerHTML = `<li class="history-item" style="justify-content: center; color: var(--gray);">Nenhum histórico disponível</li>`;
-        } else {
-          // Extrair rodadas e ordenar
-          const rodadas = Object.keys(historicoPontuacao).sort((a, b) => {
-            const numA = parseInt(a.replace(/\D/g, '')) || 0;
-            const numB = parseInt(b.replace(/\D/g, '')) || 0;
-            return numA - numB;
-          });
+        let encontrouPontos = false;
 
-          let encontrouPontos = false;
-          rodadas.forEach(rodada => {
-            const pontos = historicoPontuacao[rodada]?.[jogador];
-            if (pontos !== undefined) {
-              encontrouPontos = true;
-              const li = document.createElement("li");
-              li.className = "history-item";
-              li.innerHTML = `
-                <span class="history-round">${rodada}</span>
-                <span class="history-points">${pontos} pts</span>
-              `;
-              historyList.appendChild(li);
-            }
-          });
+        // Loop de 1 a 38 para garantir que todas as rodadas do campeonato sejam exibidas
+        for (let i = 1; i <= 38; i++) {
+          const nomeRodada = `Rodada ${i}`;
+          const pontos = historicoPontuacao ? historicoPontuacao[nomeRodada]?.[jogador] : undefined;
 
-          if (!encontrouPontos) {
-            historyList.innerHTML = `<li class="history-item" style="justify-content: center; color: var(--gray);">Nenhuma pontuação registrada</li>`;
+          if (pontos !== undefined) {
+            encontrouPontos = true;
           }
+
+          const li = document.createElement("li");
+          li.className = "history-item";
+          li.innerHTML = `
+            <span class="history-round">${nomeRodada}</span>
+            <span class="history-points" style="${pontos === undefined ? 'color: var(--gray); font-weight: normal;' : ''}">${pontos !== undefined ? pontos + ' pts' : '-'}</span>
+          `;
+          historyList.appendChild(li);
+        }
+
+        if (!encontrouPontos) {
+           // Se quiser pode exibir uma mensagem extra, mas agora já vai preencher a lista toda com hifens
         }
 
         modal.classList.add("show");
@@ -1378,11 +1372,6 @@
         }
         tbody.innerHTML = "";
 
-        if (!historicoPontuacao || Object.keys(historicoPontuacao).length === 0) {
-           tbody.innerHTML = `<tr><td colspan="${listaJogadores.length + 1}">Nenhum histórico disponível</td></tr>`;
-           return;
-        }
-
         // Criar colunas para jogadores
         listaJogadores.forEach(jogador => {
           const th = document.createElement("th");
@@ -1390,32 +1379,31 @@
           header.appendChild(th);
         });
 
-        // Extrair rodadas e ordenar numericamente
-        const rodadas = Object.keys(historicoPontuacao).sort((a, b) => {
-          const numA = parseInt(a.replace(/\D/g, '')) || 0;
-          const numB = parseInt(b.replace(/\D/g, '')) || 0;
-          return numA - numB;
-        });
-
-        // Preencher linhas
-        rodadas.forEach(rodada => {
+        // Loop de 1 a 38 para garantir todas as rodadas
+        for (let i = 1; i <= 38; i++) {
+          const nomeRodada = `Rodada ${i}`;
           const tr = document.createElement("tr");
 
           const tdRodada = document.createElement("td");
           tdRodada.className = "history-round";
-          tdRodada.textContent = rodada;
+          tdRodada.textContent = nomeRodada;
           tr.appendChild(tdRodada);
 
           listaJogadores.forEach(jogador => {
             const td = document.createElement("td");
-            const pontos = historicoPontuacao[rodada]?.[jogador];
+            const pontos = historicoPontuacao ? historicoPontuacao[nomeRodada]?.[jogador] : undefined;
+
             td.textContent = pontos !== undefined ? pontos : "-";
-            if(pontos !== undefined) td.className = "history-points";
+            if (pontos === undefined) {
+                td.style.color = "var(--gray)";
+            } else {
+                td.className = "history-points";
+            }
             tr.appendChild(td);
           });
 
           tbody.appendChild(tr);
-        });
+        }
       }
 
       // Inicialização
