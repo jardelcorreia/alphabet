@@ -615,6 +615,198 @@
           padding: 5px;
         }
       }
+
+      /* ===== HISTÓRICO MODAL ===== */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(4px);
+      }
+
+      .modal-overlay.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 400px;
+        max-height: 80vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      body.dark-mode .modal-content {
+        background: #1e293b;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .modal-overlay.show .modal-content {
+        transform: translateY(0);
+      }
+
+      .modal-header {
+        padding: 1.5rem;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-header h3 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      .modal-close {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+      }
+
+      .modal-close:hover {
+        opacity: 1;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+        overflow-y: auto;
+        color: var(--dark);
+      }
+
+      body.dark-mode .modal-body {
+        color: var(--light);
+      }
+
+      .history-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-mode .history-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .history-item:last-child {
+        border-bottom: none;
+      }
+
+      .history-round {
+        font-weight: 600;
+        color: var(--primary-dark);
+      }
+
+      body.dark-mode .history-round {
+        color: var(--primary-light);
+      }
+
+      .history-points {
+        font-weight: 700;
+      }
+
+      /* ===== TABELA DE HISTÓRICO ===== */
+      .history-table-container {
+        width: 100%;
+        max-width: 1400px;
+        margin: 2rem auto;
+      }
+
+      .history-table-wrapper {
+        overflow-x: auto;
+      }
+
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+
+      .history-table th, .history-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      body.dark-mode .history-table th, body.dark-mode .history-table td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .history-table th {
+        background: rgba(37, 99, 235, 0.1);
+        color: var(--primary-dark);
+        font-weight: 700;
+      }
+
+      body.dark-mode .history-table th {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--primary-light);
+      }
+
+      .history-table tr:hover {
+        background: rgba(0, 0, 0, 0.02);
+      }
+
+      body.dark-mode .history-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .history-btn {
+        margin-top: 1rem;
+        width: 100%;
+        padding: 8px;
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        border-radius: 6px;
+        font-family: 'Kanit', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .history-btn:hover {
+        background: var(--primary);
+        color: white;
+      }
+
+      body.dark-mode .history-btn {
+        border-color: var(--primary-light);
+        color: var(--primary-light);
+      }
+
+      body.dark-mode .history-btn:hover {
+        background: var(--primary-light);
+        color: var(--dark);
+      }
     </style>
   </head>
 
@@ -650,9 +842,41 @@
       </div>
     </div>
 
+    <div class="history-table-container card animate__animated animate__fadeInUp">
+      <div class="card-header">
+        <h2><i class="fas fa-list-ol"></i> Histórico Detalhado por Rodada</h2>
+      </div>
+      <div class="card-body history-table-wrapper">
+        <table class="history-table" id="tabela-historico">
+          <thead>
+            <tr id="tabela-historico-header">
+              <th>Rodada</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-historico-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="saved-indicator" id="saved-indicator">
       <i class="fas fa-check-circle"></i>
       <span>Dados salvos com sucesso!</span>
+    </div>
+
+    <!-- Modal de Histórico -->
+    <div class="modal-overlay" id="history-modal" onclick="fecharModalClickFora(event)">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-player-name">Histórico</h3>
+          <button class="modal-close" onclick="fecharModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <ul class="history-list" id="modal-history-list">
+            <!-- Preenchido via JS -->
+          </ul>
+        </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1019,6 +1243,9 @@
           return a[0].localeCompare(b[0]);
         });
 
+        // Popular a Tabela de Histórico Detalhado
+        popularTabelaHistorico(historicoPontuacao, Object.keys(resultados));
+
         resultadosOrdenados.forEach(
           ([jogador, { vitorias, empates, saldo }], index) => {
             // Usa o total calculado do histórico ou 0 se não houver
@@ -1070,6 +1297,14 @@
             card.appendChild(posicao);
             card.appendChild(nome);
             card.appendChild(statsContainer);
+
+            // Add history button
+            const historyBtn = document.createElement("button");
+            historyBtn.className = "history-btn";
+            historyBtn.innerHTML = '<i class="fas fa-history"></i> Ver Histórico';
+            historyBtn.onclick = () => abrirModal(jogador, historicoPontuacao);
+            card.appendChild(historyBtn);
+
             vitoriasContainer.appendChild(card);
 
             setTimeout(() => {
@@ -1078,6 +1313,109 @@
             }, index * 150);
           }
         );
+      }
+
+      // Funções do Modal e Tabela de Histórico
+      function abrirModal(jogador, historicoPontuacao) {
+        const modal = document.getElementById("history-modal");
+        const modalTitle = document.getElementById("modal-player-name");
+        const historyList = document.getElementById("modal-history-list");
+
+        modalTitle.textContent = `Histórico - ${jogador}`;
+        historyList.innerHTML = "";
+
+        if (!historicoPontuacao || Object.keys(historicoPontuacao).length === 0) {
+          historyList.innerHTML = `<li class="history-item" style="justify-content: center; color: var(--gray);">Nenhum histórico disponível</li>`;
+        } else {
+          // Extrair rodadas e ordenar
+          const rodadas = Object.keys(historicoPontuacao).sort((a, b) => {
+            const numA = parseInt(a.replace(/\D/g, '')) || 0;
+            const numB = parseInt(b.replace(/\D/g, '')) || 0;
+            return numA - numB;
+          });
+
+          let encontrouPontos = false;
+          rodadas.forEach(rodada => {
+            const pontos = historicoPontuacao[rodada]?.[jogador];
+            if (pontos !== undefined) {
+              encontrouPontos = true;
+              const li = document.createElement("li");
+              li.className = "history-item";
+              li.innerHTML = `
+                <span class="history-round">${rodada}</span>
+                <span class="history-points">${pontos} pts</span>
+              `;
+              historyList.appendChild(li);
+            }
+          });
+
+          if (!encontrouPontos) {
+            historyList.innerHTML = `<li class="history-item" style="justify-content: center; color: var(--gray);">Nenhuma pontuação registrada</li>`;
+          }
+        }
+
+        modal.classList.add("show");
+      }
+
+      function fecharModal() {
+        const modal = document.getElementById("history-modal");
+        modal.classList.remove("show");
+      }
+
+      function fecharModalClickFora(event) {
+        if (event.target.id === "history-modal") {
+          fecharModal();
+        }
+      }
+
+      function popularTabelaHistorico(historicoPontuacao, listaJogadores) {
+        const header = document.getElementById("tabela-historico-header");
+        const tbody = document.getElementById("tabela-historico-body");
+
+        // Limpar
+        while(header.children.length > 1) {
+          header.removeChild(header.lastChild);
+        }
+        tbody.innerHTML = "";
+
+        if (!historicoPontuacao || Object.keys(historicoPontuacao).length === 0) {
+           tbody.innerHTML = `<tr><td colspan="${listaJogadores.length + 1}">Nenhum histórico disponível</td></tr>`;
+           return;
+        }
+
+        // Criar colunas para jogadores
+        listaJogadores.forEach(jogador => {
+          const th = document.createElement("th");
+          th.textContent = jogador;
+          header.appendChild(th);
+        });
+
+        // Extrair rodadas e ordenar numericamente
+        const rodadas = Object.keys(historicoPontuacao).sort((a, b) => {
+          const numA = parseInt(a.replace(/\D/g, '')) || 0;
+          const numB = parseInt(b.replace(/\D/g, '')) || 0;
+          return numA - numB;
+        });
+
+        // Preencher linhas
+        rodadas.forEach(rodada => {
+          const tr = document.createElement("tr");
+
+          const tdRodada = document.createElement("td");
+          tdRodada.className = "history-round";
+          tdRodada.textContent = rodada;
+          tr.appendChild(tdRodada);
+
+          listaJogadores.forEach(jogador => {
+            const td = document.createElement("td");
+            const pontos = historicoPontuacao[rodada]?.[jogador];
+            td.textContent = pontos !== undefined ? pontos : "-";
+            if(pontos !== undefined) td.className = "history-points";
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
       }
 
       // Inicialização
