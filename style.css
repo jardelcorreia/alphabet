@@ -1480,6 +1480,10 @@ TABLE OF CONTENTS:
       }
 
       @media (max-width: 480px) {
+        .hide-on-small-mobile { 
+          display: none; 
+        }
+
         .toggle-visibility-container button {
           font-size: 0.9rem;
           padding: var(--space-xs) var(--space-sm);
