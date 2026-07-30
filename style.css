@@ -1653,7 +1653,7 @@ TABLE OF CONTENTS:
 
 @media (max-width: 600px) {
   .hide-mobile { display: none; }
-  .col-time span { max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem; }
+  .col-time span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem; }
   .tabela-classificacao { font-size: 0.8rem; }
   .logo-time { width: 20px; height: 20px; }
   .col-pos { width: 25px; }
