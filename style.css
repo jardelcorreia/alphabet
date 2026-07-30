@@ -165,7 +165,6 @@ TABLE OF CONTENTS:
         max-width: 800px;
         margin: 0 auto var(--space-lg);
         overflow-x: auto;
-        overflow: hidden;
         background: rgba(255, 255, 255, 0.95);
         border-radius: var(--radius-lg);
         box-shadow: var(--shadow-md);
@@ -1620,6 +1619,7 @@ TABLE OF CONTENTS:
 /* Classificação Table */
 .tabela-container {
   overflow-x: auto;
+  overscroll-behavior-x: contain;
   background: var(--surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
