@@ -1630,11 +1630,15 @@ TABLE OF CONTENTS:
   border-collapse: collapse;
   text-align: center;
   font-size: 0.9rem;
+  table-layout: fixed; /* Force column widths */
 }
 .tabela-classificacao th,
 .tabela-classificacao td {
   padding: var(--space-sm);
   border-bottom: 1px solid var(--border);
+  white-space: nowrap; /* Prevent wrapping by default */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tabela-classificacao th {
   background: var(--background);
@@ -1646,17 +1650,19 @@ TABLE OF CONTENTS:
 .tabela-classificacao tr:last-child td {
   border-bottom: none;
 }
-.col-pos { width: 40px; font-weight: 700; color: var(--text-secondary); }
-.col-time { text-align: left; display: flex; align-items: center; gap: var(--space-sm); font-weight: 600; }
+.col-pos { width: 8%; font-weight: 700; color: var(--text-secondary); }
+.col-time { width: 40%; text-align: left; display: flex; align-items: center; gap: var(--space-sm); font-weight: 600; }
 .logo-time { width: 24px; height: 24px; object-fit: contain; }
-.col-pts { font-weight: 700; color: var(--primary); }
+.col-pts { width: 10%; font-weight: 700; color: var(--primary); }
+.col-pj, .col-v, .col-e, .col-d, .col-sg { width: 8.4%; } /* (100 - 8 - 40 - 10) / 5 = 8.4 */
+
 
 @media (max-width: 600px) {
   .hide-mobile { display: none; }
   .col-time span { white-space: normal; word-break: break-word; font-size: 0.85rem; }
-  .tabela-classificacao { font-size: 0.8rem; }
+  .tabela-classificacao { font-size: 0.8rem; table-layout: auto; }
+  .tabela-classificacao th, .tabela-classificacao td { padding: 8px 4px; white-space: normal; }
   .logo-time { width: 20px; height: 20px; }
   .col-pos { width: 25px; }
-  .col-time { gap: 4px; }
-  .tabela-classificacao th, .tabela-classificacao td { padding: 8px 4px; }
+  .col-time { gap: 4px; width: auto; }
 }
