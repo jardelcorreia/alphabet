@@ -352,6 +352,26 @@
             }
           });
 
+          // Event Listeners para a Classificação (Segmented Control)
+          document.getElementById('btn-jogos')?.addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('btn-classificacao').classList.remove('active');
+            document.getElementById('view-jogos').classList.remove('hidden');
+            document.getElementById('view-classificacao').classList.add('hidden');
+          });
+
+          document.getElementById('btn-classificacao')?.addEventListener('click', function() {
+            this.classList.add('active');
+            document.getElementById('btn-jogos').classList.remove('active');
+            document.getElementById('view-classificacao').classList.remove('hidden');
+            document.getElementById('view-jogos').classList.add('hidden');
+
+            // Fetch standings se ainda não carregou
+            if (!document.getElementById('corpo-classificacao').dataset.loaded) {
+              carregarClassificacao();
+            }
+          });
+
           document.getElementById("proxima").addEventListener("click", () => {
             if (rodadaAtual < totalRodadas) {
               rodadaAtual++;
@@ -1688,3 +1708,65 @@
           }
         });
       
+
+        // Função para buscar e renderizar a classificação do campeonato
+        async function carregarClassificacao() {
+          const tbody = document.getElementById('corpo-classificacao');
+          tbody.innerHTML = '<tr><td colspan="8" class="loading">Carregando classificação...</td></tr>';
+
+          try {
+            const response = await fetch('/.netlify/functions/fetchStandings');
+            const data = await response.json();
+
+            if (data && data.standings && data.standings.length > 0) {
+              tbody.innerHTML = ''; // Limpar loading
+
+              data.standings.forEach(teamData => {
+                const team = teamData.team;
+                const pos = teamData.position;
+
+                // Mapeamento do nome da API para a chave do timesInfo (baseado na lógica atual do app)
+                let logoUrl = team.crest; // default to API crest
+
+                // Tentar encontrar o time correspondente no timesInfo para usar a logo local/logodetimes
+                for (const key in timesInfo) {
+                  const info = timesInfo[key];
+                  if (team.shortName === info.nomeCurto || team.name === info.nomeCompleto || team.tla === info.abreviacao) {
+                    logoUrl = info.logo;
+                    break;
+                  }
+                  // Alguns mapeamentos extras comuns
+                  if (team.name.includes("Athletico") && key.includes("Athletico") ||
+                      team.name.includes("Atletico Mineiro") && key.includes("Atlético-MG") ||
+                      team.name.includes("Flamengo") && key.includes("Flamengo")) {
+                     logoUrl = info.logo;
+                     break;
+                  }
+                }
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                  <td class="col-pos">${pos}</td>
+                  <td class="col-time">
+                    <img src="${logoUrl}" alt="${team.name}" class="logo-time" onerror="this.src='${team.crest}'">
+                    <span>${team.shortName}</span>
+                  </td>
+                  <td class="col-pts">${teamData.points}</td>
+                  <td class="col-j">${teamData.playedGames}</td>
+                  <td class="col-v hide-mobile">${teamData.won}</td>
+                  <td class="col-e hide-mobile">${teamData.draw}</td>
+                  <td class="col-d hide-mobile">${teamData.lost}</td>
+                  <td class="col-sg">${teamData.goalDifference}</td>
+                `;
+                tbody.appendChild(tr);
+              });
+
+              tbody.dataset.loaded = "true";
+            } else {
+              throw new Error("Dados da classificação não encontrados");
+            }
+          } catch (error) {
+            console.error("Erro ao carregar classificação:", error);
+            tbody.innerHTML = '<tr><td colspan="8" class="loading">Erro ao carregar classificação. Tente novamente mais tarde.</td></tr>';
+          }
+        }

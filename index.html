@@ -104,14 +104,43 @@
           <div class="subtitulo">Acompanhe todos os jogos do campeonato</div>
         </header>
 
-        <div class="navegacao">
-          <button id="anterior" disabled>&larr; Rodada Anterior</button>
-          <span id="rodada-atual"></span>
-          <button id="proxima">Próxima Rodada &rarr;</button>
+        <div class="segmented-control">
+          <button id="btn-jogos" class="segment-btn active">Jogos</button>
+          <button id="btn-classificacao" class="segment-btn">Classificação</button>
         </div>
 
-        <div id="calendario-jogos">
-          <div class="loading">Carregando jogos</div>
+        <div id="view-jogos">
+          <div class="navegacao">
+            <button id="anterior" disabled>&larr; Rodada Anterior</button>
+            <span id="rodada-atual"></span>
+            <button id="proxima">Próxima Rodada &rarr;</button>
+          </div>
+
+          <div id="calendario-jogos">
+            <div class="loading">Carregando jogos</div>
+          </div>
+        </div>
+
+        <div id="view-classificacao" class="hidden">
+          <div class="tabela-container">
+            <table class="tabela-classificacao">
+              <thead>
+                <tr>
+                  <th class="col-pos">#</th>
+                  <th class="col-time">Clube</th>
+                  <th class="col-pts">Pts</th>
+                  <th class="col-j">PJ</th>
+                  <th class="col-v hide-mobile">V</th>
+                  <th class="col-e hide-mobile">E</th>
+                  <th class="col-d hide-mobile">D</th>
+                  <th class="col-sg">SG</th>
+                </tr>
+              </thead>
+              <tbody id="corpo-classificacao">
+                <tr><td colspan="8" class="loading">Carregando classificação...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 

@@ -1576,3 +1576,76 @@ TABLE OF CONTENTS:
           font-size: 1.125rem;
         }
       }
+
+/* Segmented Control */
+.segmented-control {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 4px;
+  margin: var(--space-md) auto var(--space-lg);
+  width: 100%;
+  max-width: 400px;
+  box-shadow: var(--shadow-sm);
+}
+.segment-btn {
+  flex: 1;
+  padding: var(--space-sm) var(--space-md);
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+}
+.segment-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+.segment-btn:not(.active):hover {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+}
+
+/* Classificação Table */
+.tabela-container {
+  overflow-x: auto;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+}
+.tabela-classificacao {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.tabela-classificacao th,
+.tabela-classificacao td {
+  padding: var(--space-sm);
+  border-bottom: 1px solid var(--border);
+}
+.tabela-classificacao th {
+  background: var(--background);
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+.tabela-classificacao tr:last-child td {
+  border-bottom: none;
+}
+.col-pos { width: 40px; font-weight: 700; color: var(--text-secondary); }
+.col-time { text-align: left; display: flex; align-items: center; gap: var(--space-sm); font-weight: 600; }
+.logo-time { width: 24px; height: 24px; object-fit: contain; }
+.col-pts { font-weight: 700; color: var(--primary); }
+
+@media (max-width: 600px) {
+  .hide-mobile { display: none; }
+  .col-time span { max-width: 120px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
