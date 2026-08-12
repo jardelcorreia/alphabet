@@ -1,0 +1,21 @@
+{
+  "name": "AlphaBet",
+  "short_name": "AlphaBet",
+  "description": "Aplicativo de apostas esportivas AlphaBet",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3a86ff",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
