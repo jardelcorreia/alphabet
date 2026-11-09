@@ -956,7 +956,7 @@ body.dark-mode .tab-button.active {
               perdedores.forEach((perdedor) => {
                 vitoriasEmpates[perdedor].saldo -= valorRodada;
               });
-            } else if (listaVencedores.length === 3) {.
+            } else if (listaVencedores.length === 3) {
               const valorPorPerdedor = valorRodada / 3;
               listaVencedores.forEach((vencedor) => {
                 vitoriasEmpates[vencedor].saldo += valorPorPerdedor * perdedores.length;
