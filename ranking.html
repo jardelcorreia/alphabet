@@ -1036,37 +1036,37 @@ body.dark-mode .tab-button.active {
         setTimeout(() => indicador.classList.remove("show"), 3000);
       }
 
-      function exibirVitorias(resultados, historicoPontuacao, rodadaInicio, rodadaFim) {
+    function exibirVitorias(resultados, historicoPontuacao, rodadaInicio, rodadaFim) {
         const vitoriasContainer = document.getElementById("vitorias");
         vitoriasContainer.innerHTML = "";
 
-        // Calcula o total de pontos para cada jogador baseado no histórico
         const pontosTotais = {};
         jogadores.forEach(j => pontosTotais[j] = 0);
 
         if (historicoPontuacao) {
-          for(let i = rodadaInicio; i <= rodadaFim; i++) {
-            if(historicoPontuacao[i]) {
-                Object.entries(historicoPontuacao[i]).forEach(([jogador, pontos]) => {
-                    if (!pontosTotais[jogador]) pontosTotais[jogador] = 0;
-                    pontosTotais[jogador] += pontos;
-                });
+          Object.keys(historicoPontuacao).forEach(rodadaNumStr => {
+            const rodadaNum = parseInt(rodadaNumStr, 10);
+            if (!isNaN(rodadaNum) && rodadaNum >= rodadaInicio && rodadaNum <= rodadaFim) {
+              const rodadaPontos = historicoPontuacao[rodadaNumStr];
+              Object.entries(rodadaPontos).forEach(([jogador, pontos]) => {
+                if (pontosTotais.hasOwnProperty(jogador)) {
+                  pontosTotais[jogador] += pontos;
+                }
+              });
             }
-          }
+          });
         }
+
 
         const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
           const pontosTotalA = pontosTotais[a[0]] || 0;
           const pontosTotalB = pontosTotais[b[0]] || 0;
 
-          // Critério 1: Número de Vitórias
           if (b[1].vitorias !== a[1].vitorias)
             return b[1].vitorias - a[1].vitorias;
 
-          // Critério 2: Número de Empates
           if (b[1].empates !== a[1].empates) return b[1].empates - a[1].empates;
 
-          // Critério 3: Total de Pontos
           if (pontosTotalB !== pontosTotalA) return pontosTotalB - pontosTotalA;
 
           return a[0].localeCompare(b[0]);
