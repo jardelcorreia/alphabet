@@ -1,1092 +1,663 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ranking - AlphaBet 2026</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-    />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap");
-
-      /* ===== VARIÁVEIS ===== */
-      :root {
-        --primary: #2563eb;
-        --primary-dark: #1d4ed8;
-        --primary-light: #93c5fd;
-        --primary-bg: #e0f2fe;
-        --secondary: #9333ea;
-        --accent: #f59e0b;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --dark: #1f2937;
-        --light: #f9fafb;
-        --gray: #6b7280;
-        --gray-light: #f3f4f6;
-      }
-
-      /* ===== BASE ===== */
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Kanit", sans-serif;
-        background: linear-gradient(135deg, #dbeafe, #bfdbfe, #c7d2fe);
-        color: var(--dark);
-        min-height: 100vh;
-        padding: 2rem 1rem;
-        overflow-x: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      body.dark-mode {
-        background: linear-gradient(135deg, #1e293b, #334155, #475569);
-        color: var(--light);
-      }
-
-      /* ===== TIPOGRAFIA ===== */
-      input,
-      input::placeholder,
-      textarea,
-      textarea::placeholder {
-        font-family: "Kanit", sans-serif;
-        font-weight: 400;
-      }
-
-      .valor-rodada-input,
-      .winner-input {
-        font-family: "Kanit", sans-serif;
-        font-weight: 400;
-        letter-spacing: 0.3px;
-      }
-
-      .winner-input::placeholder {
-        font-family: "Kanit", sans-serif;
-        font-weight: 300;
-        color: var(--gray);
-        opacity: 0.8;
-      }
-
-      body.dark-mode .winner-input::placeholder {
-        color: var(--gray-light);
-        opacity: 0.7;
-      }
-
-      /* ===== LAYOUT ===== */
-      .header {
-        text-align: center;
-        margin-bottom: 2rem;
-        width: 100%;
-      }
-
-      .header h1 {
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--primary-dark);
-        margin-bottom: 0.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      body.dark-mode .header h1 {
-        color: var(--primary-light);
-      }
-
-      .header p {
-        font-size: 1.1rem;
-        color: var(--dark);
-        opacity: 0.8;
-      }
-
-      body.dark-mode .header p {
-        color: var(--gray-light);
-      }
-
-      .main-container {
-        display: flex;
-        gap: 2rem;
-        width: 100%;
-        max-width: 1400px;
-        margin: 0 auto;
-        align-items: flex-start;
-      }
-
-      /* ===== COMPONENTES ===== */
-      .card {
-        flex: 1;
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        overflow: hidden;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: transform 0.3s, box-shadow 0.3s;
-      }
-
-      body.dark-mode .card {
-        background: rgba(30, 41, 59, 0.95);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .card-header {
-        background: var(--primary);
-        color: white;
-        padding: 1.5rem;
-        text-align: center;
-        position: relative;
-      }
-
-      .card-header h2 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        margin: 0;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-
-      .card-header::after {
-        content: "";
-        position: absolute;
-        bottom: -10px;
-        left: 0;
-        width: 100%;
-        height: 10px;
-        background: linear-gradient(
-          to bottom right,
-          transparent 49%,
-          rgba(255, 255, 255, 0.1) 50%,
-          rgba(255, 255, 255, 0.1)
-        );
-      }
-
-      .card-body {
-        padding: 2rem;
-        max-height: 70vh;
-        overflow-y: auto;
-      }
-
-      .card-body::-webkit-scrollbar {
-        width: 8px;
-      }
-
-      .card-body::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.05);
-        border-radius: 4px;
-      }
-
-      .card-body::-webkit-scrollbar-thumb {
-        background: var(--primary-light);
-        border-radius: 4px;
-      }
-
-      /* ===== FORMULÁRIOS ===== */
-      .input-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 12px;
-        padding: 6px 8px;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-      }
-
-      .input-container:hover {
-        background: var(--primary-bg);
-      }
-
-      body.dark-mode .input-container:hover {
-        background: rgba(255, 255, 255, 0.1);
-      }
-
-      .rodada-label {
-        font-size: 0.9rem;
-        font-weight: 700;
-        color: var(--primary);
-        min-width: 30px;
-        text-align: center;
-        padding: 6px;
-        background: var(--primary-bg);
-        border-radius: 6px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      }
-
-      .valor-container {
-        display: flex;
-        align-items: center;
-        margin: 0 5px;
-      }
-
-      .currency-prefix {
-        margin-right: 3px;
-        font-weight: 600;
-        color: var(--primary-dark);
-        font-size: 0.8rem;
-      }
-
-      body.dark-mode .currency-prefix {
-        color: var(--primary-light);
-      }
-
-      .valor-rodada-input {
-        width: 42px;
-        padding: 3px;
-        border: 2px solid var(--primary-light);
-        border-radius: 6px;
-        background: rgba(255, 255, 255, 0.95);
-        font-family: "Kanit", sans-serif;
-        font-size: 0.8rem;
-        color: var(--primary-dark);
-        transition: all 0.3s ease;
-      }
-
-      body.dark-mode .valor-rodada-input {
-        background: rgba(37, 99, 235, 0.1);
-        color: var(--primary-light);
-        border-color: rgba(147, 197, 253, 0.3);
-      }
-
-      .winner-input {
-        flex: 1;
-        padding: 8px;
-        border: 2px solid rgba(0, 0, 0, 0.1);
-        border-radius: 6px;
-        font-size: 0.85rem;
-        background: white;
-        transition: all 0.3s;
-      }
-
-      body.dark-mode .winner-input {
-        background: #334155;
-        color: var(--light);
-        border: 2px solid rgba(255, 255, 255, 0.1);
-      }
-
-      .winner-input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
-        outline: none;
-      }
-
-      /* ===== CARDS DE JOGADORES ===== */
-      .score-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-      }
-
-      .player-card {
-        background: white;
-        border-radius: 14px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
-        padding: 1rem;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.3s;
-        border-top: 4px solid var(--primary);
-      }
-
-      body.dark-mode .player-card {
-        background: #334155;
-        color: var(--light);
-      }
-
-      .player-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .player-name {
-        font-size: 1.2rem;
-        font-weight: 700;
-        color: var(--primary-dark);
-        margin-bottom: 0.75rem;
-        text-align: center;
-      }
-
-      body.dark-mode .player-name {
-        color: var(--primary-light);
-      }
-
-      .stats-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
-        text-align: center;
-      }
-
-      .stat {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        padding: 6px;
-        border-radius: 6px;
-        background-color: rgba(0, 0, 0, 0.03);
-      }
-
-      body.dark-mode .stat {
-        background-color: rgba(255, 255, 255, 0.05);
-      }
-
-      .stat-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--dark);
-      }
-
-      body.dark-mode .stat-value {
-        color: var(--light);
-      }
-
-      .stat-label {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        color: var(--gray);
-      }
-
-      body.dark-mode .stat-label {
-        color: var(--gray-light);
-      }
-
-      .player-position {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--primary);
-        color: white;
-        font-weight: 700;
-        font-size: 0.9rem;
-        border-bottom-left-radius: 8px;
-      }
-
-      .position-1 {
-        background: #ffd700;
-        color: var(--dark);
-      }
-
-      /* ===== ANIMAÇÕES ===== */
-      .pulse {
-        animation: pulse 2s infinite;
-      }
-
-      @keyframes pulse {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-
-      .saved-indicator {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: var(--success);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.3s ease;
-        z-index: 100;
-      }
-
-      .saved-indicator.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      .saved-indicator i {
-        font-size: 1.2rem;
-      }
-
-      .text-success {
-        color: var(--success);
-      }
-
-      .text-danger {
-        color: var(--danger);
-      }
-
-      /* ===== RESPONSIVIDADE ===== */
-      @media (max-width: 992px) {
-        .main-container {
-          flex-direction: column;
-        }
-        .card {
-          width: 100%;
-        }
-        .score-cards {
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        }
-      }
-
-      @media (max-width: 576px) {
-        /* Compact winner input row */
-        .input-container {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 8px;
-          padding: 5px;
-          margin-bottom: 8px;
-        }
-
-        .rodada-label {
-          min-width: 40px;
-          padding: 4px;
-          text-align: center;
-          font-size: 0.8rem;
-          flex-shrink: 0;
-        }
-
-        .valor-container {
-          display: flex;
-          align-items: center;
-          margin: 0 5px 0 0;
-        }
-
-        .currency-prefix {
-          font-size: 0.7rem;
-          margin-right: 2px;
-        }
-
-        .valor-rodada-input {
-          width: 50px;
-          padding: 3px;
-          font-size: 0.8rem;
-        }
-
-        .winner-input {
-          flex: 1;
-          padding: 6px;
-          font-size: 0.75rem;
-        }
-
-        /* Score cards layout */
-        .score-cards {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 1rem;
-        }
-
-        .player-card {
-          width: 100%;
-          max-width: 320px;
-          margin: 0 auto;
-          min-height: 180px;
-        }
-
-        .player-name {
-          font-size: 1.2rem;
-          margin-bottom: 0.75rem;
-        }
-
-        .stats-container {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
-        }
-
-        .stat-value {
-          font-size: 1.4rem;
-        }
-
-        .stat-label {
-          font-size: 0.7rem;
-        }
-
-        /* General mobile adjustments */
-        body {
-          padding: 1rem 0.5rem;
-        }
-
-        .header h1 {
-          font-size: 1.8rem;
-          margin-bottom: 0.3rem;
-        }
-
-        .header p {
-          font-size: 1rem;
-        }
-
-        .main-container {
-          gap: 1rem;
-        }
-
-        .card {
-          border-radius: 16px;
-        }
-
-        .card-header {
-          padding: 1rem;
-        }
-
-        .card-header h2 {
-          font-size: 1.2rem;
-        }
-
-        .card-body {
-          padding: 1rem;
-          max-height: 60vh;
-        }
-      }
-
-      /* Additional adjustments for very small screens */
-      @media (max-width: 375px) {
-        .input-container {
-          flex-wrap: nowrap;
-          gap: 5px;
-        }
-
-        .rodada-label {
-          min-width: 30px;
-          padding: 3px;
-          font-size: 0.7rem;
-        }
-
-        .valor-rodada-input {
-          width: 45px;
-          font-size: 0.7rem;
-        }
-
-        .winner-input {
-          font-size: 0.7rem;
-        }
-
-        .player-card {
-          max-width: 280px;
-          min-height: 160px;
-        }
-
-        .player-name {
-          font-size: 1.1rem;
-        }
-
-        .stat-value {
-          font-size: 1.2rem;
-        }
-      }
-
-      /* Landscape mode adjustments */
-      @media (max-height: 500px) and (orientation: landscape) {
-        .score-cards {
-          grid-template-columns: repeat(3, 1fr);
-        }
-
-        .card-body {
-          max-height: 60vh;
-        }
-
-        .input-container {
-          display: grid;
-          grid-template-columns: 30px 70px 1fr;
-          gap: 5px;
-          align-items: center;
-          margin-bottom: 8px;
-          padding: 5px;
-        }
-      }
-    </style>
-  </head>
-
-  <body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
     <div class="header">
-      <h1 class="animate__animated animate__fadeInDown">
-        Ranking AlphaBet 2026
-      </h1>
-      <p class="animate__animated animate__fadeInUp animate__delay-1s">
-        Lista de vencedores de cada rodada e placar do campeonato.
-      </p>
+        <h1 class="animate__animated animate__fadeInDown">Ranking AlphaBet 2026</h1>
+        <p class="animate__animated animate__fadeInUp animate__delay-1s">
+            Lista de vencedores de cada rodada e placar do campeonato.
+        </p>
     </div>
 
     <div class="main-container">
-      <!-- Coluna 1: Inputs de ranking -->
-      <div class="card animate__animated animate__fadeInLeft">
-        <div class="card-header">
-          <h2><i class="fas fa-trophy"></i> Vencedores por Rodada</h2>
+        <!-- Coluna 1: Inputs de ranking -->
+        <div class="card animate__animated animate__fadeInLeft">
+            <div class="card-header">
+                <h2><i class="fas fa-trophy"></i> Vencedores por Rodada</h2>
+            </div>
+            <div class="card-body">
+                <div id="inputs-ranking"></div>
+            </div>
         </div>
-        <div class="card-body">
-          <div id="inputs-ranking"></div>
-        </div>
-      </div>
 
-      <!-- Coluna 2: Seção de vitórias -->
-      <div class="card animate__animated animate__fadeInRight">
-        <div class="card-header">
-          <h2><i class="fas fa-medal"></i> Placar do Campeonato</h2>
+        <!-- Coluna 2: Seção de vitórias -->
+        <div class="card animate__animated animate__fadeInRight">
+            <div class="card-header">
+                <h2><i class="fas fa-medal"></i> Placar do Campeonato</h2>
+            </div>
+            <div class="card-body">
+                <div id="vitorias" class="score-cards"></div>
+            </div>
         </div>
-        <div class="card-body">
-          <div id="vitorias" class="score-cards"></div>
+    </div>
+
+    <!-- Seção de Classificação do Campeonato -->
+    <div class="classification-card animate__animated animate__fadeInUp">
+        <h2 class="classification-title">Classificação do Campeonato</h2>
+        <div class="classification-tabs">
+            <button class="tab-button active" data-tab="geral">Geral</button>
+            <button class="tab-button" data-tab="turno1">1º Turno</button>
+            <button class="tab-button" data-tab="turno2">2º Turno</button>
         </div>
-      </div>
+        <div class="classification-table-container">
+            <div class="loader"></div>
+            <table class="classification-table">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Clube</th>
+                        <th>Pts</th>
+                        <th>PJ</th>
+                        <th>VIT</th>
+                        <th>E</th>
+                        <th>DER</th>
+                        <th>GP</th>
+                        <th>GC</th>
+                        <th>SG</th>
+                    </tr>
+                </thead>
+                <tbody id="classification-body">
+                    <!-- Linhas da tabela serão inseridas aqui -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <div class="saved-indicator" id="saved-indicator">
-      <i class="fas fa-check-circle"></i>
-      <span>Dados salvos com sucesso!</span>
+        <i class="fas fa-check-circle"></i>
+        <span>Dados salvos com sucesso!</span>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-      // Configuração do Supabase
-      const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co";
-      const SUPABASE_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4";
+        // Configuração do Supabase
+        const SUPABASE_URL = "https://leuyfasvbfwdaloapmrs.supabase.co";
+        const SUPABASE_KEY =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxldXlmYXN2YmZ3ZGFsb2FwbXJzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExMTczMzUsImV4cCI6MjA1NjY5MzMzNX0.Y_s-KMy9n_Ht2OVaxmQEjnDRniqJ_DcppQVam7uAGk4";
 
-      // Inicialização do cliente Supabase
-      const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Inicialização do cliente Supabase
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      const configCampeonato = {
-        valorRodadaAtual: 6,
-        valoresRodada: {},
-      };
-      const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
-
-      // Função debounce para otimizar chamadas
-      function debounce(func, wait) {
-        let timeout;
-        return function () {
-          const context = this;
-          const args = arguments;
-          clearTimeout(timeout);
-          timeout = setTimeout(() => {
-            func.apply(context, args);
-          }, wait);
+        const configCampeonato = {
+            valorRodadaAtual: 6,
+            valoresRodada: {},
         };
-      }
+        const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
 
-      function criarInputsRanking() {
-        const inputsRanking = document.getElementById("inputs-ranking");
-
-        for (let i = 1; i <= 38; i++) {
-          const container = document.createElement("div");
-          container.className = "input-container";
-          container.dataset.rodada = i;
-
-          // Rótulo da rodada
-          const label = document.createElement("div");
-          label.textContent = `${i}`;
-          label.className = "rodada-label";
-
-          // Valor da rodada
-          const valorDiv = document.createElement("div");
-          valorDiv.className = "valor-container";
-
-          const valorInput = document.createElement("input");
-          valorInput.type = "number";
-          valorInput.className = "valor-rodada-input";
-          valorInput.min = "1";
-          valorInput.step = "1";
-          valorInput.value =
-            configCampeonato.valoresRodada[i] ||
-            configCampeonato.valorRodadaAtual ||
-            6;
-          valorInput.id = `valor-rodada-${i}`;
-
-          valorDiv.innerHTML = `<span class="currency-prefix">R$</span>`;
-          valorDiv.appendChild(valorInput);
-
-          // Campo do vencedor
-          const winnerInput = document.createElement("input");
-          winnerInput.type = "text";
-          winnerInput.placeholder = `Vencedor da Rodada ${i}`;
-          winnerInput.id = `rodada-${i}`;
-          winnerInput.className = "winner-input";
-
-          // Montagem
-          container.appendChild(label);
-          container.appendChild(valorDiv);
-          container.appendChild(winnerInput);
-          inputsRanking.appendChild(container);
-
-          // Event listeners com debounce
-          winnerInput.addEventListener(
-            "input",
-            debounce(() => {
-              if (validarInput(winnerInput.value, i)) {
-                salvarRanking();
-              }
-            }, 1000)
-          );
-
-          valorInput.addEventListener(
-            "input",
-            debounce(() => {
-              const novoValor = parseFloat(valorInput.value);
-              if (!isNaN(novoValor) && novoValor > 0) {
-                configCampeonato.valoresRodada[i] = novoValor;
-                salvarRanking();
-              }
-            }, 1000)
-          );
-        }
-      }
-
-      function validarInput(valor, rodada) {
-        if (valor.includes(",") && !valor.includes(", ")) {
-          alert(
-            `Rodada ${rodada}: Utilize vírgula + espaço entre os nomes no empate. Ex: Jardel, Werbet`
-          );
-          return false;
+        // Função debounce para otimizar chamadas
+        function debounce(func, wait) {
+            let timeout;
+            return function () {
+                const context = this;
+                const args = arguments;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    func.apply(context, args);
+                }, wait);
+            };
         }
 
-        const nomes = valor
-          .split(",")
-          .map((n) => n.trim())
-          .filter((n) => n !== "");
+        function criarInputsRanking() {
+            const inputsRanking = document.getElementById("inputs-ranking");
 
-        for (let nome of nomes) {
-          if (!jogadores.includes(nome)) {
-            alert(
-              `Rodada ${rodada}: Nome "${nome}" inválido! Use apenas: ${jogadores.join(
-                ", "
-              )}`
-            );
-            return false;
-          }
-          if (nome[0] !== nome[0]?.toUpperCase()) {
-            alert(
-              `Rodada ${rodada}: Nome "${nome}" deve começar com letra maiúscula!`
-            );
-            return false;
-          }
-        }
-        return true;
-      }
+            for (let i = 1; i <= 38; i++) {
+                const container = document.createElement("div");
+                container.className = "input-container";
+                container.dataset.rodada = i;
 
-      async function carregarRanking() {
-        try {
-          const { data, error } = await supabaseClient
-            .from("alphabet_table")
-            .select("*")
-            .order("id", { ascending: false })
-            .limit(1);
+                // Rótulo da rodada
+                const label = document.createElement("div");
+                label.textContent = `${i}`;
+                label.className = "rodada-label";
 
-          if (error) throw error;
+                // Valor da rodada
+                const valorDiv = document.createElement("div");
+                valorDiv.className = "valor-container";
 
-          if (!data || data.length === 0) return;
-
-          const dadosAtuais = data[0];
-
-          if (dadosAtuais.configuracao) {
-            configCampeonato.valorRodadaAtual =
-              dadosAtuais.configuracao.valorRodadaAtual || 6;
-            configCampeonato.valoresRodada =
-              dadosAtuais.configuracao.valoresRodada || {};
-          }
-
-          if (dadosAtuais.ranking) {
-            dadosAtuais.ranking.forEach((vencedores, index) => {
-              const input = document.getElementById(`rodada-${index + 1}`);
-              if (input) {
-                input.value = vencedores || "";
-              }
-
-              const valorInput = document.getElementById(
-                `valor-rodada-${index + 1}`
-              );
-              if (valorInput) {
+                const valorInput = document.createElement("input");
+                valorInput.type = "number";
+                valorInput.className = "valor-rodada-input";
+                valorInput.min = "1";
+                valorInput.step = "1";
                 valorInput.value =
-                  configCampeonato.valoresRodada[index + 1] ||
-                  configCampeonato.valorRodadaAtual ||
-                  6;
-              }
-            });
-          }
+                    configCampeonato.valoresRodada[i] ||
+                    configCampeonato.valorRodadaAtual ||
+                    6;
+                valorInput.id = `valor-rodada-${i}`;
 
-          const historicoPontuacao = dadosAtuais.historico_pontuacao || {};
+                valorDiv.innerHTML = `<span class="currency-prefix">R$</span>`;
+                valorDiv.appendChild(valorInput);
 
-          exibirVitorias(
-            dadosAtuais.vitorias_empates ||
-              calcularVitoriasEmpatesSaldo(
-                dadosAtuais.ranking || [],
-                configCampeonato.valoresRodada,
-                configCampeonato.valorRodadaAtual
-              ),
-            historicoPontuacao
-          );
-        } catch (error) {
-          console.error("Erro ao carregar ranking:", error);
+                // Campo do vencedor
+                const winnerInput = document.createElement("input");
+                winnerInput.type = "text";
+                winnerInput.placeholder = `Vencedor da Rodada ${i}`;
+                winnerInput.id = `rodada-${i}`;
+                winnerInput.className = "winner-input";
+
+                // Montagem
+                container.appendChild(label);
+                container.appendChild(valorDiv);
+                container.appendChild(winnerInput);
+                inputsRanking.appendChild(container);
+
+                // Event listeners com debounce
+                winnerInput.addEventListener(
+                    "input",
+                    debounce(() => {
+                        if (validarInput(winnerInput.value, i)) {
+                            salvarRanking();
+                        }
+                    }, 1000)
+                );
+
+                valorInput.addEventListener(
+                    "input",
+                    debounce(() => {
+                        const novoValor = parseFloat(valorInput.value);
+                        if (!isNaN(novoValor) && novoValor > 0) {
+                            configCampeonato.valoresRodada[i] = novoValor;
+                            salvarRanking();
+                        }
+                    }, 1000)
+                );
+            }
         }
-      }
 
-      function calcularVitoriasEmpatesSaldo(ranking) {
-        const vitoriasEmpates = {
-          Jardel: { vitorias: 0, empates: 0, saldo: 0 },
-          Werbet: { vitorias: 0, empates: 0, saldo: 0 },
-          Nailton: { vitorias: 0, empates: 0, saldo: 0 },
-          Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
+        function validarInput(valor, rodada) {
+            if (valor.includes(",") && !valor.includes(", ")) {
+                alert(
+                    `Rodada ${rodada}: Utilize vírgula + espaço entre os nomes no empate. Ex: Jardel, Werbet`
+                );
+                return false;
+            }
+
+            const nomes = valor
+                .split(",")
+                .map((n) => n.trim())
+                .filter((n) => n !== "");
+
+            for (let nome of nomes) {
+                if (!jogadores.includes(nome)) {
+                    alert(
+                        `Rodada ${rodada}: Nome "${nome}" inválido! Use apenas: ${jogadores.join(
+                            ", "
+                        )}`
+                    );
+                    return false;
+                }
+                if (nome[0] !== nome[0]?.toUpperCase()) {
+                    alert(
+                        `Rodada ${rodada}: Nome "${nome}" deve começar com letra maiúscula!`
+                    );
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        async function carregarRanking() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from("alphabet_table")
+                    .select("*")
+                    .order("id", { ascending: false })
+                    .limit(1);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) return;
+
+                const dadosAtuais = data[0];
+
+                if (dadosAtuais.configuracao) {
+                    configCampeonato.valorRodadaAtual =
+                        dadosAtuais.configuracao.valorRodadaAtual || 6;
+                    configCampeonato.valoresRodada =
+                        dadosAtuais.configuracao.valoresRodada || {};
+                }
+
+                if (dadosAtuais.ranking) {
+                    dadosAtuais.ranking.forEach((vencedores, index) => {
+                        const input = document.getElementById(`rodada-${index + 1}`);
+                        if (input) {
+                            input.value = vencedores || "";
+                        }
+
+                        const valorInput = document.getElementById(
+                            `valor-rodada-${index + 1}`
+                        );
+                        if (valorInput) {
+                            valorInput.value =
+                                configCampeonato.valoresRodada[index + 1] ||
+                                configCampeonato.valorRodadaAtual ||
+                                6;
+                        }
+                    });
+                }
+
+                const historicoPontuacao = dadosAtuais.historico_pontuacao || {};
+
+                exibirVitorias(
+                    dadosAtuais.vitorias_empates ||
+                    calcularVitoriasEmpatesSaldo(
+                        dadosAtuais.ranking || [],
+                        configCampeonato.valoresRodada,
+                        configCampeonato.valorRodadaAtual
+                    ),
+                    historicoPontuacao
+                );
+            } catch (error) {
+                console.error("Erro ao carregar ranking:", error);
+            }
+        }
+
+        function calcularVitoriasEmpatesSaldo(ranking) {
+            const vitoriasEmpates = {
+                Jardel: { vitorias: 0, empates: 0, saldo: 0 },
+                Werbet: { vitorias: 0, empates: 0, saldo: 0 },
+                Nailton: { vitorias: 0, empates: 0, saldo: 0 },
+                Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
+            };
+
+            const jogadores = Object.keys(vitoriasEmpates);
+
+            ranking.forEach((vencedores, rodadaIndex) => {
+                if (!vencedores.trim()) return;
+
+                const numeroRodada = rodadaIndex + 1;
+                const valorRodada =
+                    configCampeonato.valoresRodada[numeroRodada] ||
+                    configCampeonato.valorRodadaAtual;
+
+                const listaVencedores = vencedores
+                    .split(",")
+                    .map((nome) => nome.trim())
+                    .filter((nome) => nome !== "");
+
+                if (listaVencedores.length === 0) return;
+
+                if (listaVencedores.length === 1) {
+                    const vencedor = listaVencedores[0];
+                    if (vitoriasEmpates[vencedor]) {
+                        vitoriasEmpates[vencedor].vitorias++;
+                        vitoriasEmpates[vencedor].saldo +=
+                            valorRodada * (jogadores.length - 1);
+
+                        jogadores.forEach((jogador) => {
+                            if (jogador !== vencedor) {
+                                vitoriasEmpates[jogador].saldo -= valorRodada;
+                            }
+                        });
+                    }
+                } else {
+                    listaVencedores.forEach((vencedor) => {
+                        if (vitoriasEmpates[vencedor]) {
+                            vitoriasEmpates[vencedor].empates++;
+                        }
+                    });
+
+                    const perdedores = jogadores.filter(
+                        (j) => !listaVencedores.includes(j)
+                    );
+
+                    if (listaVencedores.length === 2) {
+                        const valorPorPerdedor = valorRodada / 2;
+                        listaVencedores.forEach((vencedor) => {
+                            vitoriasEmpates[vencedor].saldo +=
+                                valorPorPerdedor * perdedores.length;
+                        });
+                        perdedores.forEach((perdedor) => {
+                            vitoriasEmpates[perdedor].saldo -= valorRodada;
+                        });
+                    } else if (listaVencedores.length === 3) {
+                        const valorPorPerdedor = valorRodada / 3;
+                        listaVencedores.forEach((vencedor) => {
+                            vitoriasEmpates[vencedor].saldo +=
+                                valorPorPerdedor * perdedores.length;
+                        });
+                        perdedores.forEach((perdedor) => {
+                            vitoriasEmpates[perdedor].saldo -= valorRodada;
+                        });
+                    }
+                }
+            });
+
+            return vitoriasEmpates;
+        }
+
+        async function salvarRanking() {
+            const ranking = [];
+            const valoresRodadas = configCampeonato.valoresRodada || {};
+
+            for (let i = 1; i <= 38; i++) {
+                const input = document.getElementById(`rodada-${i}`);
+                ranking.push(input ? input.value.trim() : "");
+
+                const valorInput = document.getElementById(`valor-rodada-${i}`);
+                if (valorInput && valorInput.value) {
+                    valoresRodadas[i] = parseFloat(valorInput.value);
+                }
+            }
+
+            try {
+                const { data: ultimoRegistro, error: fetchError } =
+                    await supabaseClient
+                        .from("alphabet_table")
+                        .select("id")
+                        .order("id", { ascending: false })
+                        .limit(1)
+                        .single();
+
+                if (fetchError && fetchError.code !== "PGRST116") throw fetchError;
+
+                const dadosParaSalvar = {
+                    ranking: ranking,
+                    vitorias_empates: calcularVitoriasEmpatesSaldo(
+                        ranking,
+                        valoresRodadas, // This is configCampeonato.valoresRodada
+                        configCampeonato.valorRodadaAtual
+                    ),
+                    configuracao: {
+                        valoresRodada: valoresRodadas,
+                        valorRodadaAtual: configCampeonato.valorRodadaAtual,
+                    },
+                };
+
+                if (ultimoRegistro) {
+                    const { error: updateError } = await supabaseClient
+                        .from("alphabet_table")
+                        .update(dadosParaSalvar)
+                        .eq("id", ultimoRegistro.id);
+
+                    if (updateError) throw updateError;
+                } else {
+                    const { error: insertError } = await supabaseClient
+                        .from("alphabet_table")
+                        .insert(dadosParaSalvar);
+
+                    if (insertError) throw insertError;
+                }
+
+                mostrarIndicadorSalvo();
+                exibirVitorias(calcularVitoriasEmpatesSaldo(ranking));
+                carregarRanking();
+            } catch (error) {
+                console.error("Erro ao salvar ranking:", error);
+                alert("Erro ao salvar. Verifique sua conexão.");
+            }
+        }
+
+        function mostrarIndicadorSalvo() {
+            const indicador = document.getElementById("saved-indicator");
+            indicador.classList.add("show");
+            setTimeout(() => indicador.classList.remove("show"), 3000);
+        }
+
+        function exibirVitorias(resultados, historicoPontuacao) {
+            const vitoriasContainer = document.getElementById("vitorias");
+            vitoriasContainer.innerHTML = "";
+
+            // Calcula o total de pontos para cada jogador baseado no histórico
+            const pontosTotais = {};
+
+            // Inicializa com os jogadores do ranking atual para garantir que todos apareçam
+            Object.keys(resultados).forEach(jogador => {
+                pontosTotais[jogador] = 0;
+            });
+
+            if (historicoPontuacao) {
+                Object.values(historicoPontuacao).forEach(rodada => {
+                    Object.entries(rodada).forEach(([jogador, pontos]) => {
+                        if (!pontosTotais[jogador]) pontosTotais[jogador] = 0;
+                        pontosTotais[jogador] += pontos;
+                    });
+                });
+            }
+
+            const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
+                const pontosTotalA = pontosTotais[a[0]] || 0;
+                const pontosTotalB = pontosTotais[b[0]] || 0;
+
+                // Critério 1: Número de Vitórias
+                if (b[1].vitorias !== a[1].vitorias)
+                    return b[1].vitorias - a[1].vitorias;
+
+                // Critério 2: Número de Empates
+                if (b[1].empates !== a[1].empates) return b[1].empates - a[1].empates;
+
+                // Critério 3: Total de Pontos
+                if (pontosTotalB !== pontosTotalA) return pontosTotalB - pontosTotalA;
+
+                return a[0].localeCompare(b[0]);
+            });
+
+            resultadosOrdenados.forEach(
+                ([jogador, { vitorias, empates, saldo }], index) => {
+                    // Usa o total calculado do histórico ou 0 se não houver
+                    const pontos = pontosTotais[jogador] || 0;
+
+                    const card = document.createElement("div");
+                    card.className = "player-card";
+                    if (index < 3) card.classList.add(`position-${index + 1}`);
+                    if (index === 0) card.classList.add("pulse");
+
+                    const posicao = document.createElement("div");
+                    posicao.className = `player-position ${index < 3 ? "position-" + (index + 1) : ""
+                        }`;
+                    posicao.textContent = index + 1;
+
+                    const nome = document.createElement("h3");
+                    nome.className = "player-name";
+                    nome.textContent = jogador;
+
+                    const statsContainer = document.createElement("div");
+                    statsContainer.className = "stats-container";
+
+                    const statVitorias = document.createElement("div");
+                    statVitorias.className = "stat";
+                    statVitorias.innerHTML = `<span class="stat-value">${vitorias}</span><span class="stat-label">Vitórias</span>`;
+
+                    const statEmpates = document.createElement("div");
+                    statEmpates.className = "stat";
+                    statEmpates.innerHTML = `<span class="stat-value">${empates}</span><span class="stat-label">Empates</span>`;
+
+                    const statPontos = document.createElement("div");
+                    statPontos.className = "stat";
+                    statPontos.innerHTML = `<span class="stat-value">${pontos}</span><span class="stat-label">Pontos</span>`;
+
+                    const statSaldo = document.createElement("div");
+                    statSaldo.className = "stat";
+                    statSaldo.innerHTML = `<span class="stat-value ${saldo >= 0 ? "text-success" : "text-danger"
+                        }">R$${saldo.toFixed(
+                            2
+                        )}</span><span class="stat-label">Saldo</span>`;
+
+                    statsContainer.appendChild(statVitorias);
+                    statsContainer.appendChild(statEmpates);
+                    statsContainer.appendChild(statPontos);
+                    statsContainer.appendChild(statSaldo);
+
+                    card.appendChild(posicao);
+                    card.appendChild(nome);
+                    card.appendChild(statsContainer);
+                    vitoriasContainer.appendChild(card);
+
+                    setTimeout(() => {
+                        card.style.opacity = "1";
+                        card.style.transform = "translateY(0)";
+                    }, index * 150);
+                }
+            );
+        }
+
+        // --- Classificação do Campeonato ---
+        const classificationBody = document.getElementById('classification-body');
+        const loader = document.querySelector('.loader');
+        const tabs = document.querySelectorAll('.tab-button');
+
+        const showLoader = (show) => {
+            loader.style.display = show ? 'block' : 'none';
         };
 
-        const jogadores = Object.keys(vitoriasEmpates);
+        const renderTable = (tableData) => {
+            classificationBody.innerHTML = '';
+            if (!tableData) return;
 
-        ranking.forEach((vencedores, rodadaIndex) => {
-          if (!vencedores.trim()) return;
+            tableData.forEach(team => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${team.position}</td>
+                    <td class="team-name">
+                        <img src="${team.team.crestUrl}" alt="${team.team.name}" class="team-crest">
+                        ${team.team.name}
+                    </td>
+                    <td>${team.points}</td>
+                    <td>${team.playedGames}</td>
+                    <td>${team.won}</td>
+                    <td>${team.draw}</td>
+                    <td>${team.lost}</td>
+                    <td>${team.goalsFor}</td>
+                    <td>${team.goalsAgainst}</td>
+                    <td>${team.goalDifference}</td>
+                `;
+                classificationBody.appendChild(row);
+            });
+        };
 
-          const numeroRodada = rodadaIndex + 1;
-          const valorRodada =
-            configCampeonato.valoresRodada[numeroRodada] ||
-            configCampeonato.valorRodadaAtual;
+        const fetchClassification = async () => {
+            showLoader(true);
+            try {
+                const response = await fetch('/.netlify/functions/fetchTabela');
+                const data = await response.json();
+                renderTable(data.standings[0].table);
+            } catch (error) {
+                console.error('Erro ao buscar classificação geral:', error);
+                classificationBody.innerHTML = '<tr><td colspan="10">Erro ao carregar dados.</td></tr>';
+            } finally {
+                showLoader(false);
+            }
+        };
 
-          const listaVencedores = vencedores
-            .split(",")
-            .map((nome) => nome.trim())
-            .filter((nome) => nome !== "");
+        const calculateTurnoClassification = (matches) => {
+            const teams = {};
 
-          if (listaVencedores.length === 0) return;
+            matches.forEach(match => {
+                const homeTeamId = match.homeTeam.id;
+                const awayTeamId = match.awayTeam.id;
+                const homeTeamName = match.homeTeam.name;
+                const awayTeamName = match.awayTeam.name;
+                // Assume crest URL is not available in match data, will need to fetch it separately or omit it
+                const homeCrest = ''; // Placeholder
+                const awayCrest = ''; // Placeholder
 
-          if (listaVencedores.length === 1) {
-            const vencedor = listaVencedores[0];
-            if (vitoriasEmpates[vencedor]) {
-              vitoriasEmpates[vencedor].vitorias++;
-              vitoriasEmpates[vencedor].saldo +=
-                valorRodada * (jogadores.length - 1);
 
-              jogadores.forEach((jogador) => {
-                if (jogador !== vencedor) {
-                  vitoriasEmpates[jogador].saldo -= valorRodada;
+                if (!teams[homeTeamId]) {
+                    teams[homeTeamId] = { id: homeTeamId, name: homeTeamName, crestUrl: homeCrest, playedGames: 0, won: 0, draw: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
                 }
-              });
-            }
-          } else {
-            listaVencedores.forEach((vencedor) => {
-              if (vitoriasEmpates[vencedor]) {
-                vitoriasEmpates[vencedor].empates++;
-              }
+                if (!teams[awayTeamId]) {
+                    teams[awayTeamId] = { id: awayTeamId, name: awayTeamName, crestUrl: awayCrest, playedGames: 0, won: 0, draw: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+                }
+
+                if (match.status === 'FINISHED') {
+                    const homeScore = match.score.fullTime.homeTeam;
+                    const awayScore = match.score.fullTime.awayTeam;
+
+                    teams[homeTeamId].playedGames++;
+                    teams[awayTeamId].playedGames++;
+                    teams[homeTeamId].goalsFor += homeScore;
+                    teams[awayTeamId].goalsFor += awayScore;
+                    teams[homeTeamId].goalsAgainst += awayScore;
+                    teams[awayTeamId].goalsAgainst += homeScore;
+
+                    if (homeScore > awayScore) {
+                        teams[homeTeamId].won++;
+                        teams[homeTeamId].points += 3;
+                        teams[awayTeamId].lost++;
+                    } else if (awayScore > homeScore) {
+                        teams[awayTeamId].won++;
+                        teams[awayTeamId].points += 3;
+                        teams[homeTeamId].lost++;
+                    } else {
+                        teams[homeTeamId].draw++;
+                        teams[awayTeamId].draw++;
+                        teams[homeTeamId].points += 1;
+                        teams[awayTeamId].points += 1;
+                    }
+                }
             });
 
-            const perdedores = jogadores.filter(
-              (j) => !listaVencedores.includes(j)
-            );
+            const table = Object.values(teams).map(team => ({
+                team: { id: team.id, name: team.name, crestUrl: team.crestUrl },
+                playedGames: team.playedGames,
+                won: team.won,
+                draw: team.draw,
+                lost: team.lost,
+                goalsFor: team.goalsFor,
+                goalsAgainst: team.goalsAgainst,
+                goalDifference: team.goalsFor - team.goalsAgainst,
+                points: team.points
+            }));
 
-            if (listaVencedores.length === 2) {
-              const valorPorPerdedor = valorRodada / 2;
-              listaVencedores.forEach((vencedor) => {
-                vitoriasEmpates[vencedor].saldo +=
-                  valorPorPerdedor * perdedores.length;
-              });
-              perdedores.forEach((perdedor) => {
-                vitoriasEmpates[perdedor].saldo -= valorRodada;
-              });
-            } else if (listaVencedores.length === 3) {
-              const valorPorPerdedor = valorRodada / 3;
-              listaVencedores.forEach((vencedor) => {
-                vitoriasEmpates[vencedor].saldo +=
-                  valorPorPerdedor * perdedores.length;
-              });
-              perdedores.forEach((perdedor) => {
-                vitoriasEmpates[perdedor].saldo -= valorRodada;
-              });
-            }
-          }
-        });
-
-        return vitoriasEmpates;
-      }
-
-      async function salvarRanking() {
-        const ranking = [];
-        const valoresRodadas = configCampeonato.valoresRodada || {};
-
-        for (let i = 1; i <= 38; i++) {
-          const input = document.getElementById(`rodada-${i}`);
-          ranking.push(input ? input.value.trim() : "");
-
-          const valorInput = document.getElementById(`valor-rodada-${i}`);
-          if (valorInput && valorInput.value) {
-            valoresRodadas[i] = parseFloat(valorInput.value);
-          }
-        }
-
-        try {
-          const { data: ultimoRegistro, error: fetchError } =
-            await supabaseClient
-              .from("alphabet_table")
-              .select("id")
-              .order("id", { ascending: false })
-              .limit(1)
-              .single();
-
-          if (fetchError && fetchError.code !== "PGRST116") throw fetchError;
-
-          const dadosParaSalvar = {
-            ranking: ranking,
-            vitorias_empates: calcularVitoriasEmpatesSaldo(
-              ranking,
-              valoresRodadas, // This is configCampeonato.valoresRodada
-              configCampeonato.valorRodadaAtual
-            ),
-            configuracao: {
-              valoresRodada: valoresRodadas,
-              valorRodadaAtual: configCampeonato.valorRodadaAtual,
-            },
-          };
-
-          if (ultimoRegistro) {
-            const { error: updateError } = await supabaseClient
-              .from("alphabet_table")
-              .update(dadosParaSalvar)
-              .eq("id", ultimoRegistro.id);
-
-            if (updateError) throw updateError;
-          } else {
-            const { error: insertError } = await supabaseClient
-              .from("alphabet_table")
-              .insert(dadosParaSalvar);
-
-            if (insertError) throw insertError;
-          }
-
-          mostrarIndicadorSalvo();
-          exibirVitorias(calcularVitoriasEmpatesSaldo(ranking));
-          carregarRanking();
-        } catch (error) {
-          console.error("Erro ao salvar ranking:", error);
-          alert("Erro ao salvar. Verifique sua conexão.");
-        }
-      }
-
-      function mostrarIndicadorSalvo() {
-        const indicador = document.getElementById("saved-indicator");
-        indicador.classList.add("show");
-        setTimeout(() => indicador.classList.remove("show"), 3000);
-      }
-
-      function exibirVitorias(resultados, historicoPontuacao) {
-        const vitoriasContainer = document.getElementById("vitorias");
-        vitoriasContainer.innerHTML = "";
-
-        // Calcula o total de pontos para cada jogador baseado no histórico
-        const pontosTotais = {};
-
-        // Inicializa com os jogadores do ranking atual para garantir que todos apareçam
-        Object.keys(resultados).forEach(jogador => {
-            pontosTotais[jogador] = 0;
-        });
-
-        if (historicoPontuacao) {
-          Object.values(historicoPontuacao).forEach(rodada => {
-            Object.entries(rodada).forEach(([jogador, pontos]) => {
-              if (!pontosTotais[jogador]) pontosTotais[jogador] = 0;
-              pontosTotais[jogador] += pontos;
+            table.sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+                if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+                return a.team.name.localeCompare(b.team.name);
             });
-          });
-        }
 
-        const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
-          const pontosTotalA = pontosTotais[a[0]] || 0;
-          const pontosTotalB = pontosTotais[b[0]] || 0;
+            return table.map((team, index) => ({ ...team, position: index + 1 }));
+        };
 
-          // Critério 1: Número de Vitórias
-          if (b[1].vitorias !== a[1].vitorias)
-            return b[1].vitorias - a[1].vitorias;
+        const fetchTurno = async (startRound, endRound) => {
+            showLoader(true);
+            try {
+                const response = await fetch(`/.netlify/functions/fetchMatchesByRoundRange?startRound=${startRound}&endRound=${endRound}`);
+                const data = await response.json();
+                const turnoTable = calculateTurnoClassification(data.matches);
+                renderTable(turnoTable);
+            } catch (error) {
+                console.error(`Erro ao buscar turno (${startRound}-${endRound}):`, error);
+                classificationBody.innerHTML = '<tr><td colspan="10">Erro ao carregar dados.</td></tr>';
+            } finally {
+                showLoader(false);
+            }
+        };
 
-          // Critério 2: Número de Empates
-          if (b[1].empates !== a[1].empates) return b[1].empates - a[1].empates;
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                const tabName = tab.dataset.tab;
 
-          // Critério 3: Total de Pontos
-          if (pontosTotalB !== pontosTotalA) return pontosTotalB - pontosTotalA;
-
-          return a[0].localeCompare(b[0]);
+                if (tabName === 'geral') {
+                    fetchClassification();
+                } else if (tabName === 'turno1') {
+                    fetchTurno(1, 19);
+                } else if (tabName === 'turno2') {
+                    fetchTurno(20, 38);
+                }
+            });
         });
 
-        resultadosOrdenados.forEach(
-          ([jogador, { vitorias, empates, saldo }], index) => {
-            // Usa o total calculado do histórico ou 0 se não houver
-            const pontos = pontosTotais[jogador] || 0;
+        // Inicialização
+        document.addEventListener("DOMContentLoaded", () => {
+            carregarRanking();
+            criarInputsRanking();
+            fetchClassification(); // Carrega a classificação geral por padrão
 
-            const card = document.createElement("div");
-            card.className = "player-card";
-            if (index < 3) card.classList.add(`position-${index + 1}`);
-            if (index === 0) card.classList.add("pulse");
-
-            const posicao = document.createElement("div");
-            posicao.className = `player-position ${
-              index < 3 ? "position-" + (index + 1) : ""
-            }`;
-            posicao.textContent = index + 1;
-
-            const nome = document.createElement("h3");
-            nome.className = "player-name";
-            nome.textContent = jogador;
-
-            const statsContainer = document.createElement("div");
-            statsContainer.className = "stats-container";
-
-            const statVitorias = document.createElement("div");
-            statVitorias.className = "stat";
-            statVitorias.innerHTML = `<span class="stat-value">${vitorias}</span><span class="stat-label">Vitórias</span>`;
-
-            const statEmpates = document.createElement("div");
-            statEmpates.className = "stat";
-            statEmpates.innerHTML = `<span class="stat-value">${empates}</span><span class="stat-label">Empates</span>`;
-
-            const statPontos = document.createElement("div");
-            statPontos.className = "stat";
-            statPontos.innerHTML = `<span class="stat-value">${pontos}</span><span class="stat-label">Pontos</span>`;
-
-            const statSaldo = document.createElement("div");
-            statSaldo.className = "stat";
-            statSaldo.innerHTML = `<span class="stat-value ${
-              saldo >= 0 ? "text-success" : "text-danger"
-            }">R$${saldo.toFixed(
-              2
-            )}</span><span class="stat-label">Saldo</span>`;
-
-            statsContainer.appendChild(statVitorias);
-            statsContainer.appendChild(statEmpates);
-            statsContainer.appendChild(statPontos);
-            statsContainer.appendChild(statSaldo);
-
-            card.appendChild(posicao);
-            card.appendChild(nome);
-            card.appendChild(statsContainer);
-            vitoriasContainer.appendChild(card);
-
-            setTimeout(() => {
-              card.style.opacity = "1";
-              card.style.transform = "translateY(0)";
-            }, index * 150);
-          }
-        );
-      }
-
-      // Inicialização
-      document.addEventListener("DOMContentLoaded", () => {
-        carregarRanking();
-        criarInputsRanking();
-
-        // Verificar dark mode
-        const isDarkMode = localStorage.getItem("darkMode") === "true";
-        if (isDarkMode) document.body.classList.add("dark-mode");
-      });
+            // Verificar dark mode
+            const isDarkMode = localStorage.getItem("darkMode") === "true";
+            if (isDarkMode) document.body.classList.add("dark-mode");
+        });
     </script>
-  </body>
+</body>
 </html>
