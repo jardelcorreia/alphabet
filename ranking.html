@@ -466,6 +466,42 @@
         color: var(--danger);
       }
 
+.placar-tabs {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.tab-button {
+  background-color: var(--gray-light);
+  color: var(--gray);
+  border: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: "Kanit", Arial, sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all var(--transition-normal);
+}
+
+.tab-button.active {
+  background-color: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .tab-button {
+  background-color: #334155;
+  color: var(--gray-light);
+}
+
+body.dark-mode .tab-button.active {
+  background-color: var(--primary);
+  color: var(--light);
+}
+
       /* ===== RESPONSIVIDADE ===== */
       @media (max-width: 992px) {
         .main-container {
@@ -645,148 +681,7 @@
         }
       }
 
-/* Estilos para a seção de classificação do campeonato */
-.classification-card {
-  background: rgba(255, 255, 255, 0.95);
-  padding: var(--space-lg);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  margin: var(--space-lg) auto;
-  width: 100%;
-  max-width: 1400px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
 
-.classification-title {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: var(--space-md);
-  text-align: center;
-  color: var(--primary-dark);
-}
-
-.classification-tabs {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-
-.tab-button {
-  background-color: var(--gray-light);
-  color: var(--gray);
-  border: none;
-  padding: var(--space-sm) var(--space-md);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  font-family: "Kanit", Arial, sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  transition: all var(--transition-normal);
-}
-
-.tab-button.active {
-  background-color: var(--primary);
-  color: white;
-  box-shadow: var(--shadow-sm);
-}
-
-.classification-table-container {
-  overflow-x: auto;
-  position: relative;
-  min-height: 200px; /* Para dar espaço para o loader */
-}
-
-.classification-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 600px;
-}
-
-.classification-table th,
-.classification-table td {
-  padding: var(--space-sm);
-  text-align: left;
-  border-bottom: 1px solid var(--gray-light);
-}
-
-.classification-table th {
-  background-color: var(--primary-bg);
-  font-weight: 600;
-  color: var(--primary-dark);
-  font-size: 0.875rem;
-  text-transform: uppercase;
-}
-
-.classification-table td {
-  font-size: 0.95rem;
-}
-
-.classification-table .team-name {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.classification-table .team-crest {
-  width: 24px;
-  height: 24px;
-}
-
-.loader {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid var(--primary);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* Dark mode adjustments for classification */
-body.dark-mode .classification-card {
-  background: rgba(30, 41, 59, 0.95);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .classification-title {
-  color: var(--primary-light);
-}
-
-body.dark-mode .tab-button {
-  background-color: #334155;
-  color: var(--gray-light);
-}
-
-body.dark-mode .tab-button.active {
-  background-color: var(--primary);
-  color: var(--light);
-}
-
-body.dark-mode .classification-table th {
-  background-color: #1f2937;
-  color: var(--primary-light);
-  border-color: #334155;
-}
-
-body.dark-mode .classification-table td {
-  border-color: #334155;
-}
-
-body.dark-mode .loader {
-  border-color: #334155;
-  border-top-color: var(--primary);
-}
     </style>
   </head>
 
@@ -817,41 +712,14 @@ body.dark-mode .loader {
           <h2><i class="fas fa-medal"></i> Placar do Campeonato</h2>
         </div>
         <div class="card-body">
+          <div class="placar-tabs">
+            <button class="tab-button active" data-turno="geral">Geral</button>
+            <button class="tab-button" data-turno="1">1º Turno</button>
+            <button class="tab-button" data-turno="2">2º Turno</button>
+          </div>
           <div id="vitorias" class="score-cards"></div>
         </div>
       </div>
-    </div>
-
-    <!-- Seção de Classificação do Campeonato -->
-    <div class="classification-card animate__animated animate__fadeInUp">
-        <h2 class="classification-title">Classificação do Campeonato</h2>
-        <div class="classification-tabs">
-            <button class="tab-button active" data-tab="geral">Geral</button>
-            <button class="tab-button" data-tab="turno1">1º Turno</button>
-            <button class="tab-button" data-tab="turno2">2º Turno</button>
-        </div>
-        <div class="classification-table-container">
-            <div class="loader"></div>
-            <table class="classification-table">
-                <thead>
-                    <tr>
-                        <th>Pos</th>
-                        <th>Clube</th>
-                        <th>Pts</th>
-                        <th>PJ</th>
-                        <th>VIT</th>
-                        <th>E</th>
-                        <th>DER</th>
-                        <th>GP</th>
-                        <th>GC</th>
-                        <th>SG</th>
-                    </tr>
-                </thead>
-                <tbody id="classification-body">
-                    <!-- Linhas da tabela serão inseridas aqui -->
-                </tbody>
-            </table>
-        </div>
     </div>
 
     <div class="saved-indicator" id="saved-indicator">
@@ -872,6 +740,8 @@ body.dark-mode .loader {
       const configCampeonato = {
         valorRodadaAtual: 6,
         valoresRodada: {},
+        ranking: [], // Garante que o ranking esteja disponível globalmente
+        historicoPontuacao: {},
       };
       const jogadores = ["Jardel", "Werbet", "Nailton", "Phillipe"];
 
@@ -1001,62 +871,50 @@ body.dark-mode .loader {
 
           const dadosAtuais = data[0];
 
+          // Carregar configurações
           if (dadosAtuais.configuracao) {
-            configCampeonato.valorRodadaAtual =
-              dadosAtuais.configuracao.valorRodadaAtual || 6;
-            configCampeonato.valoresRodada =
-              dadosAtuais.configuracao.valoresRodada || {};
+            configCampeonato.valorRodadaAtual = dadosAtuais.configuracao.valorRodadaAtual || 6;
+            configCampeonato.valoresRodada = dadosAtuais.configuracao.valoresRodada || {};
           }
 
-          if (dadosAtuais.ranking) {
-            dadosAtuais.ranking.forEach((vencedores, index) => {
-              const input = document.getElementById(`rodada-${index + 1}`);
-              if (input) {
-                input.value = vencedores || "";
-              }
+          // Carregar ranking
+          configCampeonato.ranking = dadosAtuais.ranking || [];
+          configCampeonato.ranking.forEach((vencedores, index) => {
+            const input = document.getElementById(`rodada-${index + 1}`);
+            if (input) input.value = vencedores || "";
+            
+            const valorInput = document.getElementById(`valor-rodada-${index + 1}`);
+            if (valorInput) {
+                valorInput.value = configCampeonato.valoresRodada[index + 1] || configCampeonato.valorRodadaAtual || 6;
+            }
+          });
 
-              const valorInput = document.getElementById(
-                `valor-rodada-${index + 1}`
-              );
-              if (valorInput) {
-                valorInput.value =
-                  configCampeonato.valoresRodada[index + 1] ||
-                  configCampeonato.valorRodadaAtual ||
-                  6;
-              }
-            });
-          }
+          // Carregar histórico de pontuação
+          configCampeonato.historicoPontuacao = dadosAtuais.historico_pontuacao || {};
 
-          const historicoPontuacao = dadosAtuais.historico_pontuacao || {};
+          // Exibir placar inicial (Geral)
+          atualizarPlacar("geral");
 
-          exibirVitorias(
-            dadosAtuais.vitorias_empates ||
-              calcularVitoriasEmpatesSaldo(
-                dadosAtuais.ranking || [],
-                configCampeonato.valoresRodada,
-                configCampeonato.valorRodadaAtual
-              ),
-            historicoPontuacao
-          );
         } catch (error) {
           console.error("Erro ao carregar ranking:", error);
         }
       }
 
-      function calcularVitoriasEmpatesSaldo(ranking) {
+      function calcularVitoriasEmpatesSaldo(ranking, rodadaInicio, rodadaFim) {
         const vitoriasEmpates = {
           Jardel: { vitorias: 0, empates: 0, saldo: 0 },
           Werbet: { vitorias: 0, empates: 0, saldo: 0 },
           Nailton: { vitorias: 0, empates: 0, saldo: 0 },
           Phillipe: { vitorias: 0, empates: 0, saldo: 0 },
         };
-
         const jogadores = Object.keys(vitoriasEmpates);
+        
+        const rankingFiltrado = ranking.slice(rodadaInicio - 1, rodadaFim);
 
-        ranking.forEach((vencedores, rodadaIndex) => {
+        rankingFiltrado.forEach((vencedores, index) => {
           if (!vencedores.trim()) return;
 
-          const numeroRodada = rodadaIndex + 1;
+          const numeroRodada = rodadaInicio + index;
           const valorRodada =
             configCampeonato.valoresRodada[numeroRodada] ||
             configCampeonato.valorRodadaAtual;
@@ -1072,9 +930,7 @@ body.dark-mode .loader {
             const vencedor = listaVencedores[0];
             if (vitoriasEmpates[vencedor]) {
               vitoriasEmpates[vencedor].vitorias++;
-              vitoriasEmpates[vencedor].saldo +=
-                valorRodada * (jogadores.length - 1);
-
+              vitoriasEmpates[vencedor].saldo += valorRodada * (jogadores.length - 1);
               jogadores.forEach((jogador) => {
                 if (jogador !== vencedor) {
                   vitoriasEmpates[jogador].saldo -= valorRodada;
@@ -1095,8 +951,7 @@ body.dark-mode .loader {
             if (listaVencedores.length === 2) {
               const valorPorPerdedor = valorRodada / 2;
               listaVencedores.forEach((vencedor) => {
-                vitoriasEmpates[vencedor].saldo +=
-                  valorPorPerdedor * perdedores.length;
+                vitoriasEmpates[vencedor].saldo += valorPorPerdedor * perdedores.length;
               });
               perdedores.forEach((perdedor) => {
                 vitoriasEmpates[perdedor].saldo -= valorRodada;
@@ -1104,8 +959,7 @@ body.dark-mode .loader {
             } else if (listaVencedores.length === 3) {
               const valorPorPerdedor = valorRodada / 3;
               listaVencedores.forEach((vencedor) => {
-                vitoriasEmpates[vencedor].saldo +=
-                  valorPorPerdedor * perdedores.length;
+                vitoriasEmpates[vencedor].saldo += valorPorPerdedor * perdedores.length;
               });
               perdedores.forEach((perdedor) => {
                 vitoriasEmpates[perdedor].saldo -= valorRodada;
@@ -1130,6 +984,7 @@ body.dark-mode .loader {
             valoresRodadas[i] = parseFloat(valorInput.value);
           }
         }
+        configCampeonato.ranking = ranking;
 
         try {
           const { data: ultimoRegistro, error: fetchError } =
@@ -1143,12 +998,8 @@ body.dark-mode .loader {
           if (fetchError && fetchError.code !== "PGRST116") throw fetchError;
 
           const dadosParaSalvar = {
-            ranking: ranking,
-            vitorias_empates: calcularVitoriasEmpatesSaldo(
-              ranking,
-              valoresRodadas, // This is configCampeonato.valoresRodada
-              configCampeonato.valorRodadaAtual
-            ),
+            ranking: configCampeonato.ranking,
+            vitorias_empates: calcularVitoriasEmpatesSaldo(configCampeonato.ranking, 1, 38),
             configuracao: {
               valoresRodada: valoresRodadas,
               valorRodadaAtual: configCampeonato.valorRodadaAtual,
@@ -1171,8 +1022,8 @@ body.dark-mode .loader {
           }
 
           mostrarIndicadorSalvo();
-          exibirVitorias(calcularVitoriasEmpatesSaldo(ranking));
-          carregarRanking();
+          const activeTurno = document.querySelector(".tab-button.active").dataset.turno;
+          atualizarPlacar(activeTurno);
         } catch (error) {
           console.error("Erro ao salvar ranking:", error);
           alert("Erro ao salvar. Verifique sua conexão.");
@@ -1185,25 +1036,23 @@ body.dark-mode .loader {
         setTimeout(() => indicador.classList.remove("show"), 3000);
       }
 
-      function exibirVitorias(resultados, historicoPontuacao) {
+      function exibirVitorias(resultados, historicoPontuacao, rodadaInicio, rodadaFim) {
         const vitoriasContainer = document.getElementById("vitorias");
         vitoriasContainer.innerHTML = "";
 
         // Calcula o total de pontos para cada jogador baseado no histórico
         const pontosTotais = {};
-
-        // Inicializa com os jogadores do ranking atual para garantir que todos apareçam
-        Object.keys(resultados).forEach(jogador => {
-            pontosTotais[jogador] = 0;
-        });
+        jogadores.forEach(j => pontosTotais[j] = 0);
 
         if (historicoPontuacao) {
-          Object.values(historicoPontuacao).forEach(rodada => {
-            Object.entries(rodada).forEach(([jogador, pontos]) => {
-              if (!pontosTotais[jogador]) pontosTotais[jogador] = 0;
-              pontosTotais[jogador] += pontos;
-            });
-          });
+          for(let i = rodadaInicio; i <= rodadaFim; i++) {
+            if(historicoPontuacao[i]) {
+                Object.entries(historicoPontuacao[i]).forEach(([jogador, pontos]) => {
+                    if (!pontosTotais[jogador]) pontosTotais[jogador] = 0;
+                    pontosTotais[jogador] += pontos;
+                });
+            }
+          }
         }
 
         const resultadosOrdenados = Object.entries(resultados).sort((a, b) => {
@@ -1225,7 +1074,6 @@ body.dark-mode .loader {
 
         resultadosOrdenados.forEach(
           ([jogador, { vitorias, empates, saldo }], index) => {
-            // Usa o total calculado do histórico ou 0 se não houver
             const pontos = pontosTotais[jogador] || 0;
 
             const card = document.createElement("div");
@@ -1284,161 +1132,36 @@ body.dark-mode .loader {
         );
       }
 
-        // --- Classificação do Campeonato ---
-        const classificationBody = document.getElementById('classification-body');
-        const loader = document.querySelector('.loader');
-        const tabs = document.querySelectorAll('.tab-button');
+      function atualizarPlacar(turno) {
+          let rodadaInicio = 1;
+          let rodadaFim = 38;
 
-        const showLoader = (show) => {
-            loader.style.display = show ? 'block' : 'none';
-        };
+          if (turno === "1") {
+              rodadaInicio = 1;
+              rodadaFim = 19;
+          } else if (turno === "2") {
+              rodadaInicio = 20;
+              rodadaFim = 38;
+          }
 
-        const renderTable = (tableData) => {
-            classificationBody.innerHTML = '';
-            if (!tableData) return;
-
-            tableData.forEach(team => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${team.position}</td>
-                    <td class="team-name">
-                        <img src="${team.team.crestUrl}" alt="${team.team.name}" class="team-crest">
-                        ${team.team.name}
-                    </td>
-                    <td><b>${team.points}</b></td>
-                    <td>${team.playedGames}</td>
-                    <td>${team.won}</td>
-                    <td>${team.draw}</td>
-                    <td>${team.lost}</td>
-                    <td>${team.goalsFor}</td>
-                    <td>${team.goalsAgainst}</td>
-                    <td>${team.goalDifference}</td>
-                `;
-                classificationBody.appendChild(row);
-            });
-        };
-
-        const fetchClassification = async () => {
-            showLoader(true);
-            try {
-                const response = await fetch('/.netlify/functions/fetchTabela');
-                const data = await response.json();
-                renderTable(data.standings[0].table);
-            } catch (error) {
-                console.error('Erro ao buscar classificação geral:', error);
-                classificationBody.innerHTML = '<tr><td colspan="10">Erro ao carregar dados.</td></tr>';
-            } finally {
-                showLoader(false);
-            }
-        };
-
-        const calculateTurnoClassification = (matches) => {
-            const teams = {};
-
-            matches.forEach(match => {
-                const homeTeamId = match.homeTeam.id;
-                const awayTeamId = match.awayTeam.id;
-                const homeTeamName = match.homeTeam.name;
-                const awayTeamName = match.awayTeam.name;
-                // Assume crest URL is not available in match data, will need to fetch it separately or omit it
-                const homeCrest = ''; // Placeholder
-                const awayCrest = ''; // Placeholder
-
-
-                if (!teams[homeTeamId]) {
-                    teams[homeTeamId] = { id: homeTeamId, name: homeTeamName, crestUrl: homeCrest, playedGames: 0, won: 0, draw: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
-                }
-                if (!teams[awayTeamId]) {
-                    teams[awayTeamId] = { id: awayTeamId, name: awayTeamName, crestUrl: awayCrest, playedGames: 0, won: 0, draw: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
-                }
-
-                if (match.status === 'FINISHED') {
-                    const homeScore = match.score.fullTime.homeTeam;
-                    const awayScore = match.score.fullTime.awayTeam;
-
-                    teams[homeTeamId].playedGames++;
-                    teams[awayTeamId].playedGames++;
-                    teams[homeTeamId].goalsFor += homeScore;
-                    teams[awayTeamId].goalsFor += awayScore;
-                    teams[homeTeamId].goalsAgainst += awayScore;
-                    teams[awayTeamId].goalsAgainst += homeScore;
-
-                    if (homeScore > awayScore) {
-                        teams[homeTeamId].won++;
-                        teams[homeTeamId].points += 3;
-                        teams[awayTeamId].lost++;
-                    } else if (awayScore > homeScore) {
-                        teams[awayTeamId].won++;
-                        teams[awayTeamId].points += 3;
-                        teams[homeTeamId].lost++;
-                    } else {
-                        teams[homeTeamId].draw++;
-                        teams[awayTeamId].draw++;
-                        teams[homeTeamId].points += 1;
-                        teams[awayTeamId].points += 1;
-                    }
-                }
-            });
-
-            const table = Object.values(teams).map(team => ({
-                team: { id: team.id, name: team.name, crestUrl: team.crestUrl },
-                playedGames: team.playedGames,
-                won: team.won,
-                draw: team.draw,
-                lost: team.lost,
-                goalsFor: team.goalsFor,
-                goalsAgainst: team.goalsAgainst,
-                goalDifference: team.goalsFor - team.goalsAgainst,
-                points: team.points
-            }));
-
-            table.sort((a, b) => {
-                if (b.points !== a.points) return b.points - a.points;
-                if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
-                if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
-                return a.team.name.localeCompare(b.team.name);
-            });
-
-            return table.map((team, index) => ({ ...team, position: index + 1 }));
-        };
-
-        const fetchTurno = async (startRound, endRound) => {
-            showLoader(true);
-            try {
-                const response = await fetch(`/.netlify/functions/fetchMatchesByRoundRange?startRound=${startRound}&endRound=${endRound}`);
-                const data = await response.json();
-                const turnoTable = calculateTurnoClassification(data.matches);
-                renderTable(turnoTable);
-            } catch (error) {
-                console.error(`Erro ao buscar turno (${startRound}-${endRound}):`, error);
-                classificationBody.innerHTML = '<tr><td colspan="10">Erro ao carregar dados.</td></tr>';
-            } finally {
-                showLoader(false);
-            }
-        };
-
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                const tabName = tab.dataset.tab;
-
-                if (tabName === 'geral') {
-                    fetchClassification();
-                } else if (tabName === 'turno1') {
-                    fetchTurno(1, 19);
-                } else if (tabName === 'turno2') {
-                    fetchTurno(20, 38);
-                }
-            });
-        });
+          const vitoriasEmpates = calcularVitoriasEmpatesSaldo(configCampeonato.ranking, rodadaInicio, rodadaFim);
+          exibirVitorias(vitoriasEmpates, configCampeonato.historicoPontuacao, rodadaInicio, rodadaFim);
+      }
 
       // Inicialização
       document.addEventListener("DOMContentLoaded", () => {
         carregarRanking();
         criarInputsRanking();
-        fetchClassification(); // Carrega a classificação geral por padrão
 
+        const tabs = document.querySelectorAll(".tab-button");
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                tab.classList.add("active");
+                const turno = tab.dataset.turno;
+                atualizarPlacar(turno);
+            });
+        });
 
         // Verificar dark mode
         const isDarkMode = localStorage.getItem("darkMode") === "true";
